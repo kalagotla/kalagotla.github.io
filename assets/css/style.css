@@ -467,12 +467,18 @@ h3 {
   font-size: 13px;
 }
 
+/* education */
 .card .card-title {
   font-size: 24px;
 }
 
+#education .card-title {
+  margin-left: -4px; /* Moves the title 4px to the left */
+  font: bold 24px/1.5 'Lora', serif;
+}
+
 .card .card-content .card-title {
-  line-height: 2.5rem;
+  line-height: 2rem;
 }
 
 .card i.right {
