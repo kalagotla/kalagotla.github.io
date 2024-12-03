@@ -548,8 +548,6 @@ a.hoverline:hover {
 
 .card-action a.btn-floating {
   margin-bottom: 0;
-  bottom: 10%;
-    left: 80%;
 }
 
 #contact a:not(.btn-floating) {
