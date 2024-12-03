@@ -28,7 +28,20 @@
   right: 0;
 }
 
-@import url(https://fonts.googleapis.com/css?family=Poiret+One);
+/* Import similar fonts */
+@import url('https://fonts.googleapis.com/css2?family=Lora:wght@400;700&family=Noto+Sans:wght@400;700&display=swap');
+
+/* General body text */
+body {
+  font-family: 'Noto Sans', sans-serif;
+}
+
+/* Headers or highlighted text to mimic reMarkable's serif font */
+h1, h2, h3, h4, h5, h6, blockquote {
+  font-family: 'Lora', serif;
+}
+
+
 .social {
   margin: 0 auto;
   width: auto;
@@ -524,10 +537,13 @@ a.hoverline:hover {
 
 .card.medium .card-image {
   height: 240px;
+  align-content: center;
 }
 
 .card-action a.btn-floating {
   margin-bottom: 0;
+  bottom: 10%;
+    left: 80%;
 }
 
 #contact a:not(.btn-floating) {
