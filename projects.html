@@ -3,13 +3,13 @@
       <div class="container">
         <div class="row">
 
-          <div class="col s12 m6 l4">
+          <div class="col s12 m6 l12">
             <div class="card medium">
               <div class="card-image waves-effect waves-block waves-light">
-                <img alt="Lagrangian Particle Tracker" src="/assets/img/lpt/lpt_title.png" style="height: 100%; width: 100%" class="activator" />
+                <img alt="Lagrangian Particle Tracking Library" src="/assets/img/lpt/lpt_title.gif" style="height: 100%; width: 100%" class="activator" />
               </div>
               <div class="card-content">
-                <span class="card-title activator teal-text hoverline">Lagrangian Particle Tracker<i
+                <span class="card-title activator teal-text hoverline">Lagrangian Particle Tracking Library<i
                     class="mdi-navigation-more-vert right"></i></span>
                 <p>
                   A highly-parallelized one-way coupled lpt module.
@@ -19,14 +19,16 @@
                 <span class="card-title grey-text"><small>Summary</small><i
                     class="mdi-navigation-close right"></i></span>
                 <ul>
-                    <li>Utilizes MPI for scalable parallelization.</li>
+                    <li>Open source and available to install using pip.</li>
                     <li>Polydisperse simulation of advanced particle dynamics.</li>
-                    <li>ROM: Converts Lagrangian data to Eulerian fields.</li>
+                    <li>Converts Lagrangian data to Eulerian fields to reduce computational cost for further processing.</li>
                     <li>Modular design for diverse applications.</li>
                 </ul>
 
                 <div class="card-action">
-                  <a aria-label="Visit " href="lpt/" target="_blank" data-position="top"
+                    <!-- Use the line below to open a new web page from lpt folder-->
+<!--                  <a aria-label="Visit " href="lpt/" target="_blank" data-position="top"-->
+                    <a aria-label="Visit " href="https://www.github.com/kalagotla/lptlib/" target="_blank" data-position="top"
                     data-tooltip="View Online"
                     class="btn-floating btn-large waves-effect waves-light blue-grey tooltipped"><i
                       class="fa fa-external-link"></i></a>
@@ -55,17 +57,53 @@
                       <span class="card-title grey-text"><small>Summary</small><i
                           class="mdi-navigation-close right"></i></span>
                       <ul>
-                          <li>Utilizes MPI for scalable parallelization.</li>
-                          <li>Parallelizing options based on type of image generation.</li>
-                          <li>Open source and easy installation using pip.</li>
+                          <li>Planar PIV capable</li>
+                          <li>Parallelizing options based on size of the image.</li>
+                          <li>Open source and easy installation.</li>
                           <li>API designed to accommodate future developments.</li>
                       </ul>
 
                       <div class="card-action">
-    <!--                  <a aria-label="Visit " href="https://github.com/kalagotla/lptlib" target="_blank" data-position="top"-->
-    <!--                    data-tooltip="View Online"-->
-    <!--                    class="btn-floating btn-large waves-effect waves-light blue-grey tooltipped"><i-->
-    <!--                      class="fa fa-external-link"></i></a>-->
+                      <a aria-label="Visit " href="https://github.com/kalagotla/sypiv" target="_blank" data-position="top"
+                        data-tooltip="View Online"
+                        class="btn-floating btn-large waves-effect waves-light blue-grey tooltipped"><i
+                          class="fa fa-external-link"></i></a>
+                          <a aria-label="Visit the GitHub repo for  project" href="https://github.com/kalagotla/syPIV"
+                            target="_blank" data-position="top" data-tooltip="View Source"
+                            class="btn-floating btn-large waves-effect waves-light blue-grey tooltipped"><i
+                              class="fa-brands fa-github"></i></a>
+                      </div>
+
+                </div>
+              </div>
+          </div>
+
+          <div class="col s12 m6 l6">
+              <div class="card medium">
+                <div class="card-image waves-effect waves-block waves-light">
+                  <img alt="Bilateral Inertia-Correction Sparse Network" src="/assets/img/pivnet/pivnet_title2.png" style="max-height: 100%; max-width: 100%;" class="activator" />
+                </div>
+                    <div class="card-content">
+                      <span class="card-title activator teal-text hoverline">Bilateral Inertia-Correction Sparse Network (BICSNet)<i
+                          class="mdi-navigation-more-vert right"></i></span>
+                      <p>
+                        A Deep Neural Network to correct for inertia bias effects in PIV data.
+                      </p>
+                    </div>
+                    <div class="card-reveal">
+                      <span class="card-title grey-text"><small>Summary</small><i
+                          class="mdi-navigation-close right"></i></span>
+                      <ul>
+                          <li>A novel architecture to correct for inertia bias effects in oblique shock PIV data.</li>
+                          <li>Trained on synthetic data generated using the lptlib and Synthetic Image Generator.</li>
+                          <li>Showcased an error reduction of 83% for in-distribution Mach numbers</li>
+                      </ul>
+
+                      <div class="card-action">
+                      <a aria-label="Visit " href="/pivnet" target="_blank" data-position="top"
+                        data-tooltip="View Online"
+                        class="btn-floating btn-large waves-effect waves-light blue-grey tooltipped"><i
+                          class="fa fa-external-link"></i></a>
                           <a aria-label="Visit the GitHub repo for  project" href="https://github.com/kalagotla/syPIV"
                             target="_blank" data-position="top" data-tooltip="View Source"
                             class="btn-floating btn-large waves-effect waves-light blue-grey tooltipped"><i
