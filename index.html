@@ -97,8 +97,8 @@
       <li class="bold">
         <!-- mdi-av-web small
              mdi-av-my-library-books small-->
-        <a aria-label="Navigate to the Projects section" href="#projects" class="waves-effect waves-dark teal-text"><i
-            class="mdi-av-my-library-books small"></i><span>Projects</span></a>
+        <a aria-label="Navigate to the Research section" href="#research" class="waves-effect waves-dark teal-text"><i
+            class="mdi-av-my-library-books small"></i><span>Research</span></a>
       </li>
 
 <!--      <li class="bold">-->
@@ -173,8 +173,8 @@
             class="mdi-action-trending-up small"></i><span>Experience</span></a>
       </li>
       <li class="bold">
-        <a aria-label="Navigate to the Projects section" href="#projects" class="waves-effect waves-dark teal-text"><i
-            class="mdi-av-my-library-books small"></i><span>Projects</span></a>
+        <a aria-label="Navigate to the Research section" href="#research" class="waves-effect waves-dark teal-text"><i
+            class="mdi-av-my-library-books small"></i><span>Research</span></a>
       </li>
 <!--      <li class="bold">-->
 <!--        <a aria-label="Navigate to the Skills section" href="#skills" class="waves-effect waves-dark teal-text"><i-->
@@ -245,15 +245,15 @@
 <!--        .catch(error => console.error('Error loading the experience section:', error));-->
 <!--    </script>-->
 
-    <!-- Fourth Section: Projects -->
-    <div id="projects-container"></div>
+    <!-- Fourth Section: Research -->
+    <div id="research-container"></div>
     <script>
-      fetch('projects.html')
+      fetch('research.html')
         .then(response => response.text())
         .then(data => {
-          document.getElementById('projects-container').innerHTML = data;
+          document.getElementById('research-container').innerHTML = data;
         })
-        .catch(error => console.error('Error loading the projects section:', error));
+        .catch(error => console.error('Error loading the research section:', error));
     </script>
 
     <!-- Fifth Section: Skills -->
