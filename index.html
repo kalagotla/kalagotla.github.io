@@ -19,6 +19,12 @@
   <link rel="stylesheet" href="/assets/css/style.css" />
   <title>Dilip Kalagotla | Aerospace Engineer</title>
 
+  <script>
+    (function(){
+      try{var t=localStorage.getItem('theme');if(t==='dark'){document.documentElement.classList.add('dark-theme');document.addEventListener('DOMContentLoaded',function(){document.body.classList.add('dark-theme');});}}catch(e){}
+    })();
+  </script>
+
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-60RKR4PHQY"></script>
   <script>
@@ -79,6 +85,11 @@
         <li><a href="research.html">Projects</a></li>
         <li><a href="publications.html">Publications</a></li>
         <li><a href="contact.html">Contact</a></li>
+        <li>
+          <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme" aria-pressed="false">
+            <i class="fas fa-moon" aria-hidden="true"></i>
+          </button>
+        </li>
       </ul>
       <button class="nav-toggle" aria-label="Toggle navigation">
         <i class="fas fa-bars"></i>
@@ -91,49 +102,125 @@
     <!-- Hero Section -->
     <section class="hero">
       <div class="container">
-        <div class="profile-photo">
-          <img src="/assets/img/headshot-new.jpeg" alt="Dilip Kalagotla" />
+        <div class="hero-content">
+          <div class="hero-left">
+            <div class="profile-photo">
+              <img src="/assets/img/headshot-new.jpeg" alt="Dilip Kalagotla" />
+            </div>
+            <div class="social-links">
+              <a href="https://github.com/kalagotla" target="_blank" class="social-link" aria-label="GitHub">
+                <i class="fab fa-github"></i>
+              </a>
+              <a href="https://linkedin.com/in/dilip-kalagotla" target="_blank" class="social-link" aria-label="LinkedIn">
+                <i class="fab fa-linkedin-in"></i>
+              </a>
+              <a href="https://scholar.google.com/citations?user=gwKZo_YAAAAJ&hl=en" target="_blank" class="social-link" aria-label="Google Scholar">
+                <i class="fas fa-graduation-cap"></i>
+              </a>
+              <a href="mailto:dilipkalagotla@gmail.com" class="social-link" aria-label="Email">
+                <i class="fas fa-envelope"></i>
+              </a>
+            </div>
+          </div>
+          
+          <div class="hero-right">
+            <h1>Dilip Kalagotla</h1>
+            <p class="subtitle">PhD Candidate in Aerospace Engineering</p>
+            <p class="description">
+              I'm a PhD candidate in Aerospace Engineering at the University of Cincinnati, specializing in computational fluid dynamics and physics-aware machine learning. My research focuses on developing innovative solutions for complex multiphysics problems in supersonic flows, with particular emphasis on particle image velocimetry (PIV) and advanced numerical methods.
+            </p>
+            
+            <!-- Quick Stats -->
+            <div class="quick-stats">
+              <div class="stat-item">
+                <div class="stat-number">8+</div>
+                <div class="stat-label">Publications</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-number">3</div>
+                <div class="stat-label">Open Source Projects</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-number">7+</div>
+                <div class="stat-label">Years Research</div>
+              </div>
+            </div>
+          </div>
         </div>
-        <h1>Dilip Kalagotla</h1>
-        <p class="subtitle">PhD Candidate in Aerospace Engineering</p>
-        <p class="description">
-          I'm a PhD candidate in Aerospace Engineering at the University of Cincinnati, specializing in computational fluid dynamics and physics-aware machine learning. My research focuses on developing innovative solutions for complex multiphysics problems in supersonic flows, with particular emphasis on particle image velocimetry (PIV) and advanced numerical methods.
-        </p>
         
         <!-- Education Section -->
         <div class="education">
           <h3>Education</h3>
-          <div class="education-item">
-            <div class="education-degree">PhD in Aerospace Engineering</div>
-            <div class="education-institution">University of Cincinnati</div>
-            <div class="education-year">2017 - 2025</div>
-          </div>
-          <div class="education-item">
-            <div class="education-degree">MS in Aerospace Engineering</div>
-            <div class="education-institution">University of Cincinnati</div>
-            <div class="education-year">2015 - 2018</div>
-          </div>
-          <div class="education-item">
-            <div class="education-degree">BTech in Mechanical Engineering</div>
-            <div class="education-institution">Indian Institute of Technology (IIT) Dhanbad</div>
-            <div class="education-year">2011 - 2015</div>
+          <div class="education-grid">
+            <div class="education-item">
+              <div class="education-degree">PhD in Aerospace Engineering</div>
+              <div class="education-institution">University of Cincinnati</div>
+              <div class="education-year">2017 - 2025</div>
+            </div>
+            <div class="education-item">
+              <div class="education-degree">MS in Aerospace Engineering</div>
+              <div class="education-institution">University of Cincinnati</div>
+              <div class="education-year">2015 - 2018</div>
+            </div>
+            <div class="education-item">
+              <div class="education-degree">BTech in Mechanical Engineering</div>
+              <div class="education-institution">Indian Institute of Technology (IIT) Dhanbad</div>
+              <div class="education-year">2011 - 2015</div>
+            </div>
           </div>
         </div>
 
-        <!-- Social Links -->
-        <div class="social-links">
-          <a href="https://github.com/kalagotla" target="_blank" class="social-link" aria-label="GitHub">
-            <i class="fab fa-github"></i>
-          </a>
-          <a href="https://linkedin.com/in/dilip-kalagotla" target="_blank" class="social-link" aria-label="LinkedIn">
-            <i class="fab fa-linkedin-in"></i>
-          </a>
-          <a href="https://scholar.google.com/citations?user=gwKZo_YAAAAJ&hl=en" target="_blank" class="social-link" aria-label="Google Scholar">
-            <i class="fas fa-graduation-cap"></i>
-          </a>
-          <a href="mailto:dilipkalagotla@gmail.com" class="social-link" aria-label="Email">
-            <i class="fas fa-envelope"></i>
-          </a>
+        <!-- Research Interests -->
+        <div class="research-interests">
+          <h3>Research Interests</h3>
+          <div class="interests-grid">
+            <div class="interest-item">
+              <i class="fas fa-wind"></i>
+              <span>Computational Fluid Dynamics</span>
+            </div>
+            <div class="interest-item">
+              <i class="fas fa-brain"></i>
+              <span>Physics-Aware Machine Learning</span>
+            </div>
+            <div class="interest-item">
+              <i class="fas fa-camera"></i>
+              <span>Particle Image Velocimetry</span>
+            </div>
+            <div class="interest-item">
+              <i class="fas fa-rocket"></i>
+              <span>Supersonic Flows</span>
+            </div>
+            <div class="interest-item">
+              <i class="fas fa-chart-line"></i>
+              <span>Numerical Methods</span>
+            </div>
+            <div class="interest-item">
+              <i class="fas fa-microscope"></i>
+              <span>Multiphysics Problems</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Work -->
+        <div class="recent-work">
+          <h3>Recent Work</h3>
+          <div class="work-grid">
+            <div class="work-item">
+              <h4>BICSNet</h4>
+              <p>Physics-aware neural network for shock wave detection and analysis in supersonic flows.</p>
+              <a href="research.html" class="work-link">Learn More →</a>
+            </div>
+            <div class="work-item">
+              <h4>lptlib</h4>
+              <p>Open-source library for Lagrangian particle tracking and analysis in fluid dynamics.</p>
+              <a href="https://github.com/kalagotla/lptlib" target="_blank" class="work-link">View on GitHub →</a>
+            </div>
+            <div class="work-item">
+              <h4>PIV Analysis</h4>
+              <p>Advanced particle image velocimetry techniques for high-speed flow characterization.</p>
+              <a href="publications.html" class="work-link">View Publications →</a>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -159,5 +246,6 @@
       }
     });
   </script>
+  <script src="/assets/js/theme.js"></script>
 </body>
 </html>
