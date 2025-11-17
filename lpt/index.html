@@ -24,8 +24,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
 
-  <title>Academic Project Page</title>
-  <link rel="icon" type="image/x-icon" href="static/images/favicon.ico">
+  <title>Lagrangian Particle Tracking Library (lptlib)</title>
+  <link rel="icon" type="image/png" href="static/images/favicon.png">
   <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
   rel="stylesheet">
 
@@ -52,44 +52,19 @@
       <div class="container is-max-desktop">
         <div class="columns is-centered">
           <div class="column has-text-centered">
-            <h1 class="title is-1 publication-title">Lagrangian Particle Tracking Library</h1>
+            <h1 class="title is-1 publication-title">Lagrangian Particle Tracking Library (lptlib)</h1>
             <div class="is-size-5 publication-authors">
-              <!-- Paper authors -->
               <span class="author-block">
-                <a href="https://github.com/kalagotla/lptlib" target="_blank">Dilip Kalagotla</a><sup>*</sup>,</span>
-                <span class="author-block">
+                <a href="https://kalagotla.github.io" target="_blank">Dilip Kalagotla</a>
                   </span>
                   </div>
 
                   <div class="is-size-5 publication-authors">
-                    <span class="author-block">Institution Name<br>Conferance name and year</span>
-                    <span class="eql-cntrb"><small><br><sup>*</sup>Indicates Equal Contribution</small></span>
+              <span class="author-block">Open-Source Python Library<br>Available on GitHub and PyPI</span>
                   </div>
 
                   <div class="column has-text-centered">
                     <div class="publication-links">
-                         <!-- Arxiv PDF link -->
-                      <span class="link-block">
-                        <a href="https://arxiv.org/pdf/<ARXIV PAPER ID>.pdf" target="_blank"
-                        class="external-link button is-normal is-rounded is-dark">
-                        <span class="icon">
-                          <i class="fas fa-file-pdf"></i>
-                        </span>
-                        <span>Paper</span>
-                      </a>
-                    </span>
-
-                    <!-- Supplementary PDF link -->
-                    <span class="link-block">
-                      <a href="static/pdfs/supplementary_material.pdf" target="_blank"
-                      class="external-link button is-normal is-rounded is-dark">
-                      <span class="icon">
-                        <i class="fas fa-file-pdf"></i>
-                      </span>
-                      <span>Supplementary</span>
-                    </a>
-                  </span>
-
                   <!-- Github link -->
                   <span class="link-block">
                     <a href="https://github.com/kalagotla/lptlib" target="_blank"
@@ -97,18 +72,18 @@
                     <span class="icon">
                       <i class="fab fa-github"></i>
                     </span>
-                    <span>Code</span>
+                  <span>GitHub</span>
                   </a>
                 </span>
 
-                <!-- ArXiv abstract Link -->
+              <!-- PyPI link -->
                 <span class="link-block">
-                  <a href="https://arxiv.org/abs/<ARXIV PAPER ID>" target="_blank"
+                <a href="https://pypi.org/project/lptlib/" target="_blank"
                   class="external-link button is-normal is-rounded is-dark">
                   <span class="icon">
-                    <i class="ai ai-arxiv"></i>
+                  <i class="fab fa-python"></i>
                   </span>
-                  <span>arXiv</span>
+                <span>PyPI</span>
                 </a>
               </span>
             </div>
@@ -119,166 +94,271 @@
   </div>
 </section>
 
-
-<!-- Teaser video-->
-<section class="hero teaser">
+  <!-- Mobile TOC -->
+  <section class="section hero is-light is-hidden-desktop" style="padding-top: 1rem; padding-bottom: 1rem;">
   <div class="container is-max-desktop">
-    <div class="hero-body">
-      <video poster="" id="tree" autoplay controls muted loop height="100%">
-        <!-- Your video here -->
-        <source src="static/videos/banner_video.mp4"
-        type="video/mp4">
-      </video>
-      <h2 class="subtitle has-text-centered">
-        Aliquam vitae elit ullamcorper tellus egestas pellentesque. Ut lacus tellus, maximus vel lectus at, placerat pretium mi. Maecenas dignissim tincidunt vestibulum. Sed consequat hendrerit nisl ut maximus. 
-      </h2>
+      <div class="tags are-medium">
+        <a href="#overview" class="tag toc-link">Overview</a>
+        <a href="#key-features" class="tag toc-link">Key Features</a>
+        <a href="#algorithm-overview" class="tag toc-link">Algorithm Overview</a>
+        <a href="#workflow" class="tag toc-link">Workflow</a>
+        <a href="#validation" class="tag toc-link">Validation</a>
+        <a href="#installation" class="tag toc-link">Installation</a>
+      </div>
     </div>
-  </div>
-</section>
-<!-- End teaser video -->
+  </section>
 
-<!-- Paper abstract -->
-<section class="section hero is-light">
+  <!-- Main Content with Sidebar -->
+  <div class="main-content-wrapper">
+    <!-- Desktop Sidebar TOC -->
+    <aside class="toc-sidebar-menu is-hidden-touch">
+      <div class="menu toc-sidebar">
+        <p class="menu-label">Contents</p>
+        <ul class="menu-list">
+          <li><a href="#overview" class="toc-link">Overview</a></li>
+          <li><a href="#key-features" class="toc-link">Key Features</a></li>
+          <li><a href="#algorithm-overview" class="toc-link">Algorithm Overview</a></li>
+          <li><a href="#workflow" class="toc-link">Workflow</a></li>
+          <li><a href="#validation" class="toc-link">Validation</a></li>
+          <li><a href="#installation" class="toc-link">Installation & Usage</a></li>
+        </ul>
+  </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <div class="main-content-area">
+<!-- Abstract -->
+<section id="overview" class="section hero is-light">
   <div class="container is-max-desktop">
     <div class="columns is-centered has-text-centered">
       <div class="column is-four-fifths">
-        <h2 class="title is-3">Abstract</h2>
+        <h2 class="title is-3">Overview</h2>
         <div class="content has-text-justified">
           <p>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin ullamcorper tellus sed ante aliquam tempus. Etiam porttitor urna feugiat nibh elementum, et tempor dolor mattis. Donec accumsan enim augue, a vulputate nisi sodales sit amet. Proin bibendum ex eget mauris cursus euismod nec et nibh. Maecenas ac gravida ante, nec cursus dui. Vivamus purus nibh, placerat ac purus eget, sagittis vestibulum metus. Sed vestibulum bibendum lectus gravida commodo. Pellentesque auctor leo vitae sagittis suscipit.
+            The Lagrangian Particle Tracking Library (lptlib) is a highly-parallelized, open-source Python library designed for accurate particle tracking in supersonic and compressible flows. Unlike existing post-processing codes, lptlib provides comprehensive features required to study uncertainty in tracer particle response, making it ideal for particle image velocimetry (PIV) uncertainty quantification and particle dynamics history (PDH) analysis.
+          </p>
+          <p>
+            The library addresses critical needs in computational fluid dynamics by offering easy access to source code for algorithm customization, seamless integration of multiple drag models, support for polydisperse particle simulations, and robust data compatibility for post-processing workflows. Built with modularity and performance in mind, lptlib enables researchers to track particles through complex flow fields while quantifying the effects of particle inertia, compressibility, and rarefaction.
           </p>
         </div>
       </div>
     </div>
   </div>
 </section>
-<!-- End paper abstract -->
+<!-- End abstract -->
 
 
-<!-- Image carousel -->
-<section class="hero is-small">
-  <div class="hero-body">
-    <div class="container">
-      <div id="1results-carousel" class="carousel results-carousel">
-       <div class="item">
-        <!-- Your image here -->
-        <img src="static/images/carousel1.jpg" alt="MY ALT TEXT"/>
-        <h2 class="subtitle has-text-centered">
-          First image description.
-        </h2>
-      </div>
-      <div class="item">
-        <!-- Your image here -->
-        <img src="static/images/carousel2.jpg" alt="MY ALT TEXT"/>
-        <h2 class="subtitle has-text-centered">
-          Second image description.
-        </h2>
-      </div>
-      <div class="item">
-        <!-- Your image here -->
-        <img src="static/images/carousel3.jpg" alt="MY ALT TEXT"/>
-        <h2 class="subtitle has-text-centered">
-         Third image description.
-       </h2>
-     </div>
-     <div class="item">
-      <!-- Your image here -->
-      <img src="static/images/carousel4.jpg" alt="MY ALT TEXT"/>
-      <h2 class="subtitle has-text-centered">
-        Fourth image description.
-      </h2>
-    </div>
-  </div>
-</div>
-</div>
-</section>
-<!-- End image carousel -->
-
-
-
-
-<!-- Youtube video -->
-<section class="hero is-small is-light">
-  <div class="hero-body">
-    <div class="container">
-      <!-- Paper video. -->
-      <h2 class="title is-3">Video Presentation</h2>
-      <div class="columns is-centered has-text-centered">
-        <div class="column is-four-fifths">
-          
-          <div class="publication-video">
-            <!-- Youtube embed code here -->
-            <iframe src="https://www.youtube.com/embed/JkaxUblCGz0" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+<!-- Key Features -->
+<section id="key-features" class="section hero">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Key Features</h2>
+        <div class="content has-text-justified">
+          <div class="box" style="background-color: #f5f5f5; margin-bottom: 2rem;">
+            <div class="content">
+              <h4 class="title is-5" style="margin-bottom: 1rem;">Core Capabilities</h4>
+              <ul>
+                <li><strong>Three Core Aspects:</strong> Search, Interpolation, and Integration algorithms with multiple implementation options</li>
+                <li><strong>Multiple Drag Models:</strong> Stokes, Schiller-Nauman, Melling, Tedeschi, Loth, and custom drag formulations</li>
+                <li><strong>High-Performance Parallelization:</strong> MPI-based parallel computing for large-scale simulations</li>
+                <li><strong>Frame Transformation:</strong> Convert Lagrangian particle data to Eulerian fields for visualization and analysis</li>
+                <li><strong>Polydisperse Simulation:</strong> Support for particle size distributions to quantify uncertainty</li>
+                <li><strong>Modular Design:</strong> Easy-to-understand code structure with minimal background required</li>
+                <li><strong>Data Compatibility:</strong> Seamless integration with Plot3D format and other CFD data formats</li>
+              </ul>
+            </div>
           </div>
+      </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- End key features -->
+
+<!-- Algorithm Overview -->
+<section id="algorithm-overview" class="section hero is-light">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Algorithm Overview</h2>
+        <div class="content has-text-justified">
+          <p>
+            The Lagrangian Particle Tracking algorithm consists of three fundamental aspects that work together to accurately trace particle paths through flow fields:
+          </p>
+          
+          <div style="text-align: center; margin: 2rem 0;">
+            <img src="static/images/LPT_Algorithm.drawio.svg" alt="LPT Algorithm Flowchart" style="max-width: 100%; height: auto;"/>
+            <p class="is-size-7" style="color: #666; margin-top: 0.5rem;">Lagrangian Particle Tracking Algorithm Workflow</p>
+     </div>
+
+          <h3 class="title is-4" style="margin-top: 2rem;">1. Search</h3>
+          <p>
+            The search aspect locates particles within structured curvilinear grids. Two primary approaches are implemented:
+          </p>
+          <ul>
+            <li><strong>Physical Space (p-space):</strong> Uses Newton-Raphson iteration to find particle locations in physical coordinates, providing high accuracy for complex geometries</li>
+            <li><strong>Computational Space (c-space):</strong> Leverages orthonormal computational grids for O(1) search complexity, ideal for large-scale simulations</li>
+          </ul>
+
+          <h3 class="title is-4" style="margin-top: 2rem;">2. Interpolation</h3>
+          <p>
+            Once a particle's location is found, flow field data must be interpolated to that point. Multiple interpolation schemes are available:
+          </p>
+          <ul>
+            <li><strong>Trilinear Interpolation:</strong> Standard second-order accurate method with C⁰ continuity</li>
+            <li><strong>Radial Basis Functions (RBF):</strong> Higher-order interpolation for scattered data with customizable shape parameters</li>
+            <li><strong>Adaptive Schemes:</strong> Automatically switches to nearest-neighbor interpolation in shock cells for improved accuracy</li>
+          </ul>
+
+          <h3 class="title is-4" style="margin-top: 2rem;">3. Integration</h3>
+          <p>
+            Particle trajectories are computed using numerical integration of the quasi-steady drag equation:
+          </p>
+          <ul>
+            <li><strong>Runge-Kutta 2nd Order (RK2):</strong> Fast integration scheme suitable for smooth flows</li>
+            <li><strong>Runge-Kutta 4th Order (RK4):</strong> Higher accuracy for complex flow features and shock interactions</li>
+            <li><strong>Adaptive Time-Stepping:</strong> Automatically adjusts time steps based on particle acceleration and Courant number constraints</li>
+          </ul>
+    </div>
+  </div>
+</div>
+</div>
+</section>
+<!-- End algorithm overview -->
+
+
+
+
+<!-- Workflow Visualization -->
+<section id="workflow" class="section hero">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+        <div class="column is-four-fifths">
+        <h2 class="title is-3">Workflow: Lagrangian to Eulerian Transformation</h2>
+        <div class="content has-text-justified">
+          <p>
+            One of the key capabilities of lptlib is transforming scattered Lagrangian particle data into structured Eulerian fields. This enables visualization and further analysis of particle dynamics history (PDH) effects in flow measurements.
+          </p>
+          
+          <div style="text-align: center; margin: 2rem 0;">
+            <img src="static/images/workflow_contours.png" alt="LPT Workflow" style="max-width: 100%; height: auto;"/>
+            <p class="is-size-7" style="color: #666; margin-top: 0.5rem;">Workflow: CFD data → Particle paths → Eulerian field transformation</p>
+          </div>
+
+          <p>
+            The transformation process uses Delaunay triangulation to map scattered particle data onto regular grids, ensuring smooth transitions even in high-gradient regions like shock interfaces. This capability is essential for generating PDH-informed synthetic PIV data and understanding how particle inertia affects measured velocity fields.
+          </p>
         </div>
       </div>
     </div>
   </div>
 </section>
-<!-- End youtube video -->
+<!-- End workflow visualization -->
 
+<!-- Validation & Results -->
+<section id="validation" class="section hero is-light">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Validation & Results</h2>
+        <div class="content has-text-justified">
+          <p>
+            The lptlib code has been extensively validated against both numerical and experimental data from the literature, demonstrating high accuracy and reliability for particle tracking in supersonic flows.
+          </p>
 
-<!-- Video carousel -->
-<section class="hero is-small">
-  <div class="hero-body">
-    <div class="container">
-      <h2 class="title is-3">Another Carousel</h2>
-      <div id="results-carousel" class="carousel results-carousel">
-        <div class="item item-video1">
-          <video poster="" id="video1" autoplay controls muted loop height="100%">
-            <!-- Your video file here -->
-            <source src="static/videos/carousel1.mp4"
-            type="video/mp4">
-          </video>
+          <h3 class="title is-4" style="margin-top: 2rem;">Code Verification</h3>
+          <p>
+            Verification against Melling (1997) numerical data shows excellent agreement, confirming the correctness of the implementation:
+          </p>
+          <div style="text-align: center; margin: 2rem 0;">
+            <img src="static/images/melling.svg" alt="Melling Verification" style="max-width: 100%; height: auto;"/>
+            <p class="is-size-7" style="color: #666; margin-top: 0.5rem;">Code verification against Melling (1997) data</p>
+          </div>
+
+          <h3 class="title is-4" style="margin-top: 2rem;">Experimental Validation</h3>
+          <p>
+            Validation against experimental oblique shock data from Ragni et al. (2011) demonstrates the library's ability to accurately predict particle response:
+          </p>
+          <div style="text-align: center; margin: 2rem 0;">
+            <img src="static/images/lpt_ragni.svg" alt="Ragni Validation" style="max-width: 100%; height: auto;"/>
+            <p class="is-size-7" style="color: #666; margin-top: 0.5rem;">Validation against Ragni et al. (2011) experimental data</p>
         </div>
-        <div class="item item-video2">
-          <video poster="" id="video2" autoplay controls muted loop height="100%">
-            <!-- Your video file here -->
-            <source src="static/videos/carousel2.mp4"
-            type="video/mp4">
-          </video>
+
+          <p>
+            Further validation against Williams et al. (2015) data shows RMS errors below 1% for particle velocity lag across oblique shocks:
+          </p>
+          <div style="text-align: center; margin: 2rem 0;">
+            <img src="static/images/williams_validation.svg" alt="Williams Validation" style="max-width: 100%; height: auto;"/>
+            <p class="is-size-7" style="color: #666; margin-top: 0.5rem;">Validation against Williams et al. (2015) experimental data</p>
         </div>
-        <div class="item item-video3">
-          <video poster="" id="video3" autoplay controls muted loop height="100%">\
-            <!-- Your video file here -->
-            <source src="static/videos/carousel3.mp4"
-            type="video/mp4">
-          </video>
         </div>
       </div>
     </div>
   </div>
 </section>
-<!-- End video carousel -->
+<!-- End validation -->
 
 
 
 
 
 
-<!-- Paper poster -->
-<section class="hero is-small is-light">
-  <div class="hero-body">
-    <div class="container">
-      <h2 class="title">Poster</h2>
+<!-- Installation & Usage -->
+<section id="installation" class="section hero">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Installation & Usage</h2>
+        <div class="content has-text-justified">
+          <h3 class="title is-4">Installation</h3>
+          <p>
+            Install lptlib directly from PyPI:
+          </p>
+          <pre><code>pip install lptlib</code></pre>
 
-      <iframe  src="static/pdfs/sample.pdf" width="100%" height="550">
-          </iframe>
-        
+          <h3 class="title is-4" style="margin-top: 2rem;">Quick Start</h3>
+          <p>
+            Here's a simple example of tracking particles through a flow field:
+          </p>
+          <pre><code>from lptlib import Streamlines
+
+# Initialize the streamline tracker
+streamline = Streamlines(
+    grid_file='grid.x',
+    flow_file='flow.q',
+    point=[0.1, 0.1, 0.05],  # Starting point
+    method='pRK4',  # Runge-Kutta 4th order in physical space
+    diameter=1e-6,  # Particle diameter (meters)
+    density=1000,   # Particle density (kg/m³)
+    time_step=1e-3  # Initial time step
+)
+
+# Compute particle path
+streamline.compute(method='adaptive-ppath')</code></pre>
+
+          <h3 class="title is-4" style="margin-top: 2rem;">Documentation</h3>
+          <p>
+            For comprehensive documentation, API reference, and advanced usage examples, please visit the <a href="https://github.com/kalagotla/lptlib" target="_blank">GitHub repository</a>. The repository includes detailed tutorials, validation cases, and examples demonstrating various drag models and parallelization strategies.
+          </p>
+
+          <h3 class="title is-4" style="margin-top: 2rem;">Features in Detail</h3>
+          <ul>
+            <li><strong>Multiple Tracking Methods:</strong> p-space, c-space, adaptive variants, and unsteady tracking</li>
+            <li><strong>Drag Models:</strong> Choose from Stokes, Schiller-Nauman, Melling, Tedeschi, Loth, or implement custom models</li>
+            <li><strong>Parallel Processing:</strong> Built-in MPI support for tracking multiple particles simultaneously</li>
+            <li><strong>Data Export:</strong> Export particle paths in NumPy format for further analysis</li>
+            <li><strong>Frame Conversion:</strong> Transform Lagrangian data to Eulerian fields using the DataIO class</li>
+          </ul>
+        </div>
       </div>
     </div>
-  </section>
-<!--End paper poster -->
-
-
-<!--BibTex citation -->
-  <section class="section" id="BibTeX">
-    <div class="container is-max-desktop content">
-      <h2 class="title">BibTeX</h2>
-      <pre><code>BibTex Code Here</code></pre>
-    </div>
+  </div>
 </section>
-<!--End BibTex citation -->
+<!-- End installation & usage -->
+    </div>
+  </div>
+  <!-- End main content wrapper -->
 
 
   <footer class="footer">

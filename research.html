@@ -133,10 +133,10 @@
               </p>
             </div>
           </div>
-          <div style="margin: 3rem 0; text-align: center;">
-            <img src="/assets/img/research-sbli-collaborative.svg" alt="Collaborative efforts to study shock-boundary layer interactions" style="max-width: 100%; height: auto; margin-bottom: 1rem;" />
+          <!-- <div style="margin: 3rem 0; text-align: center;">
+            <img src="/assets/img/research-sbli-collaborative.svg" alt="Collaborative efforts to study shock-boundary layer interactions" style="max-width: 40%; height: auto; margin-bottom: 1rem;" />
             <p style="font-size: 0.9rem; color: var(--text-muted); font-style: italic; max-width: 800px; margin: 0 auto;">Collaborative efforts integrating theory, experiments, and numerical analysis to study shock-boundary layer interactions</p>
-          </div>
+          </div> -->
           <style>
             @media (max-width: 768px) {
               .philosophy-grid {
@@ -150,96 +150,8 @@
         <div class="projects-section" style="margin-bottom: 4rem;">
           <h3>Selected Projects</h3>
           
-          <div class="projects" style="margin-top: 2rem;">
-          <!-- BICSNet Project -->
-          <div class="project">
-            <div class="project-card">
-              <div class="project-image">
-                <img src="/assets/img/pivnet/pivnet_title2.svg" alt="BICSNet Project" />
-              </div>
-              <div class="project-content">
-                <h3>Bilateral Inertia-Correction Sparse Network (BICSNet)</h3>
-            <div class="project-meta">Deep Learning • PIV Analysis • 2024-2025</div>
-            <p class="project-description">
-              A novel bilateral inertia-correction sparse network that achieves 76% error reduction in PIV data correction for oblique shock flows. This physics-aware neural network is specifically designed to correct for inertia bias effects in shock-dominated PIV measurements, trained on comprehensive synthetic datasets and demonstrating robust generalization across different Mach numbers.
-            </p>
-            <div class="project-links">
-              <a href="/pivnet" class="project-link" target="_blank">
-                <i class="fas fa-external-link-alt"></i>
-                Project Page
-              </a>
-              <a href="https://github.com/kalagotla/lptlib" class="project-link" target="_blank">
-                <i class="fab fa-github"></i>
-                GitHub
-              </a>
-              <a href="https://doi.org/10.2514/6.2025-xxxx" class="project-link" target="_blank">
-                <i class="fas fa-file-alt"></i>
-                AIAA SciTech 2025
-              </a>
-            </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- lptlib Project -->
-          <div class="project">
-            <div class="project-card">
-              <div class="project-image">
-                <img src="/assets/img/lpt/lpt_title.png" alt="lptlib Project" />
-              </div>
-              <div class="project-content">
-                <h3>Lagrangian Particle Tracking Library (lptlib)</h3>
-            <div class="project-meta">Python Library • CFD • 2022-2025</div>
-            <p class="project-description">
-              A highly-parallelized one-way coupled Lagrangian particle tracking module with polydisperse simulation capabilities and Eulerian field conversion. This open-source library provides comprehensive particle dynamics simulation with customizable particle properties, modular design for diverse applications, and high-performance parallel computing support for large-scale simulations.
-            </p>
-            <div class="project-links">
-              <a href="/lpt" class="project-link" target="_blank">
-                <i class="fas fa-external-link-alt"></i>
-                Project Page
-              </a>
-              <a href="https://github.com/kalagotla/lptlib" class="project-link" target="_blank">
-                <i class="fab fa-github"></i>
-                GitHub
-              </a>
-              <a href="https://pypi.org/project/lptlib/" class="project-link" target="_blank">
-                <i class="fab fa-python"></i>
-                PyPI
-              </a>
-            </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Synthetic Image Generator -->
-          <div class="project">
-            <div class="project-card">
-              <div class="project-image">
-                <img src="/sypiv/static/images/sigma_variation_sypiv.png" alt="Synthetic Image Generator Project" />
-              </div>
-              <div class="project-content">
-                  <h3>Synthetic Image Generator for PIV (syPIV)</h3>
-            <div class="project-meta">Computer Vision • Simulation • 2023-2024</div>
-            <p class="project-description">
-              A comprehensive synthetic image generator for emulating planar PIV data with advanced particle dynamics and parallelization support. This tool provides full planar PIV capability with realistic particle image generation, intelligent parallelization based on computational resources, and seamless integration with lptlib for end-to-end synthetic data generation pipeline.
-            </p>
-            <div class="project-links">
-              <a href="/sypiv" class="project-link" target="_blank">
-                <i class="fas fa-external-link-alt"></i>
-                Project Page
-              </a>
-              <a href="https://github.com/kalagotla/sypiv" class="project-link" target="_blank">
-                <i class="fab fa-github"></i>
-                GitHub
-              </a>
-              <a href="https://pypi.org/project/sypivlib/" class="project-link" target="_blank">
-                <i class="fab fa-python"></i>
-                PyPI
-              </a>
-            </div>
-              </div>
-            </div>
-          </div>
+          <div class="projects" style="margin-top: 2rem;" id="research-projects-container">
+            <!-- Dynamic content will be loaded here from projects.json -->
           </div>
         </div>
 
@@ -287,5 +199,6 @@
     });
   </script>
   <script src="/assets/js/theme.js"></script>
+  <script src="/assets/js/research-projects.js"></script>
 </body>
 </html>

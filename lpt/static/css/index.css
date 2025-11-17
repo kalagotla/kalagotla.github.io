@@ -133,5 +133,129 @@ body {
   font-size: smaller;
 }
 
+/* Table of Contents Styles */
+.main-content-wrapper {
+  display: flex;
+  min-height: calc(100vh - 200px);
+  position: relative;
+}
 
+/* Table of Contents Sidebar */
+.toc-sidebar-menu {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 260px;
+  height: 100vh;
+  overflow-y: auto;
+  background-color: #fafafa;
+  border-right: 1px solid #e5e5e5;
+  padding: 1rem 1.5rem 2rem 1.5rem;
+  z-index: 100;
+  box-shadow: 2px 0 4px rgba(0, 0, 0, 0.05);
+}
+
+.toc-sidebar {
+  position: sticky;
+  top: 2rem;
+}
+
+.toc-sidebar .menu-label {
+  font-weight: 600;
+  color: #363636;
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #e5e5e5;
+}
+
+.toc-sidebar .menu-list {
+  padding-left: 0;
+  list-style: none;
+}
+
+.toc-sidebar .menu-list li {
+  margin-bottom: 0.25rem;
+}
+
+.toc-sidebar .menu-list a {
+  padding: 0.75rem 1rem;
+  border-radius: 4px;
+  color: #4a4a4a;
+  transition: all 0.2s ease;
+  display: block;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  text-decoration: none;
+}
+
+.toc-sidebar .menu-list a:hover {
+  background-color: #f0f0f0;
+  color: #3273dc;
+}
+
+.toc-sidebar .menu-list a.is-active {
+  background-color: #3273dc;
+  color: white;
+}
+
+/* Hero Section - Account for sidebar */
+.hero {
+  margin-left: 0;
+}
+
+@media screen and (min-width: 1024px) {
+  /* Hero section at top (outside main-content-wrapper) needs margin */
+  body > .hero {
+    margin-left: 260px;
+  }
+  
+  /* Mobile TOC section should not have margin */
+  .is-hidden-desktop.hero {
+    margin-left: 0;
+  }
+}
+
+/* Main Content Area */
+.main-content-area {
+  flex: 1;
+  margin-left: 260px;
+  min-width: 0;
+  width: calc(100% - 260px);
+}
+
+.main-content-area .container {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+@media screen and (max-width: 1023px) {
+  .main-content-area {
+    margin-left: 0;
+    width: 100%;
+  }
+  
+  .main-content-wrapper {
+    flex-direction: column;
+  }
+  
+  .toc-sidebar-menu {
+    display: none;
+  }
+}
+
+/* Smooth Scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Mobile TOC Tags */
+.toc-link {
+  transition: all 0.2s ease;
+}
+
+.toc-link:hover {
+  background-color: #3273dc !important;
+  color: white !important;
+}
 
