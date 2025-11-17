@@ -16,7 +16,7 @@
   <!-- Font Awesome Icon - CSS-->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
   <!-- Custom Styles-->
-  <link rel="stylesheet" href="/assets/css/style.css" />
+  <link rel="stylesheet" href="/assets/css/style.css?v=2" />
   <title>Dilip Kalagotla | Aerospace Engineer</title>
 
   <script>
@@ -197,22 +197,8 @@
         <!-- Recent Work -->
         <div class="recent-work">
           <h3>Recent Work</h3>
-          <div class="work-grid">
-            <div class="work-item">
-              <h4>BICSNet</h4>
-              <p>Physics-aware neural network for shock wave detection and analysis in supersonic flows.</p>
-              <a href="research.html" class="work-link">Learn More →</a>
-            </div>
-            <div class="work-item">
-              <h4>lptlib</h4>
-              <p>Open-source library for Lagrangian particle tracking and analysis in fluid dynamics.</p>
-              <a href="https://github.com/kalagotla/lptlib" target="_blank" class="work-link">View on GitHub →</a>
-            </div>
-            <div class="work-item">
-              <h4>Research</h4>
-              <p>Explore my research philosophy, projects, and publications in computational fluid dynamics and machine learning.</p>
-              <a href="research.html" class="work-link">View Research →</a>
-            </div>
+          <div class="work-grid" id="recent-work-container">
+            <!-- Dynamic content will be loaded here -->
           </div>
         </div>
       </div>
@@ -240,5 +226,6 @@
     });
   </script>
   <script src="/assets/js/theme.js"></script>
+  <script src="/assets/js/recent-work.js"></script>
 </body>
 </html>

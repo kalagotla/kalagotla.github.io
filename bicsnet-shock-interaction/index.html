@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Meta tags for social media banners, these should be filled in appropriatly as they are your "business card" -->
+  <!-- Replace the content tag with appropriate information -->
+  <meta name="description" content="Application of BICSNet to Shock-dominated PIV data: Experimental validation of BICSNet on shock-shock interaction data from the Polysonic Wind Tunnel at Florida State University.">
+  <meta property="og:title" content="Application of BICSNet to Shock-dominated PIV data"/>
+  <meta property="og:description" content="Experimental validation of BICSNet on shock-shock interaction PIV data from FSU, demonstrating correction of particle inertia bias in real-world supersonic flow measurements."/>
+  <meta property="og:url" content="https://kalagotla.github.io/bicsnet-shock-interaction/"/>
+  <!-- Path to banner image, should be in the path listed below. Optimal dimenssions are 1200X630-->
+  <meta property="og:image" content="https://kalagotla.github.io/bicsnet-shock-interaction/static/images/shock_interaction_5mm.png" />
+  <meta property="og:image:width" content="1200"/>
+  <meta property="og:image:height" content="630"/>
+
+  <meta name="twitter:title" content="Application of BICSNet to Shock-dominated PIV data">
+  <meta name="twitter:description" content="Experimental validation of BICSNet on shock-shock interaction PIV data from FSU, demonstrating correction of particle inertia bias in real-world supersonic flow measurements.">
+  <!-- Path to banner image, should be in the path listed below. Optimal dimenssions are 1200X600-->
+  <meta name="twitter:image" content="https://kalagotla.github.io/bicsnet-shock-interaction/static/images/shock_interaction_5mm.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <!-- Keywords for your paper to be indexed by-->
+  <meta name="keywords" content="deep learning, particle image velocimetry, PIV, neural networks, computational fluid dynamics, shock interaction, experimental validation, BICSNet, supersonic flow, FSU">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Application of BICSNet to Shock-dominated PIV data</title>
+  <link rel="icon" type="image/x-icon" href="static/images/favicon.png">
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
+  rel="stylesheet">
+
+  <link rel="stylesheet" href="static/css/bulma.min.css">
+  <link rel="stylesheet" href="static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="static/css/fontawesome.all.min.css">
+  <link rel="stylesheet"
+  href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="static/css/index.css">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://documentcloud.adobe.com/view-sdk/main.js"></script>
+  <script defer src="static/js/fontawesome.all.min.js"></script>
+  <script src="static/js/bulma-carousel.min.js"></script>
+  <script src="static/js/bulma-slider.min.js"></script>
+  <script src="static/js/index.js"></script>
+</head>
+<body>
+
+  <section class="hero">
+    <div class="hero-body">
+      <div class="container is-max-desktop">
+        <div class="columns is-centered">
+          <div class="column has-text-centered">
+            <h1 class="title is-1 publication-title">Application of BICSNet to Shock-dominated PIV data</h1>
+            <div class="is-size-5 publication-authors">
+              <!-- Paper authors -->
+              <span class="author-block">
+                <a href="https://scholar.google.com/citations?user=gwKZo_YAAAAJ&hl=en" target="_blank">Dilip Kalagotla</a>,</span>
+              <span class="author-block">
+                </span>
+              </div>
+
+              <div class="is-size-5 publication-authors">
+                <span class="author-block">Florida State University / University of Cincinnati<br><strong>Work in Progress - Not Yet Published</strong></span>
+              </div>
+
+              <div class="column has-text-centered">
+                <div class="publication-links">
+                  <!-- Github link -->
+                  <span class="link-block">
+                    <a href="https://github.com/kalagotla/BICSNet-PIV" target="_blank"
+                    class="external-link button is-normal is-rounded is-dark">
+                    <span class="icon">
+                      <i class="fab fa-github"></i>
+                    </span>
+                    <span>Code</span>
+                  </a>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Paper abstract -->
+  <section class="section hero is-light">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered has-text-centered">
+        <div class="column is-four-fifths">
+          <h2 class="title is-3">Abstract</h2>
+          <div class="content has-text-justified">
+            <p>
+              This work presents the application of BICSNet (Bilateral Inertia-Correction Sparse Neural Network) to experimental shock-shock interaction particle image velocimetry (PIV) data obtained from the Polysonic Wind Tunnel at Florida State University. The study demonstrates the network's capability to correct particle inertia bias in real-world supersonic flow measurements, validating the model against computational fluid dynamics (CFD) simulations and experimental data. The experimental campaign investigated shock-shock interactions generated by wedge shock generators at Mach 2, with BICSNet applied to correct for particle dynamics history (PDH) effects in the PIV measurements. Results show significant improvements in velocity field accuracy, with the corrected data showing better agreement with CFD predictions, particularly in the shock interaction region where particle inertia effects are most pronounced.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- End paper abstract -->
+
+  <!-- Methodology Section -->
+  <section class="section hero">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column is-four-fifths">
+          <h2 class="title is-3">Methodology</h2>
+          <div class="content has-text-justified">
+            <p>
+              BICSNet is a bilateral convolutional neural network (CNN) architecture enhanced with U-Net components, specifically designed to correct particle inertia bias in PIV measurements. The network operates directly on raw PIV image pairs, extracting localized particle features through convolutional layers while preserving fine-scale spatial information critical for resolving shock structures.
+            </p>
+            <p>
+              The architecture incorporates physics-aware inputs, including freestream Mach and Reynolds numbers computed from particle properties. These scalar inputs are integrated into the deep decoder layers, providing essential physical context that allows the network to adapt the correction process to specific flow conditions. Unlike physics-informed neural networks (PINNs), this approach maintains computational efficiency while learning image features and adhering to underlying physics.
+            </p>
+            <p>
+              The model was trained on approximately 76,800 synthetic image sets representing diverse oblique shock conditions, including variations in Mach numbers (1.5-7.6), deflection angles, shock strengths, particle properties, and magnifications. However, applying the trained network to experimental PIV data requires careful preprocessing to match the synthetic training data characteristics.
+            </p>
+
+            <h3 class="title is-4" style="margin-top: 2rem;">Experimental Data Preprocessing</h3>
+            
+            <p>
+              The experimental PIV dataset comprises 365 particle image pairs captured by a 2048×2048 pixel camera. Since BICSNet was trained on synthetic data with oblique shocks aligned to the Cartesian grid, the experimental shock-interaction data must be preprocessed to enable meaningful feature extraction and bias correction.
+            </p>
+
+            <h4 class="title is-5" style="margin-top: 1.5rem;">Step 1: Rotation and Cropping</h4>
+            <div class="columns" style="margin-top: 1rem;">
+              <div class="column is-half">
+                <p>
+                  The first preprocessing step involves rotating and cropping the incident shock region to align with the Cartesian grid, as illustrated in the figure. This alignment is crucial because the model was trained on synthetic data where shocks are oriented vertically or horizontally relative to the image axes.
+                </p>
+                <p>
+                  The rotation ensures that the shock front is properly oriented for the network to recognize and process the flow features effectively. The cropped region isolates the shock interaction zone of interest, removing extraneous flow features that could confuse the model.
+                </p>
+              </div>
+              <div class="column is-half">
+                <figure style="text-align: center;">
+                  <img src="static/images/preview.png" alt="Steps to isolate incident shock region" style="max-width: 100%; height: auto; border: 1px solid #ddd; border-radius: 4px;"/>
+                  <figcaption style="font-size: 0.9em; color: #666; margin-top: 0.5rem;">
+                    Steps to isolate the incident shock region from shock-interaction PIV image
+                  </figcaption>
+                </figure>
+              </div>
+            </div>
+
+            <h4 class="title is-5" style="margin-top: 2rem;">Step 2: Patch Extraction</h4>
+            <div class="columns" style="margin-top: 1rem;">
+              <div class="column is-half">
+                <p>
+                  To process the full shock interaction data, each 2048×2048 pixel image is cropped into 256×256 pixel patches with 50% overlap. This patching strategy produces 225 cropped images per PIV frame, ensuring comprehensive coverage of the flow field while maintaining the input size required by BICSNet (256×256×3).
+                </p>
+                <p>
+                  The 50% overlap ensures that no flow features are missed at patch boundaries and provides redundancy that helps improve the robustness of the correction process. Each patch is processed independently through BICSNet, and the results are later reassembled to reconstruct the full flow field.
+                </p>
+                <p>
+                  In total, this procedure generated 94,095 image pairs from the 365 experimental frames, providing a substantial dataset for validation and analysis.
+                </p>
+              </div>
+              <div class="column is-half">
+                <figure style="text-align: center; margin-bottom: 1rem;">
+                  <img src="static/images/256px_grid.png" alt="2048×2048 pixel image with grid overlay" style="max-width: 100%; height: auto; border: 1px solid #ddd; border-radius: 4px;"/>
+                  <figcaption style="font-size: 0.9em; color: #666; margin-top: 0.5rem;">
+                    2048×2048 pixel image from PIV with 256×256 patch grid overlay
+                  </figcaption>
+                </figure>
+                <figure style="text-align: center;">
+                  <img src="static/images/256px_crops.png" alt="256×256 patches with 50% overlap" style="max-width: 100%; height: auto; border: 1px solid #ddd; border-radius: 4px;"/>
+                  <figcaption style="font-size: 0.9em; color: #666; margin-top: 0.5rem;">
+                    Extracted 256×256 pixel patches with 50% overlap
+                  </figcaption>
+                </figure>
+              </div>
+            </div>
+
+            <h4 class="title is-5" style="margin-top: 2rem;">Step 3: Intensity Distribution Matching</h4>
+            <p>
+              A critical challenge in applying BICSNet to experimental data is matching the intensity distribution characteristics of the synthetic training data. Experimental PIV images exhibit significantly different intensity profiles compared to synthetic images, with approximately 80% of pixels at zero intensity (black levels) versus 25% in synthetic data.
+            </p>
+
+            <div class="columns" style="margin-top: 1rem;">
+              <div class="column is-half">
+                <figure style="text-align: center;">
+                  <img src="static/images/synthetic_vs_cropped.png" alt="Intensity distribution comparison before preprocessing" style="max-width: 100%; height: auto; border: 1px solid #ddd; border-radius: 4px;"/>
+                  <figcaption style="font-size: 0.9em; color: #666; margin-top: 0.5rem;">
+                    Intensity distribution comparison between synthetic and cropped PIV data (before preprocessing)
+                  </figcaption>
+                </figure>
+              </div>
+              <div class="column is-half">
+                <p>
+                  The intensity mismatch is addressed through a combination of image processing techniques:
+                </p>
+                <ul>
+                  <li><strong>Gaussian Blur:</strong> Applied with a 3×3 kernel (matching particle size in pixels) to smooth intensity distributions and reduce noise</li>
+                  <li><strong>Random Noise:</strong> Added using a normal distribution with standard deviation of 5.0 to improve intensity count smoothness</li>
+                  <li><strong>Exposure Factor:</strong> Multiplied by image intensity (0.8 for incident shock, 0.95 for transmitted shock) to reduce particle streaking effects</li>
+                </ul>
+                <p>
+                  These preprocessing steps effectively reduce zero-intensity pixel counts from approximately 75% to 30%, bringing the experimental data distribution closer to the synthetic training data.
+                </p>
+              </div>
+            </div>
+
+            <div class="columns" style="margin-top: 2rem;">
+              <div class="column is-half">
+                <figure style="text-align: center;">
+                  <img src="static/images/synthetic_vs_pre_processed.png" alt="Intensity distribution comparison after preprocessing" style="max-width: 100%; height: auto; border: 1px solid #ddd; border-radius: 4px;"/>
+                  <figcaption style="font-size: 0.9em; color: #666; margin-top: 0.5rem;">
+                    Intensity distribution comparison after preprocessing (synthetic vs. preprocessed PIV)
+                  </figcaption>
+                </figure>
+              </div>
+              <div class="column is-half">
+                <figure style="text-align: center;">
+                  <img src="static/images/cdfs_synthetic_vs_cropped.png" alt="Cumulative frequency distribution before preprocessing" style="max-width: 100%; height: auto; border: 1px solid #ddd; border-radius: 4px; margin-bottom: 1rem;"/>
+                  <img src="static/images/cdfs_synthetic_vs_pre_processed.png" alt="Cumulative frequency distribution after preprocessing" style="max-width: 100%; height: auto; border: 1px solid #ddd; border-radius: 4px;"/>
+                  <figcaption style="font-size: 0.9em; color: #666; margin-top: 0.5rem;">
+                    Cumulative frequency distributions showing intensity matching improvement
+                  </figcaption>
+                </figure>
+              </div>
+            </div>
+
+            <h4 class="title is-5" style="margin-top: 2rem;">Step 4: BICSNet Processing</h4>
+            <p>
+              Once preprocessed, the 256×256 pixel image patches are passed through the trained BICSNet model along with scalar inputs (Mach number = 2.0, particle Reynolds number = 427). The network processes each patch independently, applying physics-aware corrections to reduce particle inertia bias. The corrected patches are then reassembled to reconstruct the full velocity field, which can be further analyzed using standard PIV post-processing tools like OpenPIV.
+            </p>
+            <p>
+              This preprocessing pipeline ensures that experimental PIV data is compatible with the BICSNet architecture while preserving the essential flow physics, enabling accurate correction of particle inertia bias in real-world supersonic flow measurements.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- End Methodology Section -->
+
+  <!-- CFD Section -->
+  <section class="section hero is-light">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column is-four-fifths">
+          <h2 class="title is-3">Computational Fluid Dynamics</h2>
+          <div class="content has-text-justified">
+            <p>
+              CFD simulations were conducted using ANSYS Fluent 2021 R2 to provide validation data for the experimental PIV measurements. The computational domain models the shock-shock interaction generated by 10° wedge shock generators at Mach 2, matching the experimental configuration.
+            </p>
+            
+            <div class="columns" style="margin-top: 1.5rem;">
+              <div class="column is-half">
+                <p>
+                  An adaptive mesh refinement strategy was employed to capture the shock interaction region accurately. The initial grid contained 33,097 cells with a maximum cell thickness of 0.1 mm in the shock interaction region. The refinement process utilized gradient adaptation with a factor of 0.5, splitting cells up to 8 levels of refinement.
+                </p>
+                <p>
+                  This process yielded a final grid resolution of approximately 10⁻⁵ m in the shock cells, enabling detailed resolution of the complex flow structures. The adaptive refinement ensures computational efficiency while maintaining high accuracy in critical regions.
+                </p>
+              </div>
+              <div class="column is-half">
+                <figure style="text-align: center; margin-bottom: 1rem;">
+                  <img src="static/images/original_mesh_logo_removed.png" alt="Initial CFD grid" style="max-width: 100%; height: auto; border: 1px solid #ddd; border-radius: 4px;"/>
+                  <figcaption style="font-size: 0.9em; color: #666; margin-top: 0.5rem;">
+                    Initial computational grid (33,097 cells)
+                  </figcaption>
+                </figure>
+                <figure style="text-align: center;">
+                  <img src="static/images/adapted_mesh_logo_removed.png" alt="Final adapted CFD grid" style="max-width: 100%; height: auto; border: 1px solid #ddd; border-radius: 4px;"/>
+                  <figcaption style="font-size: 0.9em; color: #666; margin-top: 0.5rem;">
+                    Final adapted grid after 8 levels of refinement (~10⁻⁵ m resolution)
+                  </figcaption>
+                </figure>
+              </div>
+            </div>
+
+            <p>
+              The Reynolds-averaged Navier-Stokes (RANS) equations were solved using the k-ω turbulence model, chosen for its robustness in capturing regions with adverse pressure gradients typical of shock interactions. Boundary conditions were set as follows: pressure inlet with gauge total pressure of 280,000 Pa, supersonic/initial gauge pressure of 35,785.27 Pa, and total temperature of 291.25 K; pressure outlet with gauge pressure of 35,785.27 Pa; far-field pressure conditions on domain boundaries; and no-slip walls on the wedges.
+            </p>
+
+            <div class="columns" style="margin-top: 1.5rem;">
+              <div class="column is-half">
+                <figure style="text-align: center;">
+                  <img src="static/images/u_contour_normalized.png" alt="CFD velocity contour" style="max-width: 100%; height: auto; border: 1px solid #ddd; border-radius: 4px;"/>
+                  <figcaption style="font-size: 0.9em; color: #666; margin-top: 0.5rem;">
+                    Normalized velocity contour from CFD simulation
+                  </figcaption>
+                </figure>
+              </div>
+              <div class="column is-half">
+                <p>
+                  The converged CFD solution provides velocity contours normalized by the free-stream velocity of 510 m/s, offering a high-resolution reference for comparison with experimental PIV data and BICSNet-corrected results. The CFD data exhibits finer resolution due to the higher grid refinement, allowing for a more detailed representation of the flow structures compared to the experimental measurements.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- End CFD Section -->
+
+  <!-- Experiments Section -->
+  <section class="section hero">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column is-four-fifths">
+          <h2 class="title is-3">Experimental Setup</h2>
+          <div class="content has-text-justified">
+            <div class="columns" style="margin-top: 1rem;">
+              <div class="column is-half">
+                <p>
+                  Experimental data for validating BICSNet were obtained from high-speed tests conducted in the Polysonic Wind Tunnel (PSWT) at Florida State University. This blowdown-type tunnel operates over a Mach number range of 0.2 to 5 and features a 0.305 m × 0.305 m solid-wall test section with optical access from four sides.
+                </p>
+                <p>
+                  For the current Mach 2 experiments, a fixed nozzle block was used, and the tunnel was supplied with 150 m³ of air at 3.5 MPa, enabling run times of approximately 60 seconds. The flow was unheated, with near-ambient stagnation temperatures monitored by a Resistance Temperature Detector (RTD), and pressures were recorded using Baratron transducers.
+                </p>
+              </div>
+              <div class="column is-half">
+                <figure style="text-align: center;">
+                  <img src="static/images/PSWT.PNG" alt="Polysonic Wind Tunnel facility" style="max-width: 100%; height: auto; border: 1px solid #ddd; border-radius: 4px;"/>
+                  <figcaption style="font-size: 0.9em; color: #666; margin-top: 0.5rem;">
+                    Polysonic Wind Tunnel (PSWT) at Florida State University
+                  </figcaption>
+                </figure>
+              </div>
+            </div>
+
+            <div class="columns" style="margin-top: 1.5rem;">
+              <div class="column is-half">
+                <figure style="text-align: center;">
+                  <img src="static/images/PIVsetup.PNG" alt="PIV experimental setup" style="max-width: 100%; height: auto; border: 1px solid #ddd; border-radius: 4px;"/>
+                  <figcaption style="font-size: 0.9em; color: #666; margin-top: 0.5rem;">
+                    Test section showing shock generators and PIV laser sheet optics
+                  </figcaption>
+                </figure>
+              </div>
+              <div class="column is-half">
+                <p>
+                  The test campaign investigated shock-shock interactions generated by wedge shock generators with leading-edge deflections of 5°, 10°, and 15°. Each wedge had a 0.14 m span to balance 2D flow development with minimal blockage. The generators were mounted on diamond cross-section struts from the ceiling and floor. The present study focuses on data from the 10°/10° wedge configuration at Mach 2.
+                </p>
+                <p>
+                  PIV measurements were performed in a vertical streamwise plane between the wedges, with a laser sheet introduced through the top of the test section. An Nd:YAG laser (EVG-200) operating at 7.23 Hz with 200 mJ/pulse and an inter-pulse delay of 0.8 μs was used to illuminate the flow field. Two LaVision Imager Pro X cameras captured images from the side window: one wide-angle camera for the overall flow and one zoomed-in camera to capture the shock-shock interaction zone.
+                </p>
+              </div>
+            </div>
+
+            <p style="margin-top: 1.5rem;">
+              Seeding for the PIV system was generated using a Wright nebulizer housed in a pressure vessel. The nebulizer used Rosco Fog Fluid, a glycol-based commercial seeding solution. Compressed air from the tunnel supply system was regulated to 0.55 MPa to drive the nebulizer. The air-seed mixture was introduced into the tunnel's stagnation chamber via a vertical seed pipe with five upstream-facing holes to ensure proper mixing. Particle size distributions were analyzed to characterize the seeding properties, with distributions showing typical characteristics of nebulizer-generated particles.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- End Experiments Section -->
+
+  <!-- Results Section -->
+  <section class="section hero is-light">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column is-four-fifths">
+          <h2 class="title is-3">Results</h2>
+          <div class="content has-text-justified">
+            <p>
+              The application of BICSNet to the experimental PIV data demonstrates significant improvements in velocity field accuracy, particularly in regions affected by particle inertia bias. Comparison of CFD velocity contours with PIV measurements reveals the impact of particle dynamics history (PDH) effects, where particles lag behind the fluid motion as they traverse through shock structures.
+            </p>
+
+            <div class="columns" style="margin-top: 1.5rem;">
+              <div class="column is-half">
+                <p>
+                  The corrected velocity fields show improved agreement with CFD predictions, especially in the shock interaction region where particle inertia effects are most pronounced. The velocity profiles demonstrate how BICSNet successfully bridges the gap between raw PIV measurements and CFD validation data.
+                </p>
+                <p>
+                  For the incident oblique shock, BICSNet processing achieved a 53.75% reduction in inertia bias when compared to CFD validation data. The normalized velocity profiles at different y-locations (y = 0.5 mm and y = 5 mm) clearly show that BICSNet-corrected data closely matches the CFD predictions, while raw PIV data exhibits the characteristic smearing and lag due to particle inertia effects.
+                </p>
+              </div>
+              <div class="column is-half">
+                <figure style="text-align: center;">
+                  <img src="static/images/bicsnet_piv_cfd_y_0p5mm.png" alt="Corrected velocity field comparison at y = 0.5 mm" style="max-width: 100%; height: auto; border: 1px solid #ddd; border-radius: 4px; margin-bottom: 1rem;"/>
+                  <img src="static/images/bicsnet_piv_cfd_y_5mm.png" alt="Corrected velocity field comparison at y = 5 mm" style="max-width: 100%; height: auto; border: 1px solid #ddd; border-radius: 4px;"/>
+                  <figcaption style="font-size: 0.9em; color: #666; margin-top: 0.5rem;">
+                    Normalized velocity profiles comparing BICSNet-corrected data, CFD, and raw PIV measurements at y = 0.5 mm (top) and y = 5 mm (bottom)
+                  </figcaption>
+                </figure>
+              </div>
+            </div>
+
+            <p>
+              The results demonstrate BICSNet's ability to generalize from synthetic training data to real-world experimental measurements, validating the network's effectiveness in correcting particle-induced uncertainties in supersonic PIV data. The corrected data provides a more accurate representation of the true flow field, bridging the gap between experimental and numerical analyses.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- End Results Section -->
+
+  <!-- Image carousel -->
+  <section class="hero is-small">
+    <div class="hero-body">
+      <div class="container">
+        <div id="results-carousel" class="carousel results-carousel">
+         <div class="item">
+          <!-- Your image here -->
+          <img src="static/images/PSWT.PNG" alt="Polysonic Wind Tunnel at Florida State University"/>
+          <h2 class="subtitle has-text-centered">
+            Polysonic Wind Tunnel (PSWT) at Florida State University, a blowdown-type facility operating over Mach 0.2 to 5.
+          </h2>
+        </div>
+        <div class="item">
+          <!-- Your image here -->
+          <img src="static/images/PIVsetup.PNG" alt="PIV experimental setup"/>
+          <h2 class="subtitle has-text-centered">
+            Test section side view showing shock generators on struts and the PIV laser sheet optics on top of the test section.
+          </h2>
+        </div>
+        <div class="item">
+          <!-- Your image here -->
+          <img src="static/images/original_mesh_logo_removed.png" alt="Initial CFD grid"/>
+          <h2 class="subtitle has-text-centered">
+            Initial computational grid for the shock-shock interaction case, Mach 2 10°/10° configuration.
+          </h2>
+        </div>
+        <div class="item">
+          <!-- Your image here -->
+          <img src="static/images/adapted_mesh_logo_removed.png" alt="Final adapted CFD grid"/>
+          <h2 class="subtitle has-text-centered">
+            Final adapted grid after 8 levels of refinement, achieving approximately 10⁻⁵ m resolution in shock cells.
+          </h2>
+        </div>
+        <div class="item">
+          <!-- Your image here -->
+          <img src="static/images/u_contour_normalized.png" alt="CFD velocity contour"/>
+          <h2 class="subtitle has-text-centered">
+            Normalized velocity contour from CFD simulation showing the shock-shock interaction region.
+          </h2>
+        </div>
+        <div class="item">
+          <!-- Your image here -->
+          <img src="static/images/mach2_10-10_velocity_contour.png" alt="PIV velocity contour"/>
+          <h2 class="subtitle has-text-centered">
+            Normalized velocity contour from experimental PIV measurements, capturing the shock interaction region.
+          </h2>
+        </div>
+        <div class="item">
+          <!-- Your image here -->
+          <img src="static/images/shock_interaction_5mm.png" alt="Shock interaction visualization"/>
+          <h2 class="subtitle has-text-centered">
+            Visualization of the shock-shock interaction flow field showing the complex flow structures.
+          </h2>
+        </div>
+        <div class="item">
+          <!-- Your image here -->
+          <img src="static/images/shock_interaction_spatial_bias_5mm.png" alt="Spatial bias analysis"/>
+          <h2 class="subtitle has-text-centered">
+            Spatial bias analysis showing particle inertia effects at different locations in the flow field.
+          </h2>
+        </div>
+      </div>
+    </div>
+  </div>
+  </section>
+  <!-- End image carousel -->
+
+  <!-- Animation Section - Patches -->
+  <section class="section hero is-light">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered has-text-centered">
+        <div class="column is-four-fifths">
+          <h2 class="title is-3">Particle Patch Analysis</h2>
+          <div class="content has-text-justified">
+            <p>
+              The animation below demonstrates the analysis of particle patches in the PIV images, showing how BICSNet processes localized regions to extract particle motion features and correct for inertia bias. Each patch represents a region of interest where particle dynamics are analyzed to understand the relationship between particle motion and true fluid motion.
+            </p>
+          </div>
+          <div style="text-align: center; margin-top: 2rem;">
+            <video autoplay loop muted playsinline style="max-width: 100%; height: auto;">
+              <source src="static/images/patch_animation_8th_row.mp4" type="video/mp4">
+              Your browser does not support the video tag.
+            </video>
+          </div>
+          <div class="content has-text-justified" style="margin-top: 1rem;">
+            <p>
+              This visualization highlights the patch-based approach used in BICSNet, where the network analyzes particle distributions and motion patterns across different regions of the flow field to apply physics-aware corrections.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- End Animation Section - Patches -->
+
+  <!-- Animation Section - Vectors -->
+  <section class="section hero">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered has-text-centered">
+        <div class="column is-four-fifths">
+          <h2 class="title is-3">Velocity Vector Field</h2>
+          <div class="content has-text-justified">
+            <p>
+              The animation below shows the velocity vector field evolution, demonstrating how BICSNet corrects the particle-measured velocities to better represent the true fluid motion. The correction accounts for particle inertia effects, particularly evident in regions with strong velocity gradients such as shock waves.
+            </p>
+          </div>
+          <div style="text-align: center; margin-top: 2rem;">
+            <video autoplay loop muted playsinline style="max-width: 100%; height: auto;">
+              <source src="static/images/vectors_animation.mp4" type="video/mp4">
+              Your browser does not support the video tag.
+            </video>
+          </div>
+          <div class="content has-text-justified" style="margin-top: 1rem;">
+            <p>
+              This visualization illustrates the improvement in velocity field accuracy achieved through BICSNet correction, showing how the network reduces particle-induced bias and provides a more accurate representation of the underlying flow physics.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- End Animation Section - Vectors -->
+
+  <!-- Publication Status Note -->
+  <section class="section hero is-light">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column is-four-fifths">
+          <div class="notification is-warning">
+            <h3 class="title is-5">Publication Status</h3>
+            <p>
+              <strong>This work is currently in progress and has not yet been published.</strong> The material presented here is part of ongoing research on the application of BICSNet to experimental shock-dominated PIV data. For more details on the BICSNet methodology and synthetic validation, please refer to the <a href="/pivnet">BICSNet project page</a>.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- End Publication Status Note -->
+
+  <footer class="footer">
+  <div class="container">
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="content">
+
+          <p>
+            This page was built using the <a href="https://github.com/eliahuhorwitz/Academic-project-page-template" target="_blank">Academic Project Page Template</a> which was adopted from the <a href="https://nerfies.github.io" target="_blank">Nerfies</a> project page.
+            You are free to borrow the source code of this website, we just ask that you link back to this page in the footer. <br> This website is licensed under a <a rel="license"  href="http://creativecommons.org/licenses/by-sa/4.0/" target="_blank">Creative
+            Commons Attribution-ShareAlike 4.0 International License</a>.
+          </p>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- Statcounter tracking code -->
+  
+<!-- You can add a tracker to track page visits by creating an account at statcounter.com -->
+
+    <!-- End of Statcounter Code -->
+
+  </body>
+  </html>
+

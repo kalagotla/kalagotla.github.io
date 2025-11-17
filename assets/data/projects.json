@@ -1,0 +1,56 @@
+[
+  {
+    "id": "bicsnet",
+    "title": "Bilateral Inertia-Correction Sparse Network (BICSNet)",
+    "description": "A novel bilateral inertia-correction sparse network that achieves 76% error reduction in PIV data correction for oblique shock flows. This physics-aware neural network is specifically designed to correct for inertia bias effects in shock-dominated PIV measurements, trained on comprehensive synthetic datasets and demonstrating robust generalization across different Mach numbers.",
+    "image": "/assets/img/pivnet/pivnet_title2.svg",
+    "meta": "Deep Learning • PIV Analysis • 2024-2025",
+    "featured": true,
+    "order": 1,
+    "links": {
+      "projectPage": "/pivnet",
+      "github": "https://github.com/kalagotla/lptlib",
+      "paper": "https://doi.org/10.2514/6.2025-xxxx"
+    }
+  },
+  {
+    "id": "bicsnet-shock-interaction",
+    "title": "Application of BICSNet to Shock-dominated PIV data",
+    "description": "Application of BICSNet to experimental shock-shock interaction PIV data from the Polysonic Wind Tunnel at Florida State University. This work demonstrates the network's ability to correct particle inertia bias in real-world supersonic flow measurements, validating the model against CFD simulations and experimental data.",
+    "image": "/assets/img/bicsnet-shock-interaction/thumbnail.png",
+    "meta": "Deep Learning • Experimental PIV • CFD Validation • 2024-2025",
+    "featured": true,
+    "order": 1.5,
+    "links": {
+      "projectPage": "/bicsnet-shock-interaction"
+    }
+  },
+  {
+    "id": "lptlib",
+    "title": "Lagrangian Particle Tracking Library (lptlib)",
+    "description": "A highly-parallelized one-way coupled Lagrangian particle tracking module with polydisperse simulation capabilities and Eulerian field conversion. This open-source library provides comprehensive particle dynamics simulation with customizable particle properties, modular design for diverse applications, and high-performance parallel computing support for large-scale simulations.",
+    "image": "/assets/img/lpt/lpt_title.png",
+    "meta": "Python Library • CFD • 2022-2025",
+    "featured": true,
+    "order": 2,
+    "links": {
+      "projectPage": "/lpt",
+      "github": "https://github.com/kalagotla/lptlib",
+      "pypi": "https://pypi.org/project/lptlib/"
+    }
+  },
+  {
+    "id": "sypiv",
+    "title": "Synthetic Image Generator for PIV (syPIV)",
+    "description": "A comprehensive synthetic image generator for emulating planar PIV data with advanced particle dynamics and parallelization support. This tool provides full planar PIV capability with realistic particle image generation, intelligent parallelization based on computational resources, and seamless integration with lptlib for end-to-end synthetic data generation pipeline.",
+    "image": "/assets/img/computer-vision-v2-04.png",
+    "meta": "Computer Vision • Simulation • 2023-2024",
+    "featured": true,
+    "order": 3,
+    "links": {
+      "github": "https://github.com/kalagotla/sypiv",
+      "pypi": "https://pypi.org/project/sypiv/"
+    }
+  }
+]
+
