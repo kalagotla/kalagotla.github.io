@@ -93,3 +93,7 @@ build/
 *.log
 logs/
 
+# zips
+*.zip
+*.tar.gz
+*.rar
