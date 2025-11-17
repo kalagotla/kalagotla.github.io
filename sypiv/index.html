@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Meta tags for social media banners -->
+  <meta name="description" content="syPIV: A comprehensive synthetic image generator for emulating planar PIV data with advanced particle dynamics and parallelization support.">
+  <meta property="og:title" content="Synthetic Image Generator for PIV (syPIV)"/>
+  <meta property="og:description" content="A comprehensive synthetic image generator for emulating planar PIV data with advanced particle dynamics and parallelization support."/>
+  <meta property="og:url" content="https://kalagotla.github.io/sypiv/"/>
+  <!-- Path to banner image -->
+  <meta property="og:image" content="https://kalagotla.github.io/sypiv/static/images/sigma_variation_sypiv.png" />
+  <meta property="og:image:width" content="1200"/>
+  <meta property="og:image:height" content="630"/>
+
+  <meta name="twitter:title" content="Synthetic Image Generator for PIV (syPIV)">
+  <meta name="twitter:description" content="A comprehensive synthetic image generator for emulating planar PIV data with advanced particle dynamics and parallelization support.">
+  <meta name="twitter:image" content="https://kalagotla.github.io/sypiv/static/images/sigma_variation_sypiv.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <!-- Keywords -->
+  <meta name="keywords" content="synthetic PIV, particle image velocimetry, PIV, synthetic image generation, computational fluid dynamics, CFD, Python, simulation">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Synthetic Image Generator for PIV (syPIV)</title>
+  <link rel="icon" type="image/png" href="static/images/favicon.png">
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet">
+
+  <link rel="stylesheet" href="static/css/bulma.min.css">
+  <link rel="stylesheet" href="static/css/fontawesome.all.min.css">
+  <link rel="stylesheet" href="static/css/index.css">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="static/js/fontawesome.all.min.js"></script>
+  <script src="static/js/index.js"></script>
+</head>
+<body>
+
+  <section class="hero">
+    <div class="hero-body">
+      <div class="container is-max-desktop">
+        <div class="columns is-centered">
+          <div class="column has-text-centered">
+            <h1 class="title is-1 publication-title">Synthetic Image Generator for PIV (syPIV)</h1>
+            <div class="is-size-5 publication-authors">
+              <span class="author-block">
+                <a href="https://scholar.google.com/citations?user=gwKZo_YAAAAJ&hl=en" target="_blank">Dilip Kalagotla</a>
+              </span>
+            </div>
+
+            <div class="is-size-5 publication-authors">
+              <span class="author-block">FAMU-FSU College of Engineering</span>
+            </div>
+
+            <div class="column has-text-centered">
+              <div class="publication-links">
+                <!-- Github link -->
+                <span class="link-block">
+                  <a href="https://github.com/kalagotla/sypiv" target="_blank"
+                  class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                    <i class="fab fa-github"></i>
+                  </span>
+                  <span>Code</span>
+                </a>
+              </span>
+              <!-- PyPI link -->
+              <span class="link-block">
+                <a href="https://pypi.org/project/sypivlib/" target="_blank"
+                class="external-link button is-normal is-rounded is-dark">
+                <span class="icon">
+                  <i class="fab fa-python"></i>
+                </span>
+                <span>PyPI</span>
+              </a>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- Mobile TOC -->
+<section class="section hero is-light is-hidden-desktop" style="padding-top: 1rem; padding-bottom: 1rem;">
+  <div class="container is-max-desktop">
+    <div class="tags are-medium">
+      <a href="#abstract" class="tag toc-link">Abstract</a>
+      <a href="#features" class="tag toc-link">Key Features</a>
+      <a href="#validation" class="tag toc-link">Validation</a>
+    </div>
+  </div>
+</section>
+
+<!-- Main Content with Sidebar -->
+<div class="main-content-wrapper">
+  <!-- Desktop Sidebar TOC -->
+  <aside class="toc-sidebar-menu is-hidden-touch">
+    <div class="menu toc-sidebar">
+      <p class="menu-label">Contents</p>
+      <ul class="menu-list">
+        <li><a href="#abstract" class="toc-link">Abstract</a></li>
+        <li><a href="#features" class="toc-link">Key Features</a></li>
+        <li><a href="#validation" class="toc-link">Validation Results</a></li>
+      </ul>
+    </div>
+  </aside>
+
+  <!-- Main Content Area -->
+  <div class="main-content-area">
+    <!-- Paper abstract -->
+    <section id="abstract" class="section hero is-light">
+      <div class="container is-max-desktop">
+        <div class="columns is-centered has-text-centered">
+          <div class="column is-four-fifths">
+            <h2 class="title is-3">Abstract</h2>
+            <div class="content has-text-justified">
+              <p>
+                The uncertainty of the imaging phase and its interrogation phase in PIV contributes significantly to the total generated uncertainty. Synthetic image generation provides a powerful tool for validating numerical codes against PIV data while accounting for the uncertainty introduced during the imaging and processing phases.
+              </p>
+              <p>
+                syPIV is a comprehensive synthetic image generator for emulating planar PIV data, building upon the EUROPIV-2 Synthetic Image Generator (SIG). The code generalizes image generation for data obtained from Lagrangian Particle Tracking (LPT) codes, incorporating advanced particle dynamics and parallelization support. This tool enables researchers to evaluate PIV algorithms, understand PIV recording parameters before experimental setup, and validate numerical codes more effectively.
+              </p>
+              <p>
+                The current implementation has been applied to planar PIV setups and can be easily extended to stereo configurations. syPIV acts as a preliminary step in developing machine learning models that can handle uncertainties arising from the tracer, imaging, and analysis/interrogation phases of PIV.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- End paper abstract -->
+
+    <!-- Key Features Section -->
+    <section id="features" class="section hero">
+      <div class="container is-max-desktop">
+        <div class="columns is-centered">
+          <div class="column is-four-fifths">
+            <h2 class="title is-3">Key Features</h2>
+            
+            <div class="content has-text-justified">
+              <h3 class="title is-4" style="margin-top: 2rem;">Core Capabilities</h3>
+              <p>
+                syPIV carefully models each aspect of the PIV process to produce realistic synthetic images:
+              </p>
+              <ul>
+                <li><strong>Particle Distribution:</strong> Models both spatial particle distribution and physical particle diameter distributions, accounting for effects of coalescence, agglomeration, and breakup in supersonic flows</li>
+                <li><strong>Interrogation Area:</strong> Accurately transforms particle locations from physical space to CCD sensor coordinates, accounting for laser sheet thickness and optical geometry</li>
+                <li><strong>Laser Properties:</strong> Incorporates monochromatic laser sheet properties including wavelength, pulse energy, pulse width, and intensity profiles (Gaussian or top-hat)</li>
+                <li><strong>Optics System:</strong> Models particle image intensity using 2D Gaussian distributions, accounting for particle diameter, laser sheet intensity, and pixel fill ratios</li>
+              </ul>
+
+              <h3 class="title is-4" style="margin-top: 2rem;">Integration with lptlib</h3>
+              <p>
+                syPIV seamlessly integrates with the Lagrangian Particle Tracking Library (lptlib) to provide an end-to-end synthetic data generation pipeline. This integration allows for:
+              </p>
+              <ul>
+                <li>Direct use of particle trajectory data from LPT simulations</li>
+                <li>Incorporation of particle dynamics history (PDH) effects</li>
+                <li>Realistic modeling of particle lag in acceleration regions, particularly important for supersonic flows</li>
+              </ul>
+
+              <h3 class="title is-4" style="margin-top: 2rem;">Parallelization Support</h3>
+              <p>
+                The code includes intelligent parallelization based on available computational resources, enabling efficient generation of large synthetic image datasets required for machine learning applications and comprehensive PIV algorithm evaluation.
+              </p>
+
+              <div class="columns" style="margin-top: 2rem;">
+                <div class="column is-full">
+                  <figure class="image-gallery-item" data-image="static/images/sigma_variation_sypiv.png" data-caption="Particle image size variation with respect to parameter σ_p, showing intensity heat maps (top row) and grayscale images with 8-bit color values (bottom row)">
+                    <img src="static/images/sigma_variation_sypiv.png" alt="Particle image size variation" style="max-width: 100%; height: auto; border: 1px solid #ddd; border-radius: 4px; cursor: pointer;"/>
+                    <figcaption style="font-size: 0.9em; color: #666; margin-top: 0.5rem;">
+                      Particle image size variation with respect to parameter σ_p, showing intensity heat maps (top row) and grayscale images with 8-bit color values (bottom row)
+                    </figcaption>
+                  </figure>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- End Key Features Section -->
+
+    <!-- Validation Results Section -->
+    <section id="validation" class="section hero is-light">
+      <div class="container is-max-desktop">
+        <div class="columns is-centered">
+          <div class="column is-four-fifths">
+            <h2 class="title is-3">Validation Results</h2>
+            <div class="content has-text-justified">
+              <p>
+                syPIV has been validated against experimental PIV data for oblique shock flows, demonstrating the importance of incorporating particle dynamics history (PDH) effects in synthetic image generation.
+              </p>
+
+              <h3 class="title is-4" style="margin-top: 2rem;">Oblique Shock Analysis</h3>
+              <p>
+                Synthetic images were generated for the 20° deflection case of Williams et al. (2015), incorporating PDH effects through integration with the LPT code. The images were processed using openPIV with a 48×48 interrogation window size, matching the experimental PIV analysis parameters.
+              </p>
+
+              <div class="columns" style="margin-top: 1.5rem;">
+                <div class="column is-half">
+                  <figure class="image-gallery-item" data-image="static/images/0_1_150000.png" data-caption="Synthetic PIV image pair - First snapshot">
+                    <img src="static/images/0_1_150000.png" alt="Synthetic PIV image 1" style="max-width: 100%; height: auto; border: 1px solid #ddd; border-radius: 4px; cursor: pointer;"/>
+                    <figcaption style="font-size: 0.9em; color: #666; margin-top: 0.5rem;">
+                      Synthetic PIV image pair - First snapshot
+                    </figcaption>
+                  </figure>
+                </div>
+                <div class="column is-half">
+                  <figure class="image-gallery-item" data-image="static/images/0_2_150000.png" data-caption="Synthetic PIV image pair - Second snapshot">
+                    <img src="static/images/0_2_150000.png" alt="Synthetic PIV image 2" style="max-width: 100%; height: auto; border: 1px solid #ddd; border-radius: 4px; cursor: pointer;"/>
+                    <figcaption style="font-size: 0.9em; color: #666; margin-top: 0.5rem;">
+                      Synthetic PIV image pair - Second snapshot
+                    </figcaption>
+                  </figure>
+                </div>
+              </div>
+
+              <p style="margin-top: 1.5rem;">
+                When overlaying synthetic images generated from analytical data and PDH-informed data, the particle lag across the oblique shock becomes evident. The color-temperature-corrected overlapped images highlight this particle lag as streaks, which are clearer at the shock interface, demonstrating the effect of particle inertia in the PDH-informed data.
+              </p>
+
+              <div class="columns" style="margin-top: 1.5rem;">
+                <div class="column is-full">
+                  <figure class="image-gallery-item" data-image="static/images/overlapped_zoom.png" data-caption="Overlapped second snapshots of synthetic images generated from analytical data and PDH-informed data, highlighting the effect of PDH as streaks">
+                    <img src="static/images/overlapped_zoom.png" alt="Overlapped images showing particle lag" style="max-width: 100%; height: auto; border: 1px solid #ddd; border-radius: 4px; cursor: pointer;"/>
+                    <figcaption style="font-size: 0.9em; color: #666; margin-top: 0.5rem;">
+                      Overlapped second snapshots of synthetic images generated from analytical data and PDH-informed data, highlighting the effect of PDH as streaks
+                    </figcaption>
+                  </figure>
+                </div>
+              </div>
+
+              <h3 class="title is-4" style="margin-top: 2rem;">Velocity Field Comparison</h3>
+              <p>
+                The processed vector fields for both analytical and PDH-informed data demonstrate the qualitative impact of particle presence on optical velocimetry data. The overlapped velocity vectors highlight the differences between traditional synthetic PIV (assuming particles carry local flow velocity) and PDH-informed synthetic PIV.
+              </p>
+
+              <div class="columns" style="margin-top: 1.5rem;">
+                <div class="column is-full">
+                  <figure class="image-gallery-item" data-image="static/images/quiver_comparison.svg" data-caption="Overlapped velocity vectors obtained by processing synthetic images">
+                    <img src="static/images/quiver_comparison.svg" alt="Velocity vector comparison" style="max-width: 100%; height: auto; border: 1px solid #ddd; border-radius: 4px; cursor: pointer;"/>
+                    <figcaption style="font-size: 0.9em; color: #666; margin-top: 0.5rem;">
+                      Overlapped velocity vectors obtained by processing synthetic images
+                    </figcaption>
+                  </figure>
+                </div>
+              </div>
+
+              <h3 class="title is-4" style="margin-top: 2rem;">Quantitative Validation</h3>
+              <p>
+                Comparison of shock normal velocity lag data reveals significant improvements when using PDH-informed synthetic images:
+              </p>
+
+              <div class="box" style="background-color: #e8f4f8; margin: 2rem 0;">
+                <div class="content">
+                  <h4 class="title is-5" style="margin-bottom: 1rem;">Average Error (RMS, 0-20mm)</h4>
+                  <ul>
+                    <li>Traditional syPIV vs. experiment: <strong>15.8%</strong></li>
+                    <li>LPT code vs. experiment: <strong>0.6%</strong></li>
+                    <li>PDH-informed syPIV vs. experiment: <strong>0.2%</strong></li>
+                  </ul>
+                  
+                  <h4 class="title is-5" style="margin-top: 1.5rem; margin-bottom: 1rem;">Maximum Error</h4>
+                  <ul>
+                    <li>Traditional syPIV vs. experiment: <strong>86%</strong></li>
+                    <li>LPT code vs. experiment: <strong>2%</strong></li>
+                    <li>PDH-informed syPIV vs. experiment: <strong>1.7%</strong></li>
+                  </ul>
+                </div>
+              </div>
+
+              <p>
+                Traditional syPIV data assume that particles carry the local flow velocity in the first image, leading to substantial errors in velocity lag compared to both the LPT code and PDH-informed data. The difference in error between PDH-informed data and the numerical code suggests that image analysis did not produce significant uncertainty in this case. The maximum error values demonstrate that PDH is locally substantial in acceleration regions when studying flows with tracers.
+              </p>
+
+              <div class="columns" style="margin-top: 2rem;">
+                <div class="column is-half">
+                  <figure class="image-gallery-item" data-image="static/images/syPIV_validation.svg" data-caption="Shock normal velocity lag comparison">
+                    <img src="static/images/syPIV_validation.svg" alt="Validation results" style="max-width: 100%; height: auto; border: 1px solid #ddd; border-radius: 4px; cursor: pointer;"/>
+                    <figcaption style="font-size: 0.9em; color: #666; margin-top: 0.5rem;">
+                      Shock normal velocity lag comparison
+                    </figcaption>
+                  </figure>
+                </div>
+                <div class="column is-half">
+                  <figure class="image-gallery-item" data-image="static/images/validation_error.svg" data-caption="Error in velocity between different methods">
+                    <img src="static/images/validation_error.svg" alt="Error analysis" style="max-width: 100%; height: auto; border: 1px solid #ddd; border-radius: 4px; cursor: pointer;"/>
+                    <figcaption style="font-size: 0.9em; color: #666; margin-top: 0.5rem;">
+                      Error in velocity between different methods
+                    </figcaption>
+                  </figure>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- End Validation Results Section -->
+
+  </div>
+  <!-- End Main Content Area -->
+</div>
+<!-- End Main Content Wrapper -->
+
+<!-- Lightbox Modal -->
+<div id="lightbox-modal" class="modal">
+  <div class="modal-background"></div>
+  <div class="modal-content">
+    <p class="image">
+      <img id="lightbox-image" src="" alt="Lightbox image">
+    </p>
+    <p id="lightbox-caption" class="has-text-centered" style="margin-top: 1rem; color: white;"></p>
+  </div>
+  <button class="modal-close is-large" aria-label="close"></button>
+</div>
+
+<footer class="footer">
+  <div class="container">
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="content">
+          <p>
+            This page was built using the <a href="https://github.com/eliahuhorwitz/Academic-project-page-template" target="_blank">Academic Project Page Template</a> which was adopted from the <a href="https://nerfies.github.io" target="_blank">Nerfies</a> project page.
+            You are free to borrow the source code of this website, we just ask that you link back to this page in the footer. <br> This website is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/" target="_blank">Creative
+            Commons Attribution-ShareAlike 4.0 International License</a>.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
+

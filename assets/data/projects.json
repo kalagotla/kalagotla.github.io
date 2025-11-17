@@ -7,6 +7,10 @@
     "meta": "Deep Learning • PIV Analysis • 2024-2025",
     "featured": true,
     "order": 1,
+    "researchAreas": [
+      "Physics-Aware ML for Fluid Dynamics",
+      "Shock-Dominated PIV Diagnostics"
+    ],
     "links": {
       "projectPage": "/pivnet",
       "github": "https://github.com/kalagotla/lptlib",
@@ -21,6 +25,11 @@
     "meta": "Deep Learning • Experimental PIV • CFD Validation • 2024-2025",
     "featured": true,
     "order": 1.5,
+    "researchAreas": [
+      "Physics-Aware ML for Fluid Dynamics",
+      "Shock-Dominated PIV Diagnostics",
+      "High-Speed Aerodynamics"
+    ],
     "links": {
       "projectPage": "/bicsnet-shock-interaction"
     }
@@ -33,6 +42,10 @@
     "meta": "Python Library • CFD • 2022-2025",
     "featured": true,
     "order": 2,
+    "researchAreas": [
+      "Lagrangian Particle Tracking",
+      "Experimental + Numerical Flow Modeling"
+    ],
     "links": {
       "projectPage": "/lpt",
       "github": "https://github.com/kalagotla/lptlib",
@@ -43,13 +56,18 @@
     "id": "sypiv",
     "title": "Synthetic Image Generator for PIV (syPIV)",
     "description": "A comprehensive synthetic image generator for emulating planar PIV data with advanced particle dynamics and parallelization support. This tool provides full planar PIV capability with realistic particle image generation, intelligent parallelization based on computational resources, and seamless integration with lptlib for end-to-end synthetic data generation pipeline.",
-    "image": "/assets/img/computer-vision-v2-04.png",
+    "image": "/sypiv/static/images/sigma_variation_sypiv.png",
     "meta": "Computer Vision • Simulation • 2023-2024",
     "featured": true,
     "order": 3,
+    "researchAreas": [
+      "Shock-Dominated PIV Diagnostics",
+      "Data-Driven Flow Analysis"
+    ],
     "links": {
+      "projectPage": "/sypiv",
       "github": "https://github.com/kalagotla/sypiv",
-      "pypi": "https://pypi.org/project/sypiv/"
+      "pypi": "https://pypi.org/project/sypivlib/"
     }
   }
 ]
