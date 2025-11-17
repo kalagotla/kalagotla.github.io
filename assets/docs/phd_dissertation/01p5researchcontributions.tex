@@ -1,0 +1,92 @@
+\chapter{Research Contributions}\label{ch:research_contributions}
+This chapter outlines the primary contributions of this dissertation, offering readers a high-level overview of the novel insights and advancements achieved through this work.\par
+
+The present research addresses the uncertainties inherent in ``supersonic" velocity diagnostic experiments caused by the presence of tracer particles, with a particular focus on Particle Image Velocimetry (PIV). These uncertainties primarily stem from particle inertia and the imaging process of the tracer particles. Chapter \ref{ch:intro} reviews the relevant literature, highlighting the impact of particle inertia bias on the accuracy of PIV measurements in supersonic flows.\par
+
+As velocity diagnostic techniques have evolved, this work critically examines supersonic PIV, classifying it as a non-intrusive yet inherently invasive technique. This classification underscores the role of tracer particles as a significant source of uncertainty in PIV-based measurements. By emphasizing this aspect, the research lays the groundwork for novel approaches to mitigate particle inertia bias and enhance the accuracy of supersonic flow diagnostics.\par
+
+
+
+\section{Novel Contributions}
+This dissertation makes several novel contributions to quantifying and correcting particle inertia bias in supersonic flow diagnostics, focusing on particle image velocimetry (PIV) utilizing data-driven modeling. The critical gaps in the accuracy and reliability of velocity measurements in high-speed flows are addressed. These key contributions are as follows:
+\begin{enumerate}
+    \item \textbf{Quantifying Particle Inertia Bias in Supersonic PIV:}
+        \begin{itemize}
+            \item Developed two modules to quantify particle inertia bias accurately in supersonic PIV: Lagrangian particle tracking (LPT) module and synthetic image generation (SIG) module.
+            \item The LPT code is highly parallelized and incorporates the complex drag models that capture accurate particle physics for studying tracer particle dynamics in supersonic PIV.
+            \item Studied the particle response analysis using the LPT code, demonstrating the effects of particle agglomeration in existing PIV studies. This study showcased that the particle diameter can go up to two orders of magnitude higher than the manufacturer specifications in supersonic experiments in a typical PIV setup.
+            \item The SIG module is a highly parallelized image generation module to generate realistic mega-pixel level images with adjustable particle, laser sheet, and camera parameters common in a PIV experiment.
+            \item Defined the concept of Particle Dynamics History (PDH), which captures the idea of the effect of particle inertia through a series of flow interactions.
+            \item Quantified the effect of PDH in a multishock converging scenario. This highlighted that peak uncertainty in velocity (about 3.60\% for this case) occurs after the second shock when the shocks are closer together.
+            \item A size sensitivity analysis was conducted for supersonic jet exhaust to quantify the PDH effect accurately in complex flows.
+            \item Developed a novel methodology to quantify particle size distribution in shock-dominated PIV experiments, revealing preferential concentration effects and strong sensitivity to the spatial resolution of the cross-correlation process.
+            \item Leveraged the estimated particle sizes to improve CFD validation, achieving up to 85\% error reduction when accounting for Particle Dynamics History (PDH) effects.
+        \end{itemize}
+    \item \textbf{Exploration of Stokes Number Effects in High-Speed Flows}
+        \begin{itemize}
+            \item Developed a novel methodology to study the particle size distributions in shock-dominated experiments. This was demonstrated in a shock interaction experiment.
+            \item Studied the non-linear dependency of Stokes number on particle diameter and the underlying drag model.
+            \item A theory of Stokes number is developed to provide experimentalists guidance on reporting it for complex flows, and this was presented for a supersonic jet exhaust.
+        \end{itemize}
+    \item \textbf{Reducing Particle Inertia Bias in Supersonic PIV}
+        \begin{itemize}
+            \item Developed a new framework to mitigate particle inertia bias in supersonic PIV data.
+            \item Generated 73,000 pairs of PIV images from 600 oblique shock cases using the LPT code and SIG module.
+            \item Trained and evaluated a novel machine learning model known as Bilateral Inertia Correction Sparse Neural Network (BICSNet) to reduce particle inertia bias in shock-dominated PIV data.
+             \item Achieved an average error reduction of 83\% and up to 87\% improvement in velocity estimation for synthetic single oblique shock cases within the training Mach number distribution.
+             \item Demonstrated up to 58\% error reduction when applied to experimental shock interaction PIV data, introducing a new paradigm for integrating bias-informed machine learning into experimental workflows.
+        \end{itemize}
+\end{enumerate}
+
+These contributions collectively represent significant advancements in supersonic flow diagnostics, providing new tools and methodologies to enhance the accuracy and reliability of velocity measurements in high-speed aerodynamics research.
+
+\begin{comment}
+\section{Novel Contributions}
+This dissertation makes several novel contributions to supersonic flow diagnostics focusing on particle image velocimetry (PIV) utilizing data-driven modeling. The critical gaps in the accuracy and reliability of velocity measurements in high-speed flows are addressed. These key contributions are as follows:
+
+\begin{enumerate}
+    \item The bias due to particle inertia is compounded as a tracer particle passes through complex flow interactions such as shocks, expansions, and vortex regions. This effect is termed the particle dynamics history (PDH). PDH provides a new perspective on the discrepancies between experimental PIV measurements and numerical simulations by linking particle inertia effects to flowfield estimation inaccuracies.
+
+    \item The effect of PDH is studied and quantified carefully in a shock interaction case in Chapter \ref{ch:multishock}, highlighting the need for particle inertia bias correction.
+
+    \item One of the important studies conducted in this work is the study of several drag models available for tracing particles numerically. Each drag model has been contrasted against the popular Stokes drag model for different oblique shock cases to see their respective performance. This dataset highlights the importance of using ``curve-fit" drag models for studying complex flows.
+
+    \item The tracer particle size is not uniform in PIV. This is especially true for supersonic flows. A new methodology was developed to study particle sizing during a PIV experiment run. This helps experimentalists get an accurate estimate for Stokes number range, providing the ability to define uncertainty bounds. This methodology is demonstrated in a shock-interaction case. The results found showed that the particle diameter does not deviate far from the mean particle diameter estimated and has a skewed distribution, which can be attributed to the large particle sizes being picked up by the camera
+
+    % incorporate FSU analysis
+
+    \item Tools developed could be used for estimating uncertainty due to tracer particles in already existing datasets. This has been demonstrated on a jet exhaust case. The findings are reported ??.
+
+    \item A new framework to reduce particle inertia bias in PIV images is developed. This includes a Lagrangian particle tracking (LPT) code
+\end{enumerate}
+\end{comment}
+
+\begin{comment}
+\begin{enumerate}
+\item Particle Dynamics History (PDH):\\
+The bias due to particle inertia is compounded as a tracer particle passes through complex flow interactions such as shocks, expansions, and vortex regions. This effect, termed Particle Dynamics History (PDH), provides a new perspective on the discrepancies between experimental PIV measurements and numerical simulations by linking particle inertia effects to flowfield estimation inaccuracies. This is presented in detail in Chapter \ref{ch:pdh} and is studied using shock boundary layer interactions in supersonic inlets and a turbomachinery case.
+
+\item Quantifying PDH Effects:\\
+The effect of PDH is studied and quantified carefully in a shock interaction case in Chapter \ref{ch:multishock}, highlighting the need for particle inertia bias reduction in PIV data. This was emphasized around the region of shock interaction, where the bias due to the PDH are more pronounced.
+
+\item Evaluation of Drag Models:\\
+A comprehensive evaluation of various drag models used for numerically tracing particles has been conducted, with each model compared against the widely adopted Stokes drag model across a range of oblique shock cases. This study underscores the critical role of employing advanced ``curve-fit" drag models to capture the intricacies of complex flow dynamics. The analysis, detailed in Chapter \ref{ch:lpt}, highlights the limitations of simplistic approaches like the Stokes drag model, which often predict faster particle response times that may deviate significantly from reality. This work provides a valuable foundation for future studies aiming to improve particle response analysis, particularly in applications where accurate particle dynamics modeling is essential.
+
+\item Methodology for Particle Sizing in PIV:\\
+A novel methodology has been developed to facilitate accurate particle sizing during supersonic PIV experiments. This approach enables experimentalists to estimate Stokes number ranges and establish well-defined uncertainty bounds reliably. Applied to a shock-interaction PIV case, the methodology reveals a skew in the particle diameter distribution toward larger sizes attributed to detecting larger particles due to optical limitations. Additionally, a detailed spatial resolution convergence analysis has been performed, providing critical insights into the dependency of the sizing analysis on spatial resolution. These findings, which enhance the precision and reliability of particle sizing in complex flows, are comprehensively discussed in Chapter \ref{ch:lpt}.
+
+\item Uncertainty Estimation for Existing Datasets:\\ 
+Tools were developed to estimate uncertainty due to tracer particles in existing datasets. This capability is demonstrated on a jet exhaust case, enabling retrospective analyses of experimental datasets to account for particle-induced uncertainties. The findings are discussed in Chapter \ref{ch:jet_exhaust}.
+
+\item Development of a Particle Inertia Bias Reduction Framework:\\
+A new framework to mitigate particle inertia bias in PIV data has been developed, addressing a critical challenge in supersonic flow experiments. The framework integrates a robust Lagrangian Particle Tracking (LPT) algorithm to simulate particle dynamics and generate physics-informed synthetic PIV data using the synthetic image generator discussed in Chapter \ref{ch:sypiv}. This synthetic dataset serves as the foundation for training a novel deep learning model known as Bilateral Inertia Correction Sparse Network (BICSNet). The network utilizes approximately 73,000 images, encompassing a broad parameter space including Mach numbers, deflection angles, particle properties, and imaging conditions.
+
+Key features of BICSNet include a dual-encoder architecture informed by U-Net principles, enabling efficient feature extraction and correction of inertia bias. Including physical parameters, such as Mach and Reynolds numbers, ensures that the network adheres to the physics governing particle-fluid interactions. Unlike traditional approaches, BICSNet operates directly on raw PIV images, decoupling image processing and particle inertia biases for enhanced accuracy.
+
+The framework demonstrates an average error reduction of 76\%, with improvements of up to 87\% for cases within the training distribution. Out-of-distribution scenarios, such as high Mach flows (e.g., Mach 7.6), highlight areas for further optimization. These results validate the framework's effectiveness in bridging the gap between experimental and numerical analyses, offering a transformative tool for advancing PIV-based flow diagnostics.
+
+This approach not only improves the reliability of PIV data but also sets the stage for its application in complex flow configurations, such as shock-boundary layer interactions and hypersonic flows. The detailed findings are presented in Chapter \ref{ch:pivnet}, showcasing the potential of deep learning in resolving long-standing challenges in studying complex flow fields using supersonic PIV.
+
+
+\end{enumerate}
+\end{comment}

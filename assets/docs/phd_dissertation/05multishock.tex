@@ -1,0 +1,177 @@
+\chapter{Particle Dynamics History Effects in Multi-shock Environments}\label{ch:multishock}
+% Start the discussion about the oblqiue shock interaction
+% refer to twinjet case for writing technical details
+The framework for analyzing Particle Dynamics History (PDH) is investigated using a flowfield containing a series of interacting shock waves. A viscous flow over a double-wedge geometry is simulated using the NASA OVERFLOW code~\cite{overflow2012}, ~\cite{nichols2012}, employing the Shear Stress Transport (SST) turbulence model. The freestream conditions correspond to a Mach number of 3.0, a temperature ratio of 1.5, and a pressure ratio of 2.5. The double wedge features deflection angles of $8^\circ$ and $12^\circ$, generating two shocks of differing strengths. Additional solver parameters are detailed by Kalagotla et al.~\cite{kalagotla2020-jet}. This configuration is designed to produce a supersonic flow with converging shocks, providing a representative test case for assessing the influence of PDH on flowfield estimation when using optical velocimetry techniques.
+\par
+
+\begin{figure}[ht!]
+	\centering
+	\includesvg[width=\linewidth]{./figures/05multishock/workflow_contours_multishock}
+	\caption{CFD data for a double wedge shock generator (upper left); Particle paths obtained from the UC-LPT code (upper right); Eulerian transformed fluid data (bottom left); PDH-informed CFD data obtained by Eulerian transformation (bottom right)}
+	\label{fig:multi_shock_workflow}
+\end{figure}
+
+% Images from the overflow simulation (one contour and a line plot for velocity)
+The exact particle specifications and LPT code parameters used for the oblique shock test case presented in Chapter \ref{ch:lpt} for the Williams et al. \cite{williams2015} test case were used to generate the data from the LPT code and obtain the PDH-informed data. The data obtained during the different steps of the workflow presented earlier are presented in Fig. \ref{fig:multi_shock_workflow}. The shock system was smoothed out in the PDH-informed data, and these shocks almost form a single system, indicating an interaction between them. This can be further explored by comparing the streamlines of the CFD data with those of the PDH-informed data.\par
+
+\subsection{Comparison of PDH-informed data to CFD data}
+% Images from the LPT code (Particle vs. Fluid data)
+The streamlines, the corresponding velocities, and the difference in velocities at three different locations in y for both the CFD and PDH-informed data are plotted in Fig. \ref{fig:streamlines_comparison}. These graphs help us to understand the impact of PDH on the estimation of flow characteristics as the shocks converge. The average, maximum, and location of the maximum error were calculated and presented in Table \ref{tab:multishock_error}. This error was calculated using the root mean squared (RMS) value between the PDH-informed data and the corresponding data points from the CFD data. This does not compare the path lines presented in Fig. \ref{fig:streamlines_comparison} and is a direct comparison with the velocity data at that location. The maximum error was obtained by computing the relative difference between the data points.\par
+
+\begin{table}[ht!]
+\centering
+\begin{tabular}{|c|c|c|c|}
+\hline
+\textbf{y-location} & \textbf{Average Error} & \textbf{Maximum error} & \textbf{Occurs at x location} \\ \hline
+0.26mm              & 1.38\%                 & 6.46\%                & 1.40mm                        \\ \hline
+0.50mm              & 1.05\%                 & 5.52\%                & 2.46mm                        \\ \hline
+1.19mm              & 1.02\%                & 3.60\%                & 3.38mm                        \\ \hline
+\end{tabular}
+\caption{Multi-shock case error analysis at different y-locations}
+\label{tab:multishock_error}
+\end{table}
+
+The path comparison graphs shown in Fig. \ref{fig:streamlines_comparison} are representative of highlighting the paths formed by the fluid and the particle that started at the exact upstream location. Fluid path information is obtained from the CFD data (whose velocity contour is also shown in the path comparison plot) and particle information from the PDH-informed data, which is shown to the bottom right in Fig. \ref{fig:multi_shock_workflow}. Velocity information was obtained for both CFD and PDH-informed data at the particle location. The average error at the three y locations under study is almost the same and relatively low, suggesting consistency throughout the flow field. Most information regarding the velocity uncertainty is not captured by informing this error because of its low value. This is better conveyed by plotting the velocity error at each location, as shown in Fig. \ref{fig:streamlines_comparison}. These plots show the error in velocity as a particle traverses a flow field. The error in velocity surrounding the interaction regions suggests that there will be at least 5\% uncertainty in the estimation of the velocity due to the dynamics of the particles when this field is studied using optical velocimetry. Regions with expansion fans would show as compression fans or shock smearing due to particle deceleration in the regions, as seen after the first shock. More specifically, the expansion fan is visible in the flow field where the velocity of the particles increases, as observed after the second shock, at a location of x = 3.0 mm and y = 0.26 mm. This suggests a significant uncertainty in the location of the feature due to particle dynamics.
+
+\begin{figure}[ht!]
+    \centering
+    \begin{subfigure}{0.5\textwidth}
+        \centering
+        \includesvg[width=\linewidth]{./figures/05multishock/particle_at_y_0p26}
+        \caption{y = 0.26mm or around 20\% test section height}
+        \label{fig:particle_at_y_0p26}
+    \end{subfigure}%
+    \begin{subfigure}{0.5\textwidth}
+        \centering
+        \includesvg[width=\linewidth]{./figures/05multishock/particle_at_y_0p5}
+        \caption{y = 0.50mm or around 30\% test section height}
+        \label{fig:particle_at_y_0p5}
+    \end{subfigure}
+    \begin{subfigure}{0.5\textwidth}
+        \centering
+        \includesvg[width=\linewidth]{./figures/05multishock/particle_at_y_1p19}
+        \caption{y = 1.19mm or around 75\% test section height}
+        \label{fig:particle_at_y_1p19}
+    \end{subfigure}
+    \caption{Comparison of streamlines extracted at different y-locations from CFD solution and PDH-informed data for multishock case}
+    \label{fig:streamlines_comparison}
+\end{figure}
+
+The maximum error at each location is significantly different and occurs at different locations. This occurs due to the flow evolution in the y-direction, where the shock strength varies as a result of the formation of expansion fans. The propagation of the maximum error from behind the first shock in Fig. \ref{fig:particle_at_y_0p26} to behind the second shock in Fig. \ref{fig:particle_at_y_1p19} suggests the direct impact of PDH on the velocity. As the shocks converge, the particle does not have sufficient distance to settle to the post-shock velocity and experiences a sudden deceleration from the second shock, resulting in a higher error in velocity behind the second shock, as observed in Figs. \ref{fig:particle_at_y_0p5} and \ref{fig:particle_at_y_1p19}. At y = 0.31 mm, multiple interactions cause the maximum error to occur behind the first shock. The expansion fan after the shock is stronger at this location compared to y = 1.19 mm. This has a negative impact on the deceleration of the particle after the first shock, helping the particle settle down faster before experiencing the second shock. A correction in fluid velocity due to expansion is another cause. Successive interactions, as shown here, cause particles to traverse through a flow field with a nonlinear drag force acting on them. Therefore, studying PDH is important for understanding complex flow fields using optical velocimetry experiments.
+
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[width=0.8\linewidth]{./figures/05multishock/pdh_diff_cfd_contour.png}
+    \caption{Error between the normalized velocity between CFD and PDH-informed data. Zero contour lines are highlighted in red.}
+    \label{fig:pdh_diff_cfd_contour}
+\end{figure}
+
+The velocity error between the PDH-informed and the CFD field is presented in Fig. \ref{fig:pdh_diff_cfd_contour}. The MSE for the entire field was calculated as 2.06\%. This indicates that the CFD is validating well with the PDH-informed data, which is similar to the field estimate obtained by the PIV, without the uncertainty associated with the analysis. However, the regions after the shocks highlight that the error levels are as high as 10\%, which is a significant deviation from the local velocity. One of the reasons for the low average error is the presence of significant zero error regions observed upstream of the flow. This new error metric, which highlights error levels locally in a flow field, provides more information on particle dynamics than root mean squared error or absolute average error, which has been the norm when validating CFD codes (see, e.g., Debonis et al. \cite{debonis2012}). The zero line after the second shock also highlights the location where particles begin to accelerate due to the expansion effect.\par
+
+\subsection{PDH-informed syPIV}
+
+Traditionally, the effect of particle lag has been captured by generating synthetic images from the computational fluid dynamics (CFD) data. These images were generated by spawning a distribution of particles at the local velocity for the first snapshot using CFD data and integrating them over the laser pulse time to obtain the second image. This has been demonstrated in the work of Burns et al. \cite{burns2015}, who implemented it for LES data, and Lazar et al. \cite{lazar2010}, who applied it to steady-state data. The inherent assumption that particles carry the local velocity of the flow is informed in the first image by this traditional approach. Therefore, the effect of PDH is not captured, and most of the uncertainty studied would come from the analysis aspect as identified by Lazar et al. \cite{lazar2010}.\par
+
+Here, several synthetic image pairs were generated from the CFD and PDH-informed data to illustrate how the latter provides more information about tracer presence in optical velocimetry. The parameters for image generation are provided in Table \ref{tab:multishock_sypiv}. The interrogation region for the current analysis is highlighted in Fig. \ref{fig:multi_shock_ia}. The region with outlier data has also been used for analysis to show how the current syPIV code handles the outliers in the dataset.\par
+
+\begin{table}[ht!]
+\centering
+\begin{tabular}{|c|c|}
+\hline
+\textbf{Parameter}      & \textbf{Value}      \\ \hline
+Particle concentration  & 0.05                \\ \hline
+Total paritcles         & 276500              \\ \hline
+Particle distribution   & Uniform             \\ \hline
+Sensor resolution       & 3500x1580           \\ \hline
+Interframe time         & 180 ns              \\ \hline
+In-plane particles      & 70\%                \\ \hline
+DPI of the image        & 105 pixels/mm       \\ \hline
+Laser thickness         & 1 mm                \\ \hline
+In-plane particles      & 70\%                \\ \hline
+IA-bounds - x-direction & {[}0.15, 5.0{]mm} \\ \hline
+IA-bounds - y-direction & {[}0, 1.6{]mm}  \\ \hline
+\end{tabular}
+\caption{Parameters used to generate syPIV images for multishock case}
+\label{tab:multishock_sypiv}
+\end{table}
+
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[width=0.8\linewidth]{./figures/05multishock/interrogation_area_new.png}
+    \caption{Interrogation area in the physical domain shown on the PDH-informed data; the regions of outlier data (black) formed due to out-of-domain regions or lack of data}
+    \label{fig:multi_shock_ia}
+\end{figure}
+
+The particle distributions for the first snapshots in both sets of images (CFD and PDH-informed) were kept uniform throughout the physical interrogation area. The particles were then integrated by laser pulse time in physical space, and a second set of images was obtained for both the CFD solution (the traditional method of generating synthetic images) and the PDH-informed solution. These solutions are presented in Fig. \ref{fig:multi_shock_second_snaps}. The shock locations are visible in the image generated from the CFD data. However, these are not visible in the image from the PDH-informed data. This suggests that particle inertia is a key factor in understanding flow features, specifically in the case of shocks. The PDH-informed syPIV process replicates the PIV much more closely than the traditional way of image generation.\par
+
+\begin{figure}[ht!]
+    \centering
+    \begin{subfigure}{\textwidth}
+        \centering
+        \includegraphics[width=0.8\linewidth]{./figures/05multishock/test_new_0_fluid_2_276500.tif}
+        \caption{Traditional syPIV image}
+        \label{fig:multishock_cfd_snap}
+    \end{subfigure}
+    \begin{subfigure}{\textwidth}
+        \centering
+        \includegraphics[width=0.8\linewidth]{./figures/05multishock/test_new_0_particle_2_276500.tif}
+        \caption{PDH-informed syPIV image}
+        \label{fig:multi_shock_pdh_snap}
+    \end{subfigure}
+    \caption{Second snapshots of synthetic images generated from the multi-shock case}
+    \label{fig:multi_shock_second_snaps}
+\end{figure}
+
+% Image of particle data distribution
+% Data from syPIV
+The second set of images generated from both data sets is overlapped by adjusting the transparency of the images to highlight the movement of particles in both images. The merged image presented in Fig. \ref{fig:multi_shock_merge} clearly shows the regions of study that are impacted by particle inertia. The shock region is visible where the shocks are farther apart. However, at higher levels of the test section, these shocks are not visible because the particles did not have enough length to settle to the post-shock velocity. The outlier region is also washed out due to the difference in the outlier velocities between the data sets. Including this region helps to study and understand the regions close to the domain boundary.\par
+
+\begin{figure}[hbt!]
+    \centering
+    \includegraphics[width=0.8\linewidth]{./figures/05multishock/multishock_overlap_new.tiff}
+    \caption{Overlapped second snapshots of synthetic images generated from the CFD solution and PDH-informed data for the multi-shock case}
+    \label{fig:multi_shock_merge}
+\end{figure}
+
+The sets of images obtained were processed in the same manner as the oblique shock presented earlier. The interrogation window size was adjusted to 256x256 pixels for this analysis to avoid peak locking problems, as discussed by Hearst et al. \cite{hearst2015}. The contours of the streamwise velocity obtained are presented in Fig. \ref{fig:multishock_contours}. The contours obtained from the CFD data represent the traditional method for generating syPIV, and the PDH-informed data represent PIV due to the addition of PDH. The average velocity error between these data sets was calculated to be 2.56\%, which is low due to the large regions of zero error levels upstream of the flow, as observed in Fig. \ref{fig:pdh_diff_cfd_contour}. This is also consistent with the error observed between the reconstructed PDH-informed data and the CFD solution, indicating that the uncertainty from the image analysis between the data sets is similar.\par
+
+\begin{figure}[hbt!]
+    \centering
+    \begin{subfigure}{0.5\textwidth}
+        \centering
+        \includesvg[width=\linewidth]{./figures/05multishock/traditional_contour_multishock_new}
+        \caption{Traditional data}
+        \label{fig:traditional_contour_multishock}
+    \end{subfigure}%
+    \begin{subfigure}{0.5\textwidth}
+        \centering
+        \includesvg[width=\linewidth]{./figures/05multishock/pdh_informed_contour_multishock_new}
+        \caption{PDH-informed data}
+        \label{fig:pdh_informed_contour_multishock}
+    \end{subfigure}
+    \caption{Contours of normalized velocity obtained by processing synthetic images using open-PIV code}
+    \label{fig:multishock_contours}
+\end{figure}
+
+These contours highlight the smoothing of shocks in the PDH-informed data, which is an effect of the presence of particles that incorporates both particle dynamics and analysis uncertainty. They also highlight the level of uncertainty generated due to the large size of the search window. This workflow process introduces uncertainty related to particle presence into the underlying CFD data, making it a more suitable form for comparison with optical velocimetry. The noise of the contours can be smoothed out by creating multiple images with different particle distributions and averaging the processed data, which requires more computational resources.\par
+
+\begin{figure}[hbt!]
+    \centering
+    \begin{subfigure}{0.5\textwidth}
+        \includesvg[width=\linewidth]{./figures/05multishock/velocity_comparison_multishock_new}
+        \caption{Normalized velocities}
+        \label{fig:velocity_comparison_multishock}
+    \end{subfigure}%
+    \begin{subfigure}{0.5\textwidth}
+        \includesvg[width=\linewidth]{./figures/05multishock/error_multishock_new}
+        \caption{Error between the velocities}
+        \label{fig:error_multishock}
+    \end{subfigure}
+    \caption{Data comparison between traditional to PDH-informed syPIV}
+    \label{fig:line_plots_syPIV}
+\end{figure}
+
+Finally, data from a Y location is extracted from the contours and plotted in Fig. \ref{fig:velocity_comparison_multishock}. Fig. \ref{fig:error_multishock} shows the corresponding error plot. These results are in accordance with the LPT code, with uncertainty added from image processing. The shocks and expansion regions can be understood from traditional syPIV data. However, in PDH-informed syPIV, this information is lost due to the particle inertia and the image processing analysis implemented. The data obtained resembles a compression fan, and it is difficult to determine the location of the shocks. Due to the noise from processing only a pair of images, a significant amount of uncertainty is added to the final data.
+
+\section{Summary}
+The proposed methodology for quantifying the uncertainty in the presence of tracer particles in PIV data has been extended to a multi-shock case to understand the impact of PDH in predicting a converging shock feature in a viscous flow. Initial analysis using individual particle tracks provided information on the extent of error surrounding the acceleration regions. This highlights the importance of presenting local uncertainties when reporting PIV data. The error contours showed that the particle inertia will not predict the expansion regions between shocks, instead showing them as compression fans, which is observed as shock smearing. The average and maximum error analysis further validates the importance of reporting local errors due to PDH. The further generation of PDH-informed images and their analysis highlighted the importance of the current approach in generating synthetic images to validate numerical codes in contrast to PIV data.\par

@@ -1,0 +1,353 @@
+\chapter{On the Effect of Stokes Number in Studying Complex Supersonic Flows Using PIV}\label{ch:jetflow}
+
+% Establish how in previous studies particle diameter is estimated from a sample and was reported Callender. We already established that this will not be the same when an experiment is being conducted
+
+% Present the Stokes number reporting in PIV is done. Need more PIV cases studies to cite
+
+% In depth explanation of Stokes number and its implications on velocity estimations
+
+% Estabish a new way to report stokes number in flows such as jet exhaust, which has different regions.
+
+\section{Introduction}
+Understanding the complex flow physics in supersonic jet exhausts is crucial for both fundamental research in fluid dynamics and practical aerospace applications. Particle Image Velocimetry (PIV) has become an essential diagnostic tool for investigating high-speed flows due to its ability to provide instantaneous, non-intrusive, invasive velocity measurements. However, the accuracy of PIV in supersonic environments is inherently limited by the response characteristics of tracer particles. This discrepancy, often referred to as particle inertia bias, arises due to the finite response time of particles to abrupt changes in the flow field, particularly in the presence of shock waves, expansions, turbulence, and shear layers.\par
+
+A key parameter to quantify this response is the Stokes number (St), defined as the ratio of the particle response time to the characteristic flow time scale. The conventional use of the Stokes number assumes a uniform, global characterization of particle tracking fidelity throughout the flow field, as reported by Callender \cite{callender2004}, Cuppoletti \cite{cuppoletti2013}, and Juen et al. \cite{juen2022} in different studies of supersonic jet flow exhaust. However, this assumption oversimplifies the complexity of multiregime supersonic flows, where the local flow properties vary significantly. For example, a shock-laden jet exhaust consists of multiple regions with distinct physical characteristics, such as shock cells, expansion fans, shear layers, and turbulent mixing zones. Each region imposes different drag forces on the tracer particles, causing variations in their velocity lag and spatial dispersion. Consequently, the Stokes number should be treated as a modular, region-specific metric rather than a singular, global parameter.\par
+
+This perspective is partially supported by the work of Wagner et al. \cite{wagner2010}. In their study of an ``unstart" inlet/isolator hypersonic case using PIV, they reported three distinct Stokes numbers corresponding to different regions. However, their analysis was limited by the use of particle sizes predicted from previous experiments by Hou \cite{hou2003}, which focused on particle agglomeration in a Mach 2 oblique shock flow. Burns et al. \cite{burns2015} later underscored the significance of particle inertia bias by carefully modeling it in Large Eddy Simulation (LES) data to better validate against their PIV measurements. More recently, Martins et al. \cite{martins2021} examined particle inertia bias in a selective seeding case for turbulent jet flows and presented a theory advocating for region-specific reporting of the Stokes number, particularly when studying turbulence statistics.\par
+
+The issue of particle inertia bias in high-speed PIV has been recognized in numerous studies over the past decades. Early works, such as those by Melling \cite{melling1997} and Lang \cite{lang1999}, demonstrated that particles exhibit a lagging velocity profile across shock waves, leading to systematic underestimation of velocity gradients in PIV measurements. Later, Koike et al. \cite{koike2007} demonstrated using the Stokes drag model that a mathematical correction could be applied to a velocity field obtained from PIV to remove the particle inertia bias. Kalagotla et al. \cite{kalagotla2018} and \cite{kalagotla2020} provided case studies of particle inertia bias quantification in complex supersonic flows, showing that conventional corrections using simple Stokes drag models are insufficient for resolving complex flow structures. More recently, Williams et al. \cite{williams2015} expanded on the particle size quantification studies, highlighting the effect of how the drag model of choice depends on the local flow properties. Their results indicated that the particle frequency response varies significantly across different Mach regimes, underscoring the need for a more adaptive approach to Stokes number characterization in studying complex flows using PIV.\par
+
+Cuppoletti et al. \cite{cuppoletti2014a}, \cite{cuppoletti2014b} investigated supersonic jet flows and noise suppression using PIV and other optical diagnostics. His work provided insights into the limitations of tracer particle seeding in turbulent supersonic environments. While his research primarily focused on jet noise reduction techniques, the underlying PIV data showcased clear evidence of particle response discrepancies across different flow regions. The findings from his work align with more recent studies suggesting that PIV errors due to particle lag are amplified in regions of strong compressibility effects, such as shock waves, expansion fans, and shock-mixing layers.\par
+
+The work of Hafsteinsson et al. \cite{hafsteinsson2015} has provided crucial insights into the interaction of turbulence, shock structures, and acoustic radiation in supersonic jet exhausts using Large Eddy Simulations (LES). By resolving the large-scale turbulent structures while modeling subgrid-scale effects, LES enabled a more accurate representation of shock-cell dynamics and shear-layer instabilities, which are critical in understanding particle inertia bias in PIV. Their study also highlighted how fluidic injection modifies the flow topology, affecting noise characteristics and the underlying velocity field that PIV attempts to measure. These LES results serve as a benchmark for validating particle response models, offering a detailed comparison against experimental data to refine modular Stokes numbers. This numerical framework enhances the interpretation of PIV data, bridging the gap between experimental observations and physically accurate flow reconstructions in supersonic environments.\par
+
+This chapter investigates the impact of particle inertia bias on jet flow exhaust PIV data, building on the work of Cuppoletti \cite{cuppoletti2013}. The influence of Particle Dynamics History (PDH) is particularly significant in complex flow fields such as jet exhausts, where cumulative particle inertia effects lead to measurement discrepancies. These discrepancies are analyzed using accurate particle dynamics modeling based on LES data from Hafsteinsson et al. \cite{hafsteinsson2015}. Furthermore, this study introduces the concept of the modular Stokes number, a critical parameter for evaluating particle behavior in high-speed flows, offering a refined framework for understanding and mitigating particle inertia biases in PIV measurements.\par
+
+
+\section{Experimental Setup}
+The experimental investigation was conducted at the Aeroacoustic Test Facility of the Gas Dynamics and Propulsion Laboratory at the University of Cincinnati c.2013. The facility featured a coaxial jet rig that can simulate one-eighth scale nozzles at realistic operating conditions in terms of NPR, velocity, and temperature ratios ($T_0 / T_a$) up to 1.3. The biconical nozzle is a converging-diverging nozzle with a sharp throat that simulates current supersonic engine geometries. The biconical nozzle (Fig. \ref{fig:biconical_nozzle}) has an area ratio $A_e/ A_t = 1.23$ and $D_{j, sharp} =  57.5 mm$, with an isentropic design of NPR 4.0 corresponding to $M_d = 1.56$. All cases are run at a temperature ratio $T_0/T_a = 1.25$. The exit velocity is found to be $491.1 m/s$. The experiments and LES were run at the same Reynolds numbers ($R_e = U_jD_j / \nu$), ranging from $Re = 1.6 \times 10^6$ for NPR = 2.5 to $Re = 2.7 \times 10^6$ for $NPR = 4.5$. Coaxial secondary flow around the primary stream is at $M_s = 0.1$, which is used for particle image velocimetry (PIV) ambient flow seeding.  The secondary flow was used for acoustics measurements and in LES to allow for direct acoustics and flowfield comparison. The jet rig is in an anechoic test facility measuring 7.3 × 7.6 × 3.4 m with $f_{c,lower} = 350 Hz$. For further details on the facility design, refer to Callender et al. \cite{callender2004}.
+
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[width=0.3\linewidth]{phd_dissertation/figures/jetflow/sharp_nozzle.png}
+    \caption{Supersonic sharp nozzle cross-section used in Cuppoletti \cite{cuppoletti2013} PIV study}
+    \label{fig:biconical_nozzle}
+\end{figure}
+
+\section{Seeder and Particle Specifications}
+Callender \cite{callender2004} provides key insights into the selection, characterization, and performance validation of seeding particles in Cuppoletti's \cite{cuppoletti2013} PIV campaign focused on noise suppression studies for jet flow. In his research, atomized olive oil was used as the seeding medium, generated by a bank of seven custom-designed Laskin nozzle atomizers as shown in Fig. \ref{fig:laskin_nozzle}. These atomizers produced particles with a target diameter of approximately $1 \mu m$. Measurements using a Dantec Phase Doppler Anemometry (PDA) system equipped with a 300mW Argon ion laser and a BSA P80 flow processor confirmed that the generated seed particles ranged from $0.4 \mu m$ to $1.2 \mu m$, with a peak distribution around $1 \mu m$. This is shown in Fig. \ref{fig:particle_distribution}. However, it must be noted that this is the distribution obtained from the seeder and might not be consistent with the distribution as the PIV experiment progresses.\par
+
+\begin{figure}[ht!]
+    \centering
+    \begin{subfigure}{.5\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{phd_dissertation/figures/jetflow/seeder.png}
+        \caption{Olive oil seeder setup}
+        \label{fig:laskin_nozzle}
+    \end{subfigure}%
+    \begin{subfigure}{.45\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{phd_dissertation/figures/jetflow/particle_distribution.png}
+        \caption{PDA measured particle distribution}
+        \label{fig:particle_distribution}
+    \end{subfigure}%
+    \caption{Seeder setup and particle distribution in PIV campaign at UC}
+    \label{fig:seeder_and_particle}
+\end{figure}
+
+A particle response study was conducted using the Melling-2 drag model to report the Stokes number. This is given by,
+
+\begin{equation}
+    St = \frac{\rho_p d_p^2/18\mu [1 + 2.7Kn]}{\delta/V_{mean,C.L}}
+    \label{eq:callender_stokes_number}
+\end{equation}
+
+Where $\rho_p$ and $d_p$ denote the particle density and diameter, respectively, $ \mu$ is the fluid viscosity, and $K_n$ is the Kundsen number, which is defined as the ratio of the mean free path to the particle diameter. This is introduced to account for the compressibility effects in high-speed flows. In the denominator, $\delta$ is the shear layer thickness, and $V_{mean, C.L}$ is the centerline velocity of the mean jet flow.\par
+
+Callender computed a Stokes number of 0.06 for a cold flow nozzle, which is relatively small and indicates that the particles follow the flow accurately. However, this analysis has notable limitations:
+
+\begin{enumerate}
+    \item The particle diameter used in the analysis was obtained from the seeder at the inlet of the nozzle, not from in-flow measurements within the test section. Studies (Urban and Mungal \cite{urban2001}, Williams et al. \cite{williams2015}, and Kalagotla et al. \cite{kalagotla2024-aviation}) indicate that particle distributions can change significantly due to agglomeration, breakup, or preferential concentration in turbulent structures.
+    \item The drag model used does not accurately capture the drag acting on the particle to capture the response presented. Several drag models were tested in Chapter \ref{ch:lpt}, which showed the need for using drag models like Loth or Tedeschi, even in low supersonic flows.
+    \item The shear layer thickness and the mean centerline velocity used for the study may not accurately capture the characteristic time scale of the entire flow field, potentially leading to an incorrect estimation of the Stokes number.
+\end{enumerate}
+
+To mitigate these issues, an improved methodology would involve directly measuring the particle response using time-resolved PIV within the test section to understand the particle specifications. This was conducted in a recent jet exhaust study by Juen et al. \cite{juen2022}. However, there is no agreed-upon consensus on the use of the drag model (Juen et al. used the Melling \cite{melling1997} model) and/or the computation of flow characteristic time (Juen et al. implemented the nozzle diameter as the length scale while keeping the centerline velocity constant). These details are discussed in the section \ref{sec:region_specific_stokes_number}\par
+
+\section{Numerical Investigation}
+The numerical investigation for this flow field was performed by Hafsteinsson et al. \cite{hafsteinsson2015}. This section presents a brief overview of the solver with relevant references obtained from Cuppoletti et al. \cite{cuppoletti2014a}.
+
+The Large Eddy Simulation (LES) flowfield is obtained by solving the compressible form of the Navier–Stokes equations, with the viscous stress defined using Newton’s law and the heat flux with Fourier’s heat law. The system of governing equations is closed by two assumptions of gas thermodynamics. First, the gas is considered thermally perfect following the ideal gas law. Second, the gas is calorically perfect, implying that internal energy and enthalpy are linear functions of temperature. The Favre-filtered Navier–Stokes equations are solved with a finite volume solver belonging to the G3D family of codes developed by Eriksson \cite{cuppoletti2014a}. The code solves the compressible flow equations in a conservative form on a boundary-fitted curvilinear nonorthogonal multiblock mesh. The convective fluxes are solved with a low-dissipation third-order upwind-biased scheme, a second-order centered difference scheme for the diffusive fluxes, and a second-order three-stage Runge–Kutta technique for time marching. The numerical scheme is discussed in detail by Andersson \cite{andersson2005thesis} and Burak et al. \cite{burak2012}. The Smagorinsky part of the model proposed by Erlebacher et al. \cite{erlebacher1992} is used as the subgrid-scale model. Wall functions are used at the nozzle boundaries to model the near-wall behavior of the flow. Local artificial damping is applied to ensure that the numerical dissipation needed for shocks is applied only locally and dynamically. Details on the implementation of the local artificial damping are provided by Burak et al. \cite{burak2012}. The code has been implemented for parallel computations using domain decomposition and a message-passing interface. A detailed description of the numerical scheme and implementation of boundary conditions is given in Andersson \cite{andersson2005thesis} and Burak \cite{burak2010}.
+
+
+
+\section{Region Specific Stokes Number}\label{sec:region_specific_stokes_number}
+% large scale flow features -- free stream velocity
+% 
+The Stokes number (St) is a fundamental dimensionless parameter in particle-laden flow analysis, quantifying the ability of particles to follow the carrier fluid. It is defined as the ratio of the particle response time ($\tau_p$) to a characteristic flow time scale ($\tau_f$):
+
+\begin{equation}
+    St = \frac{\tau_p}{\tau_f}
+    \label{eq:stokes_number_eqn}
+\end{equation}
+
+Where $\tau_p$ is typically computed using the particle diameter, density, and drag equations presented in Chapter \ref{ch:lpt}. Since the particle size is known to vary in supersonic experiments (Urban and Mungal \cite{urban2001}, Williams et al. \cite{williams2015}, Glazyrin et al. \cite{glazyrin2016}), this is computed using a particle response analysis against an oblique shock using Eq. \ref{eq:settling_distance}.\par
+
+% Schematic of jet flow exhaust identifying different regions
+\begin{figure}
+    \centering
+    \includegraphics[width=\linewidth]{phd_dissertation/figures/jetflow/jet_exhaust_schematic.png}
+    \caption{Schematic of flow features and noise generation in the supersonic jet exhaust, Cuppoletti \cite{cuppoletti2013}}
+    \label{fig:jet_exhaust_stokes_schematic}
+\end{figure}
+
+For supersonic Particle Image Velocimetry (PIV), particularly in complex shock-laden environments such as the jet exhaust shown in Fig. \ref{fig:jet_exhaust_stokes_schematic}, a modular approach to the Stokes number is necessary to reflect local flow physics. The conventional Stokes number formulation assumes a single flow characteristic time scale; however, different time scales dominate in turbulent or high-gradient regions, depending on the feature of interest. Fig. \ref{fig:jet_exhaust_stokes_schematic} highlights the various areas of interest when studying a jet exhaust using PIV. These include the potential core region, shock cells, shear layers, and the mixing region. For each region, the flow timescale can be defined independently to obtain a Stokes number that accurately establishes the flow scale under study.\par
+
+\subsection{Potential Core}
+% potential core or the large-scale flow features
+For the potential core region, the flow time scale is defined as the ratio of the nozzle exit diameter ($D_j$) to the nozzle exit velocity ($U_j$). This definition accurately captures the time scales produced in the potential core region and is given by,
+
+\begin{equation}
+    \tau_f = \frac{D_j}{U_j}
+    \label{eq:tauf_core}
+\end{equation}
+
+In this region, the Stokes number can be computed using the Stokes drag coefficient as the change in velocity is gradual, which keeps the particle Reynolds and Mach numbers well under 1. This particle response time is given by,
+
+\begin{equation}
+    \tau_p = \frac{\rho_pd_p^2}{18 \mu}
+    \label{eq:stokes_response}
+\end{equation}
+
+where, $\rho_p$, $d_p$ are particle diameter and density, and $\mu$ is the flow viscosity. The diameter and density specifications from the seeder could be used here for the response time computation, as the flow features to this point do not severely affect the particle properties.\par
+
+Let the change in flow velocity with respect to time be the same as that of the corresponding particles. Substituting this into Eq. \ref{eq:drag_equation} gives,
+
+\begin{equation}
+    \frac{du_f}{dt} = \frac{(u_f - v_p)}{\tau_p}
+    \label{eq:sub_equation_1}
+\end{equation}
+
+Now, the uncertainty in velocity estimation due to particle inertia bias at any given time $\Delta u = (u_f - v_p)$ can be written as,
+
+\begin{equation}
+    \Delta u = \tau_p \frac{du_f}{dt}
+    \label{eq:velocity_uncertainty}
+\end{equation}
+
+If the flow velocity changes gradually, the Eq. \ref{eq:velocity_uncertainty} can be rewritten as,
+
+\begin{equation}
+    \Delta u = \tau_p \frac{U_j}{\tau_f} = S_t U_j
+\end{equation}
+
+So, the relative error in the velocity measurement is given by
+
+\begin{equation}
+     \frac{\Delta u}{U_j} = St
+     \label{eq:relative_error}
+\end{equation}
+
+\subsection{Shear Layer}
+% Shear layer or turbulent features
+The flow time scale in the shear layer is a characteristic time that describes the evolution and mixing dynamics of the turbulent shear layer in a high-speed jet. It is commonly defined as:
+
+\begin{equation}
+    \tau_f = \frac{10\delta}{V_{max} - V{min}}
+    \label{eq:tauf_shear_layer}
+\end{equation}
+
+Where $\delta$ is the thickness of the shear layer, calculated using the difference between the velocities reaching 0.95 and 0.10 of the jet velocity ($U_j$), these velocities correspond to the maximum ($V_{max}$) and minimum ($V_{min}$) velocities for the shear layer, respectively. The factor ``10" is heuristically applied based on the experimental conditions. This may indicate that the effective mixing dynamics (or the acceleration experienced by fluid parcels) are more gradual when estimating the average over the entire mixing region. Alternatively, it could suggest that the simple ratio underestimates the ``memory" effects in a turbulent shear layer.
+
+In the shear layer region for a jet exhaust PIV, two Stokes numbers should be reported to characterize the particle inertia bias effects fully. This is because the ambient flow is typically seeded with different types of particles than the core flow region. Since the core flow carries momentum into the ambient flow, the particles in the core flow region play a dominant role in driving the shear layer region. These particles experience the highest velocities and carry the most momentum, making them critical for determining the response time in this region. Their Stokes number will reflect how well they can follow the gradual velocity gradients in the shear layer, influencing the accuracy of velocity measurements.
+
+In addition to the core particles, it is essential to report the Stokes number corresponding to the ambient-seeded particles. These particles are primarily responsible for representing the dynamics of the shear layer in PIV measurements. These particles accelerate due to the momentum gain from the core flow and are responsible for accurately capturing the turbulent structures to depict the local flow field. Comparing their Stokes numbers with those of the entrained core particles can offer insight into potential velocity lags, particle response differences, and measurement fidelity in the shear layer region.
+
+By assuming small particles and noting that the velocity gradient is responsible for the shear layer development, i.e., $\frac{du_f}{dt} \sim \frac{du_f}{dy}$, the error in velocity estimation is given by Eq. \ref{eq:relative_error}.
+
+\subsection{Shock and Expansion waves}
+% Shock and expansion wave features
+The flow time scale for shock waves depends on the gradient across the feature change. Therefore, the timescale could be computed using the inverse of this gradient. However, for shock waves, the velocity gradient is significant because they are instantaneous, and the velocity drop occurs within the range of the mean free path of the fluid. It is impossible to capture this accurately with the existing PIV hardware. Therefore, a reasonable estimate for the Stokes number in a given setup can be defined using the lowest time scale measured for a flow with the available hardware. This would be in the order of the laser pulse time used to study the experiment, as this is typically shorter for supersonic measurements and would reflect the particle response that could be captured using the PIV equipment. This flow time scale is given by,
+
+\begin{equation}
+    \tau_f = \Delta t_{pulse}
+    \label{eq:tauf_shocks}
+\end{equation}
+
+The particle response time can be computed using the approach presented in Kalagotla et al. \cite{kalagotla2024} by using a drag model curve fit and measuring the relaxation length of the particle post-first dominant shock in the measuring field. This approach is detailed in Chapter \ref{ch:lpt}.
+
+\subsection{Turbulence Quantities}
+Reporting turbulence quantities measured from a complex supersonic particle image velocimetry (PIV) setup is typical. However, without an accurate estimate for the Stokes number, the interpretation of the data would be erroneous. Martins et al. \cite{martins2021} reported that if high accuracy of the smallest scale fluctuations is important (e.g., dissipation measurements), the Kolmogorov time scale should be used for the flow time scale measurement. This is defined as
+
+\begin{equation}
+    \tau_\eta = \bigg(\frac{\nu}{\varepsilon}\bigg)^{1/2}
+    \label{eq:kolmogorov_time_scale}
+\end{equation}
+
+Where $\nu$ is the kinematic viscosity of the fluid and $\varepsilon$ is the dissipation rate of turbulent kinetic energy. This can be derived from the turbulent velocity gradients and can be represented in Einstein notation as:
+
+\begin{equation}
+    \varepsilon = \frac{1}{2} \nu \overline{\bigg(\frac{\partial u_i}{\partial x_j} + \frac{\partial u_j}{\partial x_i}\bigg)^2}
+    \label{eq:tke_dissipation_rate}
+\end{equation}
+
+Where u is the fluctuating velocity, and the subscripts i, j, k represent the three Cartesian directions. When expanded in $x, y, z$ coordinates, this can be rewritten as:
+
+\begin{equation}
+\begin{aligned}
+\varepsilon = \nu \Biggl[ & \; 2\,\overline{\left(\frac{\partial u}{\partial x}\right)^2} 
+      + \overline{\left(\frac{\partial u}{\partial y}\right)^2}
+      + \overline{\left(\frac{\partial u}{\partial z}\right)^2} \\
+  & + \overline{\left(\frac{\partial v}{\partial x}\right)^2} 
+      + 2\,\overline{\left(\frac{\partial v}{\partial y}\right)^2}
+      + \overline{\left(\frac{\partial v}{\partial z}\right)^2} \\
+  & + \overline{\left(\frac{\partial w}{\partial x}\right)^2} 
+      + \overline{\left(\frac{\partial w}{\partial y}\right)^2}
+      + 2\,\overline{\left(\frac{\partial w}{\partial z}\right)^2} \\
+  & + 2\,\overline{\frac{\partial u}{\partial y}\,\frac{\partial v}{\partial x}} 
+      + 2\,\overline{\frac{\partial u}{\partial z}\,\frac{\partial w}{\partial x}} 
+      + 2\,\overline{\frac{\partial v}{\partial z}\,\frac{\partial w}{\partial y}}
+    \Biggr]
+\end{aligned}
+\label{eq:tke_dissipation_rate_expanded}
+\end{equation}
+
+However, in a 2D2C PIV, measurement of all velocity components is not possible, and Wang et al. \cite{wang2021} compiled three different formulae from the literature that could be used to compute the dissipation rate.
+
+The turbulence dissipation rate can be determined using Eq. \ref{eq:simple_tke_dissipation} under the simplest turbulence assumption, namely, homogeneous and isotropic turbulence.
+
+\begin{equation}
+    \varepsilon_i = 15 \nu \bigg(\frac{\partial u_i}{\partial x_i}\bigg)^2
+    \label{eq:simple_tke_dissipation}
+\end{equation}
+
+When the turbulence is statistically isotropic but non-homogeneous, Eq. \ref{eq:2d_tke_dissipation} can be used to compute the dissipation rate from known quantities.
+
+\begin{equation}
+    \varepsilon = \nu \Bigl(
+  \overline{2\bigl(\tfrac{\partial u}{\partial x}\bigr)^2}
+  + \overline{2\bigl(\tfrac{\partial v}{\partial y}\bigr)^2}
+  + \overline{3\bigl(\tfrac{\partial v}{\partial x}\bigr)^2}
+  + \overline{3\bigl(\tfrac{\partial u}{\partial y}\bigr)^2}
+  + 2\,\overline{\bigl(\tfrac{\partial u}{\partial y}\bigr) \,
+    \bigl(\tfrac{\partial v}{\partial x}\bigr)}
+    \Bigr)
+    \label{eq:2d_tke_dissipation}
+\end{equation}
+
+For some situations where the above assumptions fail, the small-scale turbulence can be assumed to be locally axisymmetric, and the turbulence dissipation rate can be expressed as:
+
+\begin{equation}
+    \varepsilon = \nu \Bigl(
+  -\,\overline{\bigl(\tfrac{\partial u}{\partial x}\bigr)^2}
+  \;+\; 8\,\overline{\bigl(\tfrac{\partial v}{\partial y}\bigr)^2}
+  \;+\; 2\,\overline{\bigl(\tfrac{\partial v}{\partial x}\bigr)^2}
+  \;+\; 2\,\overline{\bigl(\tfrac{\partial u}{\partial y}\bigr)^2}
+    \Bigr)
+    \label{eq:2d_tke_dissipation_simple}
+\end{equation}
+
+Xu et al. \cite{xu2013} explored turbulence dissipation rate calculations in PIV using the equations described above and observed that the dissipation rate computed decreased as interrogation size increased and was mainly affected by the resolution of measurements. It is worth noting that spatial resolution directly impacts the Stokes number reporting for turbulence quantities.
+
+
+\section{Methodology employed for particle inertia bias study in jet exhaust}
+To evaluate inertia bias in supersonic jet exhaust, particles were injected at three key boundaries of the computational domain (Fig. \ref{fig:spawn_locations}): 256 particles were evenly distributed between the nozzle inlet and flow inlet, while 128 each were introduced at the top and bottom boundaries, for a total of 512 particles. The domain length post-exhaust of almost $5D_j$ was selected to match the region of interest from the PIV experiments, providing a consistent basis for direct comparison between simulation and experiment. Each particle size was tracked separately, with a density fixed at $900 kg/m^3$.
+
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[width=\linewidth]{phd_dissertation/figures/jetflow/LES_data_spawn_locations.png}
+    \caption{Particle spawn locations to study particle inertia bias}
+    \label{fig:spawn_locations}
+\end{figure}
+
+The LPT methodology utilizes the Loth drag model \cite{loth2008}, which has been well-validated across subsonic to supersonic regimes. An adaptive time-stepping scheme that adjusts based on instantaneous particle deflection and residual thresholds was used to ensure accurate integration in regions of steep velocity gradients. Convergence studies \cite{kalagotla2023} have revealed that this adaptive approach accurately captures high-acceleration areas (e.g., near the shear layer and shocks) with minimal computational cost.
+
+The LPT trajectories were first sampled as described in Chapter~\ref{ch:lpt} and transformed into an Eulerian format for further processing. The resulting data set, particle dynamics history (PDH) informed data, captures the compounding effect of particle lag as it traverses the complex flow.
+
+Next, the PDH-informed data was utilized to generate synthetic PIV images using the methodology outlined in Chapter~\ref{ch:sypiv}. The same laser pulse duration of \SI{1.5}{\micro\second} used in the physical PIV system was applied to maintain fidelity with the experimental setup. Similarly, a charged-coupled device (CCD) sensor with a \SI{6}{\micro\meter} pixel size was used to render images at a resolution of \(2734\times1040\), covering a field of view slightly larger than \(\,5D_j\). This resolution ensures that the flow field of interest is captured using similar camera specifications to those from the PIV experimental campaign. The physical domain is set to be captured at $9.57 px/mm$, which ensures a similar magnification scale to the experiments.\par
+
+Finally, these synthetic images were post-processed using the same parameters and algorithms employed in the experimental PIV analysis, using Davis 11.2.1 with a 16x16 window size and 50\% overlap. This consistent workflow ensures a direct comparison with the original PIV data, enabling a precise evaluation of the influence of particle inertia and image processing on the measured flow field. The simulation results are discussed in Section \ref{sec:jet_flow_results} and compared against corresponding jet flow PIV measurements.\par
+
+
+\section{Results and Discussion}\label{sec:jet_flow_results}
+This section compares the PDH-informed data and synthetic image data obtained for several particle sizes ($1\mu m, 5 \mu m, 10\mu m, 20 \mu m, 30 \mu m, 40 \mu m, 50 \mu, 60 \mu m$) against the mean LES data and the corresponding PIV data to understand the extent of particle inertia bias and analysis uncertainty in the PIV data. First, the difference in mean velocity contours is qualitatively explored. Then, quantitative observations are performed along the centerline at the $y/D_j = 0.05$ location.
+
+% qualitative jet contours for different particle sizes
+
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[width=\linewidth]{figures/jetflow/velocity_contour.png}
+    \caption{PDH-informed velocity contour comparison for different particle sizes}
+    \label{fig:velocity_contours_pdh}
+\end{figure}
+
+Figures~\ref{fig:velocity_contours_pdh} and~\ref{fig:velocity_contours} compare the mean streamwise velocity fields derived from the PDH-informed and synthetic datasets against the baseline LES and PIV data. The LES and PIV results appear qualitatively similar and agree well with the smaller particle sizes. However, noticeable deviations arise at the jet exit for particles of 10\,\(\mu\)m and larger, which can be attributed to inertial effects as these particles enter the shear layer.
+
+Furthermore, it is to be noted that the particle size is constant in each simulation, meaning that all of the spawned particles are the same size. As particle size increases, the particles injected at the top and bottom of the domains do not follow the shear layer near the jet exit, leading to discrepancies in the predicted velocity field and artificially broadening the jet exhaust region. This issue becomes more pronounced for diameters of 40\,\(\mu\)m and above, where the relatively large inertia prevents effective entrainment into the shear layer.
+
+It is noteworthy that this discrepancy is not symmetric about the jet centerline. This asymmetry is likely due to data-reduction procedures involved in converting from a Lagrangian to an Eulerian frame, especially the parallelization procedure employed. However, all the particles inside the jet core region track the flow, and this region could be analyzed.
+
+
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[width=\linewidth]{figures/jetflow/velocity_contour.png}
+    \caption{Synthetic PIV velocity contour comparison for different particle sizes}
+    \label{fig:velocity_contours}
+\end{figure}
+
+Figure~\ref{fig:0p05} shows the centerline velocity profile extracted at $y/D_j = 0.05$, highlighting how particle inertia bias and processing uncertainty influence comparisons of LES predictions with PIV data. In Fig.~\ref{fig:pdh_informed_0p05}, the ``PDH-informed'' curves indicate that, aside from local effects near shocks (particularly around $x/D_j = 0.5$), the overall LES trend remains relatively unaffected by inertia bias for particles ranging from $1\,\mu\text{m}$ to $5\,\mu\text{m}$. Downstream of the first shock studied, especially in the post-shock region---the effective particle sizes inferred from PIV data appear closer to $20$--$30\,\mu\text{m}$. This discrepancy is consistent with the agglomeration effects near strong gradients reported by Williams et al. \cite{williams2015}.
+
+% jet center line using different particle sizes or stokes numbers
+\begin{figure}[ht!]
+    \centering
+    \begin{subfigure}{.5\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{phd_dissertation/figures/jetflow/velocity_profile_comparison_0p05_pdh_adjusted.png}
+        \caption{PDH-informed}
+        \label{fig:pdh_informed_0p05}
+    \end{subfigure}%
+    \begin{subfigure}{.5\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{phd_dissertation/figures/jetflow/velocity_profile_comparison_0p05_adjusted.png}
+        \caption{syPIV}
+        \label{fig:sypiv_0p05}
+    \end{subfigure}
+    \caption{Centerline velocity profile for jet exhaust data}
+    \label{fig:0p05}
+\end{figure}
+
+Figure~\ref{fig:sypiv_0p05} shows that adding the uncertainty from the synthetic PIV post-processing (syPIV) does not alter the measured velocity distributions by a lot unlike a previous study by Lazar et al. \cite{lazar2010} who has showed significant amounts of processing uncertainty by using PIV data as the basis, which compounded the particle inertia bias and the processing uncertainty. Overall, larger tracer particles (on the order of $20\,\mu\text{m}$) can reproduce the global velocity profile observed in PIV near the jet exit. This observation also aligns with the findings of Cuppoletti et al. \cite{cuppoletti2014a}, who noted that the LES predicted stronger shocks than the PIV data for all the nozzle cases they studied. By conducting this sensitivity analysis, we now understand that the shock strength predicted by $20\,\mu\text{m}$ particle better matches the PIV data.
+
+However, further downstream, a mismatch in the data remains, indicating a need for a more robust particle dynamics model that can account for particle-particle interactions. This could potentially reveal whether particle interactions are significant in understanding the complex flow dynamics. This assumes that most of the uncertainty arises from the presence of the particles in PIV.
+
+\begin{figure}[ht!]
+    \centering
+    \begin{subfigure}{.5\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{phd_dissertation/figures/jetflow/velocity_profile_comparison_0p25_pdh_adjusted.png}
+        \caption{PDH-informed}
+        \label{fig:pdh_informed_0p25}
+    \end{subfigure}%
+    \begin{subfigure}{.5\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{phd_dissertation/figures/jetflow/velocity_profile_comparison_0p25_adjusted.png}
+        \caption{syPIV}
+        \label{fig:sypiv_0p25}
+    \end{subfigure}
+    \caption{Velocity profile for jet exhaust data at $x/D_j = 0.25$}
+    \label{fig:0p25}
+\end{figure}
+
+% jet far core velocity with different stokes numbers
+In the $y/D_j = 0.25$ region, the shock strength is significantly weaker compared to the centerline region. In lower shock strengths, the particles quickly relax to post-shock velocity. In this region, the LES data agree better with the PIV data than in the centerline region. The PIV and LES data are compared with the PDH-informed data presented in Fig. \ref{fig:pdh_informed_0p25}. A comparison with syPIV data is shown in Fig. \ref{fig:sypiv_0p25}. When the particle inertia bias is applied to the LES data, especially after the first shock, the comparison with the PIV data improves. The $20\,\mu\text{m}$ particle data seems to agree better with PIV data as seen in Fig. \ref{fig:0p25}. This clarifies that the particle bias is, in fact, one of the dominant uncertainties in the jet exhaust measurements. 
+
+% observe jet spread using different stokes numbers
+
+
+
+\section{Conclusion}
+A theory to accurately report the Stokes number in complex flow PIV measurements has been presented, with a detailed application to a supersonic jet exhaust flow. This flow consists of three primary regions: the potential core, shock and expansion zones, and shear layers. Each region has a distinct characteristic timescale that significantly influences the measured velocity. Corresponding formulae to determine these time scales are provided, and Chapter~\ref{ch:lpt} discusses drag models to capture particle response in each region accurately. When measuring the second-order statistics, the Kolmogorov time scales become the dominant factor and must be considered as the flow characteristic time to compute the Stokes number.
+
+Several particle sizes were introduced in the mean LES velocity field along the jet centerline to compare with experimental PIV data. These particle trajectories were then converted back into an Eulerian representation. This data was used to generate synthetic PIV images using the parameters from the experimental campaign. Analysis of the resulting mean velocity contours revealed that larger particles could misrepresent the flow near the jet exit and fail to effectively enter the shear layers, thereby yielding erroneous velocity measurements in these areas. Nevertheless, once both particle inertia and PIV analysis biases were taken into account, the LES-predicted centerline velocity field showed close agreement with the experimental PIV data, most notably in the shock regions.
+
+Furthermore, this study revealed that the effective particle diameter in the experimental PIV could be approximately $20\,\mu\text{m}$, significantly larger than the size indicated by the nominal seeder specifications. This finding underscores the importance of carefully assessing and correcting for inertia and postprocessing biases when conducting PIV measurements in high-speed, complex flows.

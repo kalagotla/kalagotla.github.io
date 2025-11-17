@@ -1,0 +1,775 @@
+\chapter{A Bilateral CNN Model for Particle Inertia Bias Correction in Supersonic PIV Images}\label{ch:pivnet}
+
+Previous chapters have established that existing tools can enhance our understanding by accurately quantifying particle inertia bias in optical velocimetry techniques. Building on this foundation, this chapter proposes a Convolutional Neural Network (CNN) model to mitigate particle inertia bias in Particle Image Velocimetry (PIV) measurements. The model is trained using synthetic datasets and evaluated to assess its effectiveness.
+
+Koike et al. \cite{koike2007} investigated a mathematical correction approach by leveraging the drag equation (Eq. \ref{eq:drag_equation}) to derive a mapping from particle velocity to fluid velocity. When applied to a supersonic cross-flow case, this transfer function yielded promising results by reducing the discrepancy between Computational Fluid Dynamics (CFD) predictions and corresponding particle image velocimetry (PIV) measurements. However, their method relies on the assumption of a Stokes drag regime, which limits its applicability. As discussed in Chapter \ref{ch:lpt}, the Stokes drag coefficient is only valid in low Reynolds number regimes and fails to accurately model the drag experienced by particles in more complex or high-speed flows, precisely the regimes where accurate velocimetry is most needed.
+
+Adopting a more sophisticated drag model (Loth et al. \cite{loth2008}) is essential to overcome these limitations. However, this added complexity renders the inverse problem of inferring fluid velocity from particle motion inherently ill-posed. A data-driven approach using deep learning is proposed in response to this challenge. The current CNN model aims to learn the underlying transfer function directly from the data, thereby enabling more accurate reconstruction of flow fields from biased PIV measurements.
+
+% Koike equation
+
+The uncertainty in PIV is generated at each step during the setup and processing of the data. This has been studied in detail by Sciacchitano \cite{sciacchitano2019}. In this work, we are interested in the imaging and image processing phase, where the raw data is generated and captured. By tackling the raw PIV images directly, rather than using the computed vector field, we avoid the uncertainty associated with the processing algorithm. This enhances the longevity of the model and methodology as image-processing algorithms continue to improve.
+
+The following section presents a survey of the current state of PIV image processing algorithms using deep learning. The architecture developed will be universal and capable of training several types of flow. In this work, we train the proposed model on several oblique shock cases and demonstrate its capability in predicting other oblique shock cases. 
+
+\section{Background}
+This section explores the use of deep learning in the field of PIV. Two main uses of deep learning were first explored: velocity field construction from images and velocity field super-resolution reconstruction as reviewed by Yu et al.\cite{yu2023}. Other implementations where deep learning models were used to improve image quality due to intensity noise were also discussed.\par
+
+Traditionally, PIV images are processed using cross-correlation algorithms as studied by Keane et al. \cite{keane1992}. These algorithms capture the velocity data using an interrogation window. The algorithm queries the displacement correlation peak of the corresponding interrogation window between the image pair. The obtained vector is used to compute the average velocity for that interrogation window. As a result, this correlation-based approach provides a sparse (i.e., low-resolution) velocity field as presented by Yu et al. \cite{yu2023}.
+
+However, since the first time cross-correlation algorithms were introduced about forty years ago, several enhancements have been proposed to improve their accuracy and efficiency, as discussed by Scarano \cite{scarano2002}. Post-stage velocity processing methods, such as the outlier detection proposed by Westerweel and Scarano \cite{westerweel2005} and spline interpolation as studied by Astarita and Cardone \cite{astarita2005}, are implemented to reduce the error introduced by cross-correlation algorithms. Even with these improvements, these algorithms are limited to the resolution obtained from the choice of interrogation window size. The relation to image resolution ($N \times N$), interrogation window ($n \times n$), and final vector field is given by \par
+
+\begin{equation}
+\begin{split}
+    \Delta &= n \times \bigg(1 - \frac{x}{100}\bigg)\\
+    M &= \frac{N - n}{\Delta} + 1
+    \label{eq:vector_field}
+\end{split}
+\end{equation}
+
+Where x is the overlap between each step.\par
+
+For example, using Eq. \ref{eq:vector_field}, a $2048 \times 2048$ image pair analyzed with a $12 \times 12$ interrogation window with an overlap of $75\%$ would yield a vector field of $679 \times 679$ size. These values are typical in supersonic flows. This implies a loss of 67\% at a pixel scale.\par
+
+To overcome this issue, Horn and Schunck introduced optical flow algorithms \cite{horn1981}. Optical flow is the task of estimating per-pixel motion between video frames. It is a long-standing computer vision problem that remains unsolved and is an active research interest in the community. Optical flow (OF) methods estimate the displacement between particle images, assuming the brightness is conserved during the motion. However, this is not directly applicable, and more processing techniques like regularization functional and variational optimization are implemented to preserve flow dynamics, as noted by Corpetti et al. \cite{corpetti2006}. These methods provide dense velocity flow estimation compared to their cross-correlation counterparts due to the per-pixel nature of the particle tracking involved. Due to this nature, these methods can be expensive, and the assumptions make them sensitive to noise due to illumination. These methods are comprehensively reviewed in Heitz et al. \cite{heitz2010} and Liu et al. \cite{liu2015}.\par
+
+% A formulation for optical flow %%
+
+Let $(I(x, y, t)$ be the intensity of each pixel at $(x, y)$ and time $t$ of an image. Assuming the pixel moved to a new location $(x + u, y + v)$, the pixel intensity of the second image is given by $I(x + u, y + v, t + 1)$ at time $t + 1$. The brightness conservation implies:
+
+\begin{equation}
+    I(x, y, t) - I(x + u, y + v, t + 1) = 0
+    \label{eq:brightness_conservation}
+\end{equation}
+
+However, the issue with solving this problem analytically is that there is only one equation with two unknowns.\par
+
+Applying the Taylor series expansion to the second term in Eq. \ref{eq:brightness_conservation} yields:
+
+\begin{equation}
+    u\frac{\partial I}{\partial x} + v\frac{\partial I}{\partial y} + \frac{\partial I}{\partial t} = 0
+    \label{eq:optical_flow_governing}
+\end{equation}
+
+Eq. \ref{eq:optical_flow_governing} is the governing equation to be solved to extract the velocity field between two images. \par
+
+Now, let $\Psi()$ be a loss function and $\Omega$ be the extent of images $I(x, y)$. The objective function can be defined as:
+
+\begin{equation}
+    E = \iint_{\Omega} [\Psi(uI_x + vI_y + I_t) + \alpha (\Psi(|\nabla u|) + \Psi(| \nabla v|))] dx dy
+    \label{eq:optical_flow_objective_fn}
+\end{equation}
+
+where, $\nabla$ represents the gradient and $\alpha$ is the parameter to control data fidelity and smoothness. \par
+
+Horn and Schunck chose $\Psi (x) = x^2$ for their optimization due to its convex nature. Other cost functions can also be implemented depending on the problem. Eq. \ref{eq:optical_flow_objective_fn} can be written as: \par
+
+\begin{equation}
+    E = \iint_{\Omega} [(uI_x + vI_y + I_t)^2 + \alpha^2 (|\nabla u|^2 + | \nabla v|^2)] dx dy
+    \label{eq:horn_schunck_optimization}
+\end{equation}
+
+Applying Euler-Lagrange equations to solve:
+
+\begin{equation}
+    \begin{split}
+        I_x(uI_x + vI_y + I_t) - \alpha^2 \Delta u & = 0 \\
+        I_y(uI_x + vI_y + I_t) - \alpha^2 \Delta v & = 0
+    \end{split}
+    \label{horn_schunck_solve}
+\end{equation}
+
+These equations could be solved using any iterative scheme to determine the velocity field. The advantages of this method include its ability to yield high-density flow vectors and accurately predict strong gradients, given that the assumptions are satisfied. However, this is a computationally expensive process, leading us to explore other methods to solve for velocity fields.\par
+
+Other proposed techniques include using neural networks to estimate velocity fields from PIV images. Grant and Pan \cite{grant1995}, \cite{grant1997} utilized three and four fully connected feed-forward neural networks to demonstrate flow estimation on double exposure, low-particle density PIV images. The case studies and the analysis paved the way for the future when deeper networks would be possible to train. Grant et al. \cite{grant1998} applied a similar architecture to demonstrate the application of neural networks to stereo-PIV. Liang et al. \cite{liang2003} studied neural networks to remove spurious vectors from a flow around a semicircular cylinder at a low Reynolds number. Due to a lack of advancements in deep neural networks, the literature around this period on the application of neural networks to PIV data is sparse.\par
+
+The advancements in deep learning (see Goodfellow et al. \cite{goodfellow2016} for a comprehensive literature review) in computer vision over the past decade have made these methods an enticing alternative to overcome the drawbacks of both cross-correlation and optical flow algorithms. A brief review of advancements in deep neural networks for computer vision is presented in Voulodimos et al. \cite{voulodimos2018}. These methods can learn data features and predict complex non-linear functions, making them attractive for applications in fluid mechanics. To date, deep neural networks have been utilized to process PIV images, enabling the generation of a dense velocity field by replacing traditional cross-correlation algorithms. This was first demonstrated using a shallow convolutional neural network (CNN) by Rabault et al. \cite{rabault2017}, who conducted a case study to showcase the applicability of deep learning methods to obtain velocity fields from PIV image data. Several advantages over traditional cross-correlation algorithms were presented in their research. These include improved computational efficiency compared to a commercial code and more accurate velocity estimations compared to conventional algorithms.\par
+
+More complex deep learning architectures have since been employed for estimating fluid velocity fields from PIV images. The progression of these models is presented in Fig. \ref{fig:dl_fluid_estimation}. These models were developed based on three different architectures identified in the literature: U-Net, Spatial Pyramid Network, and Recurrent Iteration Network. These architectures lay the foundation for the progression of flow velocity estimation from PIV images.\par
+
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[width=\linewidth]{phd_dissertation/figures/06pivnet/flow_estimation_progress.png}
+    \caption{Progress of velocity estimation deep learning models, as seen in Yu et al. \cite{yu2023}}
+    \label{fig:dl_fluid_estimation}
+\end{figure}
+
+As proposed by Ronneberger et al. \cite{ronneberger2015}, U-Net was initially used to classify biomedical images, where precise localization of features is crucial. The architecture consists of two main components: a contracting path and an expanding path. The contracting path, often referred to as the encoder, utilizes a series of convolutional and max-pooling layers to capture high-level contextual information while progressively reducing the spatial resolution. This process encodes the input image into a latent representation that captures the most salient features of the data. The expanding path, or decoder, utilizes up-sampling layers in conjunction with skip connections from the encoder to restore spatial resolution while preserving fine details. Skip connections play a critical role by merging the encoder's spatially localized features with the decoder's broader contextual information, enabling precise pixel-level predictions. This architecture's ability to balance global context with local detail has made it highly adaptable, leading to its adoption in diverse fields, including fluid mechanics, for tasks such as velocity field estimation and flow structure detection from PIV images.\par
+
+% PIV-DCNN by Lee et al. \cite{lee2017}, PIV-NetS by 
+
+PIV-DCNN by Lee et al. \cite{lee2017} uses a series of four cascaded convolutional neural networks to extract velocity vectors from the particle image pairs. It has been trained on a synthetic dataset of 800,000 image pairs. The network demonstrated competitive accuracy compared to traditional PIV methods, such as the window deformation iterative method (WIDIM) \cite{scarano2002} and the single-pass cross-correlation with FFT acceleration (FFTCC), in several tests. However, it was more computationally expensive than FFTCC.\par
+
+PIV-NetS and PIV-LiteFlowNet-en were developed by Cai et al. \cite{cai2019} and \cite{cai2019-dense-estimator} to estimate dense motion fields from PIV images. These networks were based on FlowNetS, a CNN initially designed for optical flow estimation, and the LiteFlowNet architecture, known for its lightweight design and ability to handle large-displacement motions. The FlowNet architecture is based on the original U-Net but has been modified to tackle optical flow tasks. These networks have been demonstrated to produce pixel-level flow features and offer improved computational efficiency compared to traditional optical flow algorithms. However, their applicability to experimental cases is limited because the model performs well only in cases for which it has been trained.\par
+
+Recurrent all-pairs field transforms (RAFT)-PIV, presented by Lagemann et al. \cite{lagemann2021} and \cite{lagemann2022}, utilizes the new vision transformer architecture developed for optical flow estimation in computer vision. RAFT-PIV comprises three key stages: feature extraction, computation of a 4D correlation volume between all pairs of features, and multiple iterative updates utilizing a Convolutional Gated Recurrent Unit (Conv-GRU). Two architectures were studied: RAFT256-PIV, where data is downsampled during image extraction, and RAFT32-PIV, where spatial resolution is maintained during feature extraction. These models were implemented on three different data types. These include a public database with synthetic images representing idealized flow conditions, a custom dataset mimicking more realistic experimental conditions, and real experimental PIV data from a turbulent wavy channel flow. During their tests, it was demonstrated that the RAFT-PIV models consistently outperformed traditional algorithms and other deep learning models across all types of data. Limitations relevant to deep learning models still exist in this architecture as well, including issues with predicting large gradients and the model being sensitive to particle image parameters.\par
+
+Previous deep learning models for PIV have primarily focused on enhancing spatial resolution and computational efficiency. These efforts represent significant progress in improving the accuracy and practicality of velocity field estimation from PIV data. The high fidelity, resolution, and robustness of these models under realistic experimental conditions position them as promising tools for advancing research and applications in fluid mechanics.
+
+Fan et al. \cite{fan2023} introduced a residual bilateral CNN architecture to denoise PIV images by removing intensity-related artifacts. Their model was evaluated using both synthetic and experimental datasets, demonstrating its effectiveness in enhancing image quality and subsequently improving flow field reconstruction. Their approach marked a departure from earlier deep learning applications in PIV by inputting and outputting raw image data. Building upon this foundation, the present work extends the capabilities of their architecture to address a different challenge: correcting for particle inertia bias in supersonic particle image velocimetry (PIV) measurements. This adaptation enables the model to account for the complex dynamics of high-speed flows, further broadening the scope of deep learning in experimental fluid diagnostics.
+
+
+% several architectures were proposed
+
+%Review article summary
+\subsection{Convolutional Neural Networks}
+The mammalian vision system inspires convolutional neural networks (CNNs).  They are simply neural networks that use convolution in place of general matrix multiplication in at least one of their layers, as described by Goodfellow et al. \cite{goodfellow2016}. Typically, a CNN comprises several layers, as shown in Fig. \ref{fig:cnn_schematic}. The primary includes the input, convolutional, activation, pooling, and output layers. It can also have batch normalization, be fully-connected, and have other advanced layers. The concepts of interest for this work are briefly reviewed here.\par
+
+\begin{figure}[ht!]
+\centering
+    \includegraphics[scale=1.0]{figures/06pivnet/cnn_schematic.png}
+    \caption{A schematic of a Convolutional Neural Network (CNN) as depicted by Yu et al. \cite{yu2023}}
+    \label{fig:cnn_schematic}
+\end{figure}
+
+\subsubsection{Convolutional Layer}
+A convolutional layer applies a convolution operation to the input using filters or kernels. A convolution is a specialized kind of linear operator given by,
+
+\begin{equation}
+    (f * g)(\tau) = \int_{}{} f(t)g(t - \tau) dt
+    \label{eq:convolution_operator}
+\end{equation}
+
+Where $f(t)$ is an input function, in the current context, it represents images, $g(t - \tau)$ is a kernel function, shifted by $\tau$, which is a parameter that shifts the kernel function to extract matching features from $f(t)$, $*$ represents the convolution operation. \par
+
+Typically, for image data this is presented in a 2D discretized format given by Eq. \ref{eq:discretized_convolution}
+
+\begin{equation}
+    y[i, j] = \sum_{m=-k}^{k} \sum_{n=-k}^{k} x[i+m, j+n]w[m, n]
+    \label{eq:discretized_convolution}
+\end{equation}
+
+where $x[i+m, j+n]$ is the input image intensities at $[i+m, j+n]$, $w[m, n]$ is the kernel to capture features, and $y[i, j]$ is the output image intensity at $[i, j]$ and $k$ represents the half of the kernel size, which is $(2k+1)\times(2k+1)$. Note that the kernel in Eq. \ref{eq:discretized_convolution} is a flipped version of the kernel presented in Eq. \ref{eq:convolution_operator}. Mathematically, this is cross-correlation, but in machine learning terminology, both convolution and cross-correlation are used interchangeably.\par
+
+Cross-correlation is the same operation used to extract velocity information from PIV images. There, the information is obtained by cross-correlating two images, which are obtained with a time shift. Here, the same operation is used to embed features of input images into deeper layers for the network to learn.\par
+
+\begin{figure}
+\centering
+    \includegraphics[scale=0.4]{figures/06pivnet/convolution.png}
+    \caption{A schematic of a convolution operation}
+    \label{fig:convolution_schematic}
+\end{figure}
+
+A schematic of a simple convolution operation is presented in Fig. \ref{fig:convolution_schematic}. In this figure, the input image data has a shape of 5x5 and is padded by one step around the image, resulting in a final size of 7x7. Padding helps keep the data at the borders in the training loop, allowing for the capture of features and preservation of the original image size. There are several ways to pad, but the most commonly used method is zero-padding, where zeros are appended around the edges of the input image. This is used for its simplicity and efficiency.\par
+
+\subsubsection{Activation Layer}
+% expand on activation, pooling, gradient descent, and other neural network terminology for the  dissertation
+An activation layer introduces non-linearity into the model using activation functions. In CNN terminology, these are sometimes referred to as detector layers due to their ability to "detect" features from the data. They are one of the most crucial components of neural networks, owing to their ability to predict complex patterns and relationships. The activation layer plays an important role during the training process based on gradient descent. For these reasons, these activation functions are selective. There are several activation functions, including but not limited to Rectified Linear Unit (ReLU), Leaky ReLU, Sigmoid, and more. The most commonly used function is the ReLU, given by Eq. \ref{eq:relu}. It has been implemented in popular architectures like LeNet-5 \cite{lecun1998}, AlexNet \cite{krizhevsky2012}, and U-Net \cite{ronneberger2015}.
+
+\begin{equation}
+    f(x) = max(0, x)
+    \label{eq:relu}
+\end{equation}
+
+\subsubsection{Pooling Layer}
+A pooling layer is used to downsample the spatial dimensions of feature maps, reducing computational complexity and extracting dominant features. The pooling layer is feature invariant. It randomly removes the features passed on from a previous layer. Typically applied after a convolutional layer, this helps to avoid overfitting due to the increment in data after a convolution operation. Several types of pooling are available, such as max pooling and average pooling.  Due to the nature of the pooling layer, it has been omitted from the architecture of the current network.\par
+
+\subsubsection{Fully Connected Layer}
+Fully connected layers are used in CNNs to reduce further the dimensionality of the data obtained from convolutional operations. A fully connected layer is a linear function. It accepts inputs $x_i$ and outputs $\gamma x_i + \beta$, where $\gamma$ and $\beta$ are the learnable parameters. So, multiple layers are typically stacked to obtain the non-linear relationship in a given dataset. Typically, the number of layers accounts for 10 or 20\% of a CNN network, but the number of trainable parameters accounts for more than 80\% of the total.\par
+
+\subsubsection{Deconvolutional Layer}
+A deconvolutional layer, also known as a transposed convolutional layer, is a layer that upscales feature maps. It effectively increases the spatial dimensions of the data while maintaining learned patterns from the input data. As noted by Yu et al. \cite{yu2023}, it is a common feature in many fluid estimation tasks. Similar to the convolutional layer, it has learnable parameters, unlike other upsampling methods, such as bilinear interpolation. These are also essential to the current network, a form of U-net \cite{ronneberger2015}.\par
+
+\subsubsection{Batch Normalization}
+A batch normalization (BN) layer normalizes the inputs before the activation layer to address the internal covariate shift problem, as noted by Ioffe et al. \cite{ioffe2015}. This allows the network to be trained at higher learning rates and often does not require other regularization techniques like Dropout.\par
+
+The BN layer transform is given by Eq. \ref{eq:bn_map}.\par
+
+\begin{equation}
+    BN_{\gamma, \beta}: x_{1...m} \mapsto y_{1...m}
+    \label{eq:bn_map}
+\end{equation}
+
+A BN operation is performed by computing the mean and variance of a given batch and then normalizing using Eq. \ref{eq:batch_norm}.\par
+
+\begin{equation}
+    \overline{x}_{i} = \frac{x_{i} - \mu_{B}}{\sqrt{\sigma^2_{B}}}
+    \label{eq:batch_norm}
+\end{equation}
+
+where $\mu_B$ and $\sigma^2_{B}$ are the mean and variance of a given batch $B = \{x_{1...m}\}$.\par
+
+The output of a BN layer would then take the form given by Eq. \ref{eq:output_bn}.\par
+\begin{equation}
+    y_i = \gamma \overline{x}_i + \beta \equiv BN_{\gamma, \beta}(x_i)
+    \label{eq:output_bn}
+\end{equation}
+
+
+Finally, residual learning is also explored, as it has been shown to address issues with vanishing or exploding gradients during the training of a deep network. Residual learning was first proposed by He et al. \cite{he2016}. These were introduced to tackle the network degradation problem as the depth increases. The key to residual networks is the ``shortcut connection," which skips one or more layers and directly adds the input to the output of the residual function. This helps learn complex mappings as a deeper network and can also ``skip" connections if a more straightforward mapping is needed. A schematic for a residual module is shown in Fig. \ref{fig:residual_module}. The weight layers typically comprise a convolution layer followed by a batch normalization layer.\par
+
+Residual mapping can be understood by Eq. \ref{eq:residual_connection}.
+
+\begin{equation}
+    y = x + F(x)
+    \label{eq:residual_connection}
+\end{equation}
+
+\begin{figure}[ht!]
+\centering
+    \includegraphics[scale=1.0]{figures/06pivnet/residual_module.png}
+    \caption{A residual learning building block, He et al. \cite{he2016}}
+    \label{fig:residual_module}
+\end{figure}
+
+
+\section{Model Architecture}
+The reduction in particle inertia bias in PIV images is a two-step problem. First, it inherently resembles optical flow estimation, where the goal is to predict the apparent motion of pixels between consecutive images. This is analogous to estimating the displacement of particle patterns between two snapshots of a flow field. Second, the particle motion deviates from the fluid motion due to particle inertia bias, which stems from differences in density, size, and response time of particles relative to the fluid. Correcting this bias involves tracking the particles and reconstructing the underlying flow field that the particles fail to represent accurately. This step requires understanding the dynamics of particle-fluid interactions, including drag forces, slip velocity, and the impact of flow gradients on particle behavior. Together, these two will drive the existing models to achieve a reduction in particle inertia bias in PIV images.
+
+The bilateral CNN architecture implemented by Fan et al. \cite{fan2023} for the intensity correction in PIV images is modified for the current implementation. Their model is designed to remove intensity noise in the PIV images. Their model features two encoders, a dual encoder, and two decoders that work in parallel to accept two PIV snapshots and remove intensity noise from them. The encoder-decoder networks have demonstrated improved spatial resolution in velocity field computation for PIV images. One of the advantages of implementing a dual-encoder is that it can learn associated features of the input images simultaneously. It has been trained on about 7500 synthetic images. The results showed significant improvement to a maximum of 14.7\% compared to traditional techniques. However, this model is not complex enough to capture the optical flow component, which is a key requirement of this work.\par
+
+To address this limitation, their bilateral CNN model's structure is enhanced with the U-Net architecture of Ronneberger et al. \cite{ronneberger2015}, which enables hierarchical feature extraction and reconstruction. This architecture underlies several optical flow estimation models for PIV, as studied by Yu et al. \cite{yu2023}. These models are specifically designed to capture dense motion fields and provide a robust foundation for modeling the optical flow component in PIV. By omitting pooling layers, as recommended by Fan et al., the model retains critical features while leveraging U-Net's ability to extract dense motion fields. This hybrid approach balances the strengths of bilateral CNNs and U-Net for improved particle inertia correction.\par
+
+The bilateral CNN model effectively identifies artifacts in PIV images while preserving particle motion between frames, making it a strong foundation for our current approach. We hypothesize that this model can predict data with reduced inertia bias by incorporating information related to particle inertia. The bilateral model was chosen specifically for its ability to process two input images and output corresponding corrected images with reduced particle inertia bias. By operating directly on raw PIV images rather than processed data, the network focuses solely on correcting inertia bias without being influenced by other processing methods.\par
+
+To achieve this, we modified the original bilateral CNN architecture to incorporate additional parameters that capture physics, such as freestream Mach and Reynolds numbers, which reflect particle and fluid properties. These scalar inputs provide the model with essential contextual information about particle-fluid dynamics, enabling more accurate correction of inertia bias while maintaining the architectural strengths of the bilateral CNN.\par
+
+The Basset–Boussinesq–Oseen equation (BBO equation) gives the forces acting on a particle in a flow \cite{mei1996}. It is well understood that the drag force becomes the dominant force acting on a sub-micron particle traversing through a flow. Thus, the force per unit mass acting on a particle is given by Eq. \ref{eq:drag_equation}.
+
+% \begin{equation}
+%     \frac{d\boldsymbol{V}}{dt} = -\frac{3}{4} C_D Re_p \frac{\mu}{\rho_p {d_p}^2} (\boldsymbol{V} - \boldsymbol{U})
+%     \label{eq:drag_equation}
+% \end{equation}
+%
+where,\\
+$C_D$ is the coefficient of drag, which is semi-empirical, \\
+$Re_p$ is the particle Reynolds number, given by $\frac{\rho_f|V-U|d_p}{\mu}$, \\
+$\mu$ is the dynamic viscosity of the fluid, \\
+$V$, $U$ are the particle and fluid velocity magnitudes, respectively, and \\
+$\boldsymbol{V}$, $\boldsymbol{U}$ are velocity vectors of the respective mediums.\\
+
+Different drag coefficients are listed in Kalagotla et al. \cite{kalagotla2024-aviation}. For the current work, the Loth drag model \cite{loth2008} is employed, as it has demonstrated consistent performance across various Mach regimes. This Loth drag model is a function of particle Reynolds number and particle Mach number, given by $M_p = \frac{|V- U|}{\sqrt{\gamma R T}}$, where $R$ is the gas constant, and $T$ is the static temperature. So, these parameters are needed as input for the machine learning model to conform to the bounds. Hence, the freestream Mach number and freestream Reynolds number are added as input to the current model, as these are the parameters available during any PIV experiment. The Reynolds number is computed from the particle diameter. Thus, particle parameters are taken into account. Viscosity is calculated using Sutherland's law. After substituting and rearranging, the inputs to the model can be computed using Eq. \ref{eq:model_inputs}.\par
+
+\begin{equation}
+    Re = \sqrt{\frac{\gamma}{R}}\frac{\rho_f M d_p (T+S)}{C_1 T^2}
+    \label{eq:model_inputs}
+\end{equation}
+
+Where $d_p$ is the particle diameter, $S = 110.4K$ is the Sutherland's constant, $C_1 = 1.458\times10^{-6} kg/m-s\sqrt{K}$
+
+\begin{figure}[ht!]
+\centering
+    \includegraphics[scale=0.5]{figures/06pivnet/PIVnet_old.png}
+    \caption{A schematic of the BICSNet}
+    \label{fig:pivnet_architecture}
+\end{figure}
+
+The schematic for the network is shown in Fig. \ref{fig:pivnet_architecture}. The input images, each of shape $(256 \times 256 \times 3)$, are passed through a series of convolutional layers, followed by ReLU activation functions. These layers in the encoder extract low-level features such as edges, textures, and gradients, which are essential for identifying the basic structures in the images. As the data flows deeper into the network, the convolutional layers capture increasingly complex patterns, such as localized particle motion and interactions, which are critical for understanding the flow dynamics.
+
+Once the features are extracted, they are passed through deconvolutional (transpose convolutional) layers in the decoder to reconstruct the corrected PIV images. This step ensures that the model retains spatial coherence while correcting particle inertia bias and aligning the outputs with the true flow field. Additionally, the scalar inputs — Mach and Reynolds numbers, computed based on the particle diameter — are introduced into the deep decoder layers. These inputs provide critical physical context, allowing the network to adapt the correction process to the specific flow conditions represented in the input data. This integration ensures that the model learns the image features and adheres to the underlying physics of the problem. However, unlike physics-informed neural networks (PINNs), this approach does not strictly enforce physical laws during the backpropagation process. This allows for greater flexibility while maintaining computational efficiency.\par
+
+The current model employs sparse connections compared to newer architectures that might leverage denser networks or attention mechanisms to capture intricate interdependencies between features. This design choice reduces computational load, enhancing efficiency while maintaining accuracy in corrections. As Goodfellow et al. \cite{goodfellow2016} highlighted, convolutional networks extract features hierarchically. The initial layers focus on pixel-level details, such as edges and corners, which are crucial for capturing the fine details of particles in PIV images. Subsequent layers aggregate these features into higher-order representations, such as particle clusters, localized flow structures, and larger-scale flow dynamics. This hierarchy enables the model to capture particle-level details and flow-field-level behaviors effectively. By selectively utilizing relevant information from the deeper encoder layers, the network focuses on particle inertia correction and optical flow estimation, ensuring that computational efficiency is balanced with the complexity required for accurate PIV image reconstruction.\par
+
+Overall, the architecture combines convolutional feature extraction, scalar-based physical conditioning, and deconvolutional reconstruction to provide a robust framework for addressing particle inertia bias in PIV data.\par
+
+
+\section{Framework for Model Training and Testing}
+This section presents a comprehensive framework for generating data on oblique shocks, designed to effectively train and test the model. The workflow process, as illustrated in Fig. \ref{fig:framework}, encapsulates three primary modules: Synthetic Data Generation, Input Data Preparation, and Model Parameter Optimization. Each module is critical in ensuring the performance of the model and is discussed in detail below.\par
+
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[width=\linewidth]{figures/06pivnet/framework.png}
+    \caption{Framework for training and testing}
+    \label{fig:framework}
+\end{figure}
+
+The synthetic data generation process, illustrated in Fig. \ref{fig:synthetic_data_generation}, integrates analytical or computational fluid dynamics (CFD) flow data with particle dynamics to create high-fidelity datasets for training and testing the model. Flow fields are first generated on a computational grid, capturing the characteristics of oblique shocks. Particles with specified properties, such as size and density, are then traced through these fields using a one-way coupled Lagrangian Particle Tracking (LPT) code, which computes their trajectories. The code details are presented in Kalagotla et al. \cite{kalagotla2023}. The resulting Lagrangian field is transformed into a Particle Dynamics History (PDH)-informed Eulerian field on a grid. The current work achieves this by sampling at least two data points in a cell and performing linear interpolation onto local nodes. This serves as a data reduction step, allowing us to generate several PIV-like images from a given flow field, assuming the underlying flow is steady-state. These fields are fed into a synthetic image generator, which produces 128 sets of images per case, each consisting of a first snapshot and two consecutive second snapshots derived from the PDH-informed and CFD data. This process ensures the synthetic images replicate real-world conditions, enabling the model to learn and predict particle-flow interactions in complex shock environments.\par
+
+The input data preparation module is the second aspect in Fig. \ref{fig:framework}. Particle dynamics inform the input images. These are generated using the process described above. The freestream Mach number is the associated Mach number for each flow field, and the Reynolds number can be computed using Eq. \ref{eq:model_inputs}.\par
+
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[width=1.0\linewidth]{figures/06pivnet/synthetic_data_generation.png}
+    \caption{Synthetic Data Generation to capture particle inertia bias}
+    \label{fig:synthetic_data_generation}
+\end{figure}
+
+Finally, the model parameters are optimized in the highlighted Model parameter optimization module in Fig. \ref{fig:framework}. BICSNet parameters are optimized using the Adam optimizer \cite{kingma2014} and the Mean Squared Error (MSE) loss function. The MSE loss quantifies the error between the predicted and ground-truth images, defined as the average of squared differences, given by Eq. \ref{eq:mse}. The Adam optimizer combines momentum and adaptive learning rates, dynamically adjusting parameter updates based on first- and second-moment estimates of gradients, allowing for efficient and stable convergence even with sparse and high-dimensional data, such as PIV. These optimization methods are crucial for understanding various aspects of the flow fields.\par
+
+\begin{equation}
+    loss = \frac{1}{m}\frac{1}{n}\sum_{i=1}^{m}\sum_{i=1}^{n}(I_{truth}(i, j) - I_{pred}(i, j))^2
+    \label{eq:mse}
+\end{equation}
+%
+where,\\
+$m, n$ are the dimensions of the image\\
+$I_{truth}(i, j)$ is the pixel intensity at $(i, j)$ in the ground truth or label image\\
+$I_{pred}(i, j)$ is the pixel intensity at $(i, j)$ in the model predicted image\\
+
+
+\subsection{Details of the Dataset}
+ The range of shock strengths chosen for this study can be understood from Fig. \ref{fig:shock_chart}. The training data set is generated at four different Mach numbers that are unevenly distributed. Three deflection angles were chosen for each Mach number. This data is highlighted in the figure. The testing dataset is created at two different Mach numbers with three different deflection angles, which account for two different shock strengths. The flow field is randomly generated by randomly choosing temperature and pressure, typical of real PIV experiments.\par
+
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[width=0.7\linewidth]{figures/06pivnet/oblique_chart_training_testing_data.png}
+    \caption{Range of Mach and deflection angles used for training and testing the current model}
+    \label{fig:shock_chart}
+\end{figure}
+
+At each point in Fig. \ref{fig:shock_chart}, five different particle diameters and densities were chosen that are typical of particle distributions found in the PIV experiments. The inputs for flow generation are presented in Table \ref{tab:flowfield_dataset}.\par
+
+\begin{table}[ht!]
+\centering
+\begin{tabular}{|ccc|}
+\hline
+\multicolumn{3}{|c|}{\textbf{Flow Field Description}}                                                           \\ \hline
+\multicolumn{1}{|c|}{\textbf{Parameter}}    & \multicolumn{1}{c|}{\textbf{Training Set}} & \textbf{Testing Set} \\ \hline
+\multicolumn{1}{|c|}{Mach Number}           & \multicolumn{1}{c|}{1.5, 3.0, 4.3, 5.0}    & 2.5, 7.6             \\
+\multicolumn{1}{|c|}{Deflection Angles}     & \multicolumn{1}{c|}{3 distinct values}     & 3 distinct values    \\
+\multicolumn{1}{|c|}{Shock Strength}        & \multicolumn{1}{c|}{Weak/Strong}           & Weak/Strong          \\
+\multicolumn{1}{|c|}{Temperature}           & \multicolumn{1}{c|}{Randomly chosen}       & Randomly chosen      \\
+\multicolumn{1}{|c|}{Pressure}              & \multicolumn{1}{c|}{Randomly chosen}       & Randomly chosen      \\
+\multicolumn{1}{|c|}{Particle Diameter}     & \multicolumn{1}{c|}{5 distinct values}     & 5 distinct values    \\
+\multicolumn{1}{|c|}{Particle Density}      & \multicolumn{1}{c|}{5 distinct values}     & 5 distinct values    \\ \hline
+\multicolumn{1}{|c|}{Total no. of datasets} & \multicolumn{1}{c|}{600}                   & 300                  \\ \hline
+\end{tabular}
+\caption{Description of the flow fields generated for training and testing the BICSNet}
+\label{tab:flowfield_dataset}
+\end{table}
+
+The image generation parameters are also varied to account for the realistic conditions in PIV. At each training data point in Fig. \ref{fig:shock_chart}, the parameters are listed in Table \ref{tab:imagegen_dataset}. The particle diameters and densities are varied to capture a range of particle dynamics and inertia bias for each oblique shock case. The particle concentration varies between 0.03 and 0.06 per pixel to capture typical particle densities in the interrogation windows in supersonic PIV experiments. Similarly, the percentage of in-plane particles also varies. The laser properties are all kept constant. The camera settings, such as magnification and pixel resolution, remain constant and are controlled by varying domain settings that also influence the shock location. For example, magnification can be adjusted by keeping the shock location constant and varying the bounds of the interrogation area. Finally, particle distribution throughout the domain is uniform. These conditions provide a diverse dataset representation for the model to learn effectively for various oblique shocks.\par
+
+% Please add the following required packages to your document preamble:
+% \usepackage{multirow}
+\begin{table}[ht!]
+\centering
+\resizebox{\columnwidth}{!}{\begin{tabular}{|lll|}
+\hline
+\multicolumn{3}{|c|}{\textbf{Image Generation Description}} \\ \hline
+\multicolumn{1}{|c|}{\textbf{Category}} & \multicolumn{1}{c|}{\textbf{Parameter}} & \multicolumn{1}{c|}{\textbf{Values/Description}} \\ \hline
+\multicolumn{1}{|l|}{\multirow{5}{*}{Particle Specs}} & \multicolumn{1}{l|}{Particle Diameter} & Multiple diameters (0.5 µm, 5 µm, 10 µm, 30 µm, 40 µm) \\
+\multicolumn{1}{|l|}{} & \multicolumn{1}{l|}{Particle Density} & Multiple densities (950, 1212.5, 1475, 1735.5, 2000 kg/m3) \\
+\multicolumn{1}{|l|}{} & \multicolumn{1}{l|}{Concentration} & Gaussian, log-normal distribution (varying 0.03 – 0.06 per pixel) \\
+\multicolumn{1}{|l|}{} & \multicolumn{1}{l|}{Shape} & Fixed - Spherical \\
+\multicolumn{1}{|l|}{} & \multicolumn{1}{l|}{In-plane percent} & Variable (75 – 95\%) \\ \hline
+\multicolumn{1}{|l|}{\multirow{4}{*}{Laser Properties}} & \multicolumn{1}{l|}{Laser thickness} & Fixed value (1 mm) \\
+\multicolumn{1}{|l|}{} & \multicolumn{1}{l|}{Pulse timing} & Fixed time delay, $\Delta$t ($1 \mu s$) \\
+\multicolumn{1}{|l|}{} & \multicolumn{1}{l|}{Domain location} & Fixed \\
+\multicolumn{1}{|l|}{} & \multicolumn{1}{l|}{Intensity distribution} & Fixed - Gaussian \\ \hline
+\multicolumn{1}{|l|}{Domain Settings} & \multicolumn{1}{l|}{Shock Location} & Algorithmically varied positions (e.g., mid-domain, near edges) \\ \hline
+\multicolumn{1}{|l|}{Distribution Settings} & \multicolumn{1}{l|}{Particle Distribution} & Fixed - Uniform \\ \hline
+\multicolumn{1}{|l|}{\multirow{2}{*}{Imaging Properties}} & \multicolumn{1}{l|}{Magnification} & Varies with domain size \\
+\multicolumn{1}{|l|}{} & \multicolumn{1}{l|}{Pixel Resolution (dx)} & Fixed \\ \hline
+\end{tabular}}
+\caption{Description of the image generation parameter for training and testing the BICSNet}
+\label{tab:imagegen_dataset}
+\end{table}
+
+\section{Results}
+The results of this study are presented in terms of the training process, validation performance, and the final evaluation of the testing dataset. These metrics were carefully analyzed to assess the ability of the current model to generalize and effectively correct particle inertia bias.\par
+
+\subsection{Training and Evaluation of BICSNet}
+BICSNet was trained on a dataset described in the previous section, split into 70\% training, 15\% validation, and 15\% testing. The training employed a learning rate of $10^{-4}$, with a decay factor of 0.8 triggered by patience of 2, meaning the learning rate was reduced after two consecutive epochs of an increasing validation error. The training process was monitored using loss metrics, which were logged at each iteration and epoch. Additionally, sample outputs were generated and visualized every 100 iterations within each epoch to evaluate qualitative progression. A sample taken during the late training is shown in Fig. \ref{fig:training_progress}. The figure displays relevant information, including the current learning rate, training loss, and scalar values. For example, this sample was generated for a Mach 5 case. The remaining values, such as epochs, validation loss, and training loss, are static. The predicted snaps from the model are shown on the left side, and true snaps are displayed on the right side of the figure. A small red circle is randomly generated to visually check the locations.\par
+
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[width=\linewidth]{figures/06pivnet/training_progress.png}
+    \caption{Random sample generated during training to visually track the training progress}
+    \label{fig:training_progress}
+\end{figure}
+
+The model achieved convergence on the validation set with a mean squared error (MSE) of $2.34 \times 10^{-4}$ after 77 epochs, trained using a batch size of 36 on four NVIDIA H100 GPUs. GPU memory utilization averaged 85\% across three GPUs and peaked at 98\% on the fourth GPU throughout training. Each epoch required approximately 3 GPU hours, resulting in a total training time of about 11 days, including validation computations between epochs. 
+
+The final evaluation of the test set yielded an MSE of $2.20 \times 10^{-4}$, indicating robust generalization and alignment between training, validation, and testing performance. This suggests that the model effectively captures and corrects the particle inertia bias inherent in the dataset.
+
+\subsection{Error metric}
+The image pairs are analyzed using openPIV \cite{liberzon2020}. A 32x32 interrogation window is used by default with 75\% overlap to analyze all the datasets. The data is averaged over 128 image pairs obtained for each case, and the error is computed using the L2-norm of the velocity fields. This is given by Eq. \ref{eq:l2-norm}.
+
+\begin{equation}
+    ||V_{n} - V_{truth}||_2 = \sqrt{\sum_{i=1}^{N} (V_{n,i} - V_{truth, i})^2} \quad \forall \quad n \in (model, input)
+    \label{eq:l2-norm}
+\end{equation}
+
+Where $V$ is the normalized shock-normal velocity.\par
+
+A sample data highlighting the normalized shock-normal velocity vs. the normalized shock-normal distance is shown in Fig. \ref{fig:error_metric}. The plot highlights the error metric between model-to-truth and input-to-truth. All of the relevant parameters are highlighted in the title of the figure.\par
+
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[width=0.7\linewidth]{figures/06pivnet/error_metric.png}
+    \caption{Error metric from a sample}
+    \label{fig:error_metric}
+\end{figure}
+
+\subsection{Testing the model performance}
+As described in the previous section, the model's performance is evaluated on a different test set. This section examines the error metric across the entire test set. Later, each relevant parameter is isolated, and the model's performance is understood for each parameter.
+
+\subsubsection{Error analysis}
+A new image set is generated using all the variables in the training set for the flowfield. The shock location is kept consistent at each data point in Fig. \ref{fig:shock_chart}, and image generation parameters are varied to generate the testing image set for flow parameters included in the training of the model. This allows us to replicate real-world scenarios of studying oblique shocks.\par
+
+The error distribution between Input-to-Truth (left) and Model-to-Truth (right) for the whole dataset, including flow parameters from the training set and testing set, is shown in Fig. \ref{fig:error_distribution}. The Input-to-Truth error exhibits a nearly uniform distribution, with a notable peak at the lowest end, suggesting that the error is minimal for most cases. This behavior highlights the inherent quality of the synthetic PIV (syPIV) data as a baseline. On the other hand, the Model-to-Truth error distribution demonstrates a significant reduction in the average error by approximately 74\% compared to the Input-to-Truth error, dropping from 1.35 to 0.23. Despite this improvement, the Model-to-Truth error distribution has more significant outliers, indicating that while the model effectively reduces the overall error, specific predictions still exhibit substantial discrepancies.\par
+
+Additionally, the spread of errors is slightly narrower for the Model-to-Truth distribution (0.78) compared to the Input-to-Truth (0.81), suggesting a moderate improvement in consistency. This comparison highlights the model's ability to effectively correct particle inertia bias while identifying areas where further refinement is needed to address outlier errors. This can be further analyzed by looking at independent Mach numbers to understand where the significant error is generated.\par
+
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[width=\linewidth]{figures/06pivnet/error_analysis/error_distribution.png}
+    \caption{Error distribution for the whole dataset}
+    \label{fig:error_distribution}
+\end{figure}
+
+Further, when only the Mach numbers included in the training set are considered, the distribution is shown in Fig. \ref{fig:error_distribution_training}. The Input-to-Truth error distribution (left) maintains a similar pattern to the overall dataset, showing a nearly uniform distribution with a peak at lower error values. The Model-to-Truth error distribution (right) demonstrates a significant reduction in average error, decreasing by 87\%, from 1.34 to 0.17. This highlights the model's effectiveness in learning from the training dataset to correct particle inertia bias.\par
+
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[width=\linewidth]{figures/06pivnet/error_analysis/error_distribution_training.png}
+    \caption{Error distribution for the training Mach numbers}
+    \label{fig:error_distribution_training}
+\end{figure}
+
+Additionally, the spread in errors narrows from 0.77 to 0.56, signifying an improvement in consistency across the dataset. Unlike the results for the entire dataset, model predictions for the training Mach numbers are as good as or better than the Input data, with fewer significant outliers. This outcome suggests that the model performs exceptionally well when applied to scenarios similar to its training conditions, affirming its reliability in such cases.\par
+
+For the in-distribution Mach 2.5 case, highlighted in Fig. \ref{fig:shock_chart}, the error distribution is shown in Fig. \ref{fig:error_distribution_testing_2.5}. This depicts the error distributions for a Mach number excluded from the training set. The Input-to-Truth error distribution (left) shows a relatively uniform pattern, with a peak at the lowest end, indicating minimal error for most cases in the syPIV data. The Model-to-Truth error distribution (right) reveals an average error reduction of 78\%, from 0.86 to 0.19, demonstrating the model's capability to generalize to unseen scenarios. However, the spread increases from 0.69 to 0.89, reflecting a 29\% rise, indicating more significant prediction variability, including some incorrect cases. Significant outliers corroborate this behavior in the Model-to-Truth error distribution, where specific predictions exhibit larger discrepancies than those observed in the syPIV data. These results align with the observations for the overall dataset, highlighting that while the model effectively reduces the average error, its predictions for unseen conditions exhibit higher variability and occasionally significant errors. This suggests that the model can be improved for the cases not included in the training, which can be achieved by improving the model with physics-based optimization techniques.\par
+
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[width=\linewidth]{figures/06pivnet/error_analysis/error_distribution_testing_2.5.png}
+    \caption{Error distribution for the in-distribution Mach 2.5 case}
+    \label{fig:error_distribution_testing_2.5}
+\end{figure}
+
+Finally, for the Mach 7.6 case, which is out-of-distribution of the Mach numbers used in the training process, the error distribution is shown in Fig. \ref{fig:error_distribution_testing_7.6}.  The Input-to-Truth error distribution (left) has an average error of 1.81 and a standard deviation of 0.80, indicating a non-uniform distribution with a significant peak at higher error values, which suggests larger errors in the syPIV data for this case. This is typical for high supersonic flows. The Model-to-Truth error distribution (right) reduces the average error by only 30\%, from 1.81 to 1.27. However, the spread increases by 27\%, from 0.80 to 1.02, suggesting higher variability in model predictions. The presence of significant outliers in the Model-to-Truth distribution indicates that the model struggles to generalize effectively to this high Mach number, leading to more pronounced errors than the syPIV baseline. This suggests that the model demonstrates limited effectiveness in reducing errors under conditions significantly different from those used in training.\par
+
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[width=\linewidth]{figures/06pivnet/error_analysis/error_distribution_testing_7.6.png}
+    \caption{Error distribution for the out-of-distribution Mach 7.6 case}
+    \label{fig:error_distribution_testing_7.6}
+\end{figure}
+
+
+\subsubsection{Error to parameter correlation analysis}
+The correlation between model-to-truth error and critical parameters, including Mach number, deflection angle, mean particle diameter, and particle density, reveals vital insights into the model's performance and areas for further improvement. Figure \ref{fig:correlation-1} highlights these relationships, showcasing trends that underline the complexities associated with each parameter.
+
+\begin{figure}[ht!]
+    \centering
+    % Top-left subfigure
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/06pivnet/correlation-1/error_vs_mach.png}
+        \caption{Model-to-Truth Error vs. Mach numbers}
+        \label{fig:error_vs_mach_correlation}
+    \end{subfigure}
+    % Top-right subfigure
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/06pivnet/correlation-1/error_vs_deflection.png}
+        \caption{Model-to-Truth Error vs. Deflection angles}
+        \label{fig:error_vs_deflection_correlation}
+    \end{subfigure}
+    \\ % Line break for next row
+    % Bottom-left subfigure
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/06pivnet/correlation-1/error_vs_dp_mean.png}
+        \caption{Model-to-Truth Error vs. Mean particle diameters}
+        \label{fig:error_vs_dp_mean_correlation}
+    \end{subfigure}
+    % Bottom-right subfigure
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/06pivnet/correlation-1/error_vs_rhop.png}
+        \caption{Model-to-Truth Error vs. Particle densities}
+        \label{fig:error_vs_rhop_correlation}
+    \end{subfigure}
+
+    \caption{Correlation analysis between Model-to-Truth error vs. parameters of significance}
+    \label{fig:correlation-1}
+\end{figure}
+
+As the Mach number increases, the model-to-truth error exhibits an upward trend, as shown in Figure \ref{fig:error_vs_mach_correlation}. This behavior aligns with expectations, given the higher levels of lag experienced by particles associated with stronger shocks at higher Mach numbers. However, this trend aggregates results across all shock strengths at each Mach number, masking some behavior. Notably, the model demonstrates significant potential for improvement as shock strength increases, particularly at extreme Mach values, where errors are most pronounced.\par
+
+The deflection angle presents a slightly different relationship with the model-to-truth error, as illustrated in Figure \ref{fig:error_vs_deflection_correlation}. A slight negative slope compared to the Input-to-Truth error indicates that the error decreases marginally as the deflection angle increases. This trend may reflect the model's ability to generalize better for higher deflection angles under certain conditions. However, localized increases in error are evident at specific deflection angles, particularly for a Mach number of 7.6, which is an out-of-distribution case. These anomalies highlight areas where the model could benefit from additional training data or refined architecture adjustments to capture the underlying physics more accurately.\par
+
+The relationship between mean particle diameter and model-to-truth error, depicted in Figure \ref{fig:error_vs_dp_mean_correlation}, shows an apparent increase in error with larger particle diameters. While input-to-truth and model-to-truth errors follow this trend, the slope for the model-to-truth error is noticeably less steep. This reduced slope indicates the model's ability to mitigate the impact of increasing particle size on error, which is a desirable outcome. Further data for particle sizes not included in the training set is being generated, providing additional validation and insights into the model's robustness across particle size variations.\par
+
+Finally, particle density exhibits the least influence on model-to-truth error, as evident from the near-flat slope in Figure \ref{fig:error_vs_rhop_correlation}. Unlike parameters such as Mach numbers, particle density is not directly used during training, which may explain its minimal effect on error trends. This insensitivity suggests that the model can effectively generalize across variations in particle density, a promising outcome for broader applications.\par
+
+\subsubsection{Error reduction correlation analysis}
+The error reduction based on the parameter of interest could be understood by the amount of correlation between Model-to-Truth vs. Input-to-Truth error plots for a given parameter. This section explores how each parameter affects the model's performance.\par
+
+For each Mach number, the correlation between the errors is shown in Fig. \ref{fig:correlation_mach}. This analysis highlights the error reduction achieved by the model for each Mach number. In an ideal scenario, a horizontal line at zero would signify perfect model predictions, indicating no residual error between the predicted and true values. Consequently, lower Pearson correlation coefficients and narrow confidence intervals indicate effective error mitigation. The data suggests that this desirable trend is predominantly observed for the training Mach numbers, except for Mach 1.5, which shows minimal improvements in error.\par
+
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[width=\linewidth]{figures/06pivnet/correlation-2/correlation_mach.png}
+    \caption{Correlation between errors at each Mach number in the dataset}
+    \label{fig:correlation_mach}
+\end{figure}
+
+Furthermore, the results for Mach numbers not included in the training data demonstrate higher variance, as evident from the wider confidence intervals. This behavior underscores the challenges the model faces when extrapolating beyond the training set. These findings emphasize the importance of incorporating diverse training data to enhance the model's robustness and generalization capabilities.\par
+
+Figure \ref{fig:correlation_deflection} illustrates the relationship between input-to-truth and model-to-truth errors for varying Mach numbers and deflection angles, arranged by increasing shock strength from top to bottom. The lower correlation coefficients (r-values) between input-to-truth and model-to-truth errors indicate better model performance. This behavior suggests that even when input-to-truth errors are high, the model effectively reduces the model-to-truth error.\par
+
+The data reveals that stronger shocks, which inherently introduce more significant initial errors, exhibit lower r-values and, thus, better error correction. For instance, at higher shock strengths (bottom rows of the figure), the model significantly reduces model-to-truth errors, where input-to-truth errors are high. This trend highlights the model’s ability to make corrections in flow regimes where the initial predictions deviate considerably from the actual values. This also highlights that the model is skewed towards higher deflection angles, where the current training dataset is concentrated.
+
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[width=\linewidth]{figures/06pivnet/correlation-2/correlation_deflection.png}
+    \caption{Correlation between errors at each deflection angle in the dataset}
+    \label{fig:correlation_deflection}
+\end{figure}
+
+At specific Mach-deflection combinations, variability in r-values highlights regions for potential improvement. For example, at Mach 4.3 with a deflection angle of $26.42^{\circ}$, the r-value is notably low (r=0.10), reflecting an excellent reduction in error. Conversely, at weaker shocks and lower deflection angles, r-values are higher, indicating that the model's corrections are less pronounced due to lower initial errors and less room for improvement.\par
+
+These findings highlight the model’s strengths in addressing high-error scenarios in the presence of strong shocks. They also highlight the need for expanding training data in regimes where corrections are less effective to ensure consistently low model-to-truth errors across all Mach and deflection angle combinations.\par
+
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[width=\textwidth]{figures/06pivnet/correlation-2/correlation_particle_diameters.png}
+    \caption{Correlation between errors for different particle diameters.}
+    \label{fig:correlation_particle_diameters}
+\end{figure}
+
+Fig. \ref{fig:correlation_particle_diameters} explores the relationship between input-to-truth and model-to-truth errors for different particle diameters. The correlation coefficients (r-values) remain relatively consistent across all diameters, with minor variations highlighting specific trends. Notably, the smallest diameter ($0.5 \mu m$) exhibits the highest r-value ($r=0.85$), suggesting a stronger linear relationship between input and model errors for this diameter. This observation indicates that the model's corrective capabilities are consistent across particle diameters, considering the sparsity of high errors in the small particle diameters.\par
+
+A closer inspection reveals that most data is skewed toward smaller error values, resulting in tighter confidence intervals (CI) in these regions. However, the confidence interval (CI) spread increases significantly at larger error magnitudes, indicating reduced confidence in the model's predictions for outliers or extreme cases. This shows an area for improvement where more training data could be generated for cases with high Input-to-Truth errors.\par
+
+The consistency in r-values across diameters suggests that the model generalizes well across different particle sizes. This analysis highlights the need for targeted improvements in the model architecture or training set to address scenarios involving larger particle diameters with high initial errors.
+
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[width=\textwidth]{figures/06pivnet/correlation-2/correlation_particle_densities.png}
+    \caption{Correlation between errors for different particle densities.}
+    \label{fig:correlation_particle_densities}
+\end{figure}
+
+Fig. \ref{fig:correlation_particle_densities} highlights the relationship between input-to-truth and model-to-truth errors for varying particle densities. The results indicate that particle density has a relatively uniform effect on error correction, with correlation coefficients (r-values) remaining consistent across all densities. The values range between $r=0.53$ and $r=0.61$, showing minimal variability. This suggests that the model generalizes well across different densities and is not significantly influenced by variations in this parameter.\par
+
+The narrow confidence intervals across most error ranges further emphasize the model's reliability in handling density variations. However, the confidence intervals are widening at larger Input-to-Truth error values. This indicates reduced confidence in predictions for outliers or extreme cases but does not significantly impact the overall performance trends.\par
+
+The uniformity in r-values and the minimal impact of density on error correction demonstrate the robustness of the model when applied to data with varying particle densities. These results highlight the model's ability to decouple particle density effects from error predictions, further supporting its generalization capabilities.\par
+
+Overall, this parameter study highlighted the performance of the current model in various scenarios involving different shock strengths, particle diameters, and densities. Based on these findings, the model is currently skewed towards correcting higher shock strengths. The effect of particle parameters on the model is minimal. These findings suggest that the model could benefit from a larger dataset focusing on lower and random choice of shock strengths.
+
+
+\subsubsection{Peak Signal-to-Noise ratio}
+The Peak Signal-to-Noise Ratio (PSNR) is a widely used metric for assessing the quality of image reconstruction or prediction by comparing a predicted image to its ground-truth counterpart. Defined mathematically in Eq. \ref{eq:psnr}, PSNR quantifies the degree to which the model retains essential image features while minimizing distortions caused by noise or errors. A higher PSNR value signifies better model performance, indicating closer alignment between the predicted and true data. This makes PSNR a critical tool for evaluating whether the reconstructed features accurately preserve the underlying physics, ensuring that physical phenomena remain unchanged during prediction.
+
+\begin{equation}
+    PSNR = 10 \times log_{10}\biggl(\frac{MAX^2}{MSE}\biggr)
+    \label{eq:psnr}
+\end{equation}
+%
+where,\\
+$MAX$ is the maximum possible intensity value for the image. For the current case, it is 255.\\
+$MSE$ is the mean squared error between image intensities and can be computed using Eq. \ref{eq:mse}.\par
+
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[width=\linewidth]{figures/06pivnet/psnr/psnr_distribution.png}
+    \caption{PSNR distribution for Input-to-Truth and Model-to-Truth}
+    \label{fig:psnr_distribution}
+\end{figure}
+
+Figure \ref{fig:psnr_distribution} presents the PSNR distributions for the model predictions compared to the input data. The Input-to-Truth PSNR distribution (left) has a median of 38.04 and a spread of 10.55, showing a wide range as expected due to the particle inertia bias, which is almost negligible for low shock strengths and small particle diameters. In contrast, the Model-to-Truth PSNR distribution (right) exhibits a slightly higher median of 38.95 with a significantly reduced spread of 4.23, indicating more consistent predictions. The left-skewed nature of the Model-to-Truth distribution further demonstrates that the network performs better in most cases. However, the reduction in high PSNR values, which typically correspond to low shock strengths and smaller particle diameters, highlights a limitation in the network's ability to generalize to these conditions. This shortcoming is likely due to the absence of skip connections, which can better retain fine-grained features critical for high-accuracy predictions. Future work will incorporate skip connections and more dense implementations to enhance the generalization capabilities of the network and address this limitation.\par
+
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[width=0.7\linewidth]{figures/06pivnet/psnr/psnr_analysis.png}
+    \caption{PSNR analysis per parameter for Input-to-Truth and Model-to-Truth}
+    \label{fig:psnr_analysis}
+\end{figure}
+
+Figure \ref{fig:psnr_analysis} illustrates the PSNR trends across different parameters for the model predictions. While the network generalizes well for intermediate Mach numbers, its performance declines sharply for low and high Mach numbers, particularly at Mach 7.6, where PSNR values are significantly lower. Similarly, the Model-to-Truth PSNR decreases notably for smaller particle diameters, indicating challenges in capturing the fine-scale features associated with such cases. On the other hand, particle density shows consistent trends, with only a slight drop in PSNR as density increases, suggesting that the network is robust to variations in this parameter.\par
+
+The deflection angle introduces substantial variability in Input-to-Truth PSNR, but the Model-to-Truth PSNR remains comparatively stable across different angles, albeit at a lower overall level. This stability highlights the network's reduced sensitivity to this parameter, indicating room for improvement in prediction accuracy. These trends suggest that the current network architecture struggles with extreme cases and fine-grained details, necessitating future enhancements such as skip connections to improve generalization and capture finer-scale information.\par
+
+Finally, the consistent performance for particle density and intermediate Mach numbers underscores the model's potential for robust predictions under specific conditions, with opportunities for further optimization.\par
+
+\section{Application of BICSNet to experimental PIV data}
+In this section, the Mach 2 $10^\circ/10^\circ$ shock-interaction dataset is used to demonstrate the efficacy of BICSNet on experimental PIV data. This dataset comprises 365 particle image pairs captured by a 2048$\times$2048 pixel camera. More details about the setup, seeding, and experimental conditions are presented in Chapter \ref{ch:fsu_data}. The current machine learning model has been trained on a synthetic dataset containing a single oblique shock aligned with the Cartesian grid, with assumptions of uniform particle seeding, fixed laser pulse timing, and constant magnification. To enable BICSNet to extract meaningful features and correct for particle inertia bias, it is essential to pre-process the experimental PIV data. This pre-processing aims to minimize the shift in intensity distribution compared to the synthetic data used for training the BICSNet model.
+
+\subsection*{Pre-processing PIV data to work with BICSNet}\label{sec:preprocesing}
+Since the machine learning model was trained on cases where the oblique shock was aligned with the Cartesian grid, the PIV data obtained from the shock interaction experiments were modified by rotating and cropping the incident shock region, as illustrated in Fig.~\ref{fig:bicsnet_cropped_image}.
+
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[width=\linewidth]{./figures/06pivnet/piv/preview.png}
+    \caption{Steps to isolate the incident shock region from shock-interaction PIV image}
+    \label{fig:bicsnet_cropped_image}
+\end{figure}
+
+To process the full shock interaction data obtained from the PIV experiments, each 2048$\times$2048 pixel image containing the shock interaction was cropped into 256$\times$256 pixel patches with a 50\% overlap. This procedure produced 225 cropped images per PIV frame, as shown in Fig.~\ref{fig:shock_interaction_crops}. In this figure, 128$\times$128 pixel regions are outlined, with four such regions composing a single 256$\times$256 pixel image patch. This patching structure is further highlighted using a red square in Fig.~\ref{fig:256px_grid}, with the corresponding extracted patch shown in Fig.~\ref{fig:256px_crops}. Each cropped image was then pre-processed to match the intensity levels of the synthetic training data described below. In total, 94,095 image pairs generated through this process were processed using the BICSNet model to correct for particle inertia bias.
+\par
+
+Since the BICSNet model was trained on synthetic oblique shocks aligned with the Cartesian grid, the shock regions in the experimental shock interaction data were reprocessed by rotating the images, as shown in Fig.~\ref{fig:bicsnet_cropped_image}, with a 50\% overlap. This procedure resulted in a total of 5,475 image pairs. This data set also consists of two image pairs with shock interaction regions, an out-of-distribution case for the current model based on flow features.\par
+
+\begin{figure}[ht!]
+    \centering
+    % Top-left subfigure
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{./figures/06pivnet/piv/256px_grid.png}
+        \caption{2048$\times$2048 pixel image from PIV}
+        \label{fig:256px_grid}
+    \end{subfigure}
+    % Top-right subfigure
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{./figures/06pivnet/piv/256px_crops.png}
+        \caption{256$\times$256 pixel patches with 50\% overlap}
+        \label{fig:256px_crops}
+    \end{subfigure}
+
+    \caption{Procedure to process experimental PIV data using BICSNet}
+    \label{fig:shock_interaction_crops}
+\end{figure}
+
+Further, the intensity distributions between the PIV and synthetic images significantly differ, as seen in Fig. \ref{fig:bicsnet_synthetic_vs_cropped}. The figure compares the intensity data between the synthetic and the cropped experimental PIV images at the incident shock location. The experimental PIV images have many (about 80\%) black levels or zero pixels, as seen from the intensity frequency plot, compared to the synthetic image, which also has zero pixels (about 25\%) but a continuous distribution of low intensity pixels. The synthetic images are generated with a uniform particle distribution, an ideal case for experimental PIV images. This can be clearly understood from the cumulative frequency distribution plot, which highlights the intensity counts for synthetic data peaks around 50 and stays almost constant at higher levels. In comparison, the cropped PIV image shows that the intensity counts are almost linearly increasing from zero pixels, which account for nearly 80\% of the intensity counts. This could be adjusted by image processing techniques to facilitate processing the experimental PIV data using the BICSNet model.\par
+
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[width=\linewidth]{./figures/06pivnet/piv/synthetic_vs_cropped.png}
+    \caption{Intensity distribution comparison between synthetic and PIV data}
+    \label{fig:bicsnet_synthetic_vs_cropped}
+\end{figure}
+
+The intensity distribution between the synthetic data and images obtained from the experiments is adjusted to match through manual iteration of image processing techniques, such as Gaussian blur, random intensity noise, and exposure factor. The Gaussian blur is applied using a kernel size of 3$\times$3, which matches the particle size in pixels used in synthetic images. This transformation is given by Eq. \ref{eq:gaussian_blur}. Where $x$ and $y$ are the distances from the origin along horizontal and vertical axes, respectively, $\sigma$ is the standard deviation of the Gaussian distribution.
+
+\begin{equation}
+    G(x, y) = \frac{1}{2\pi \sigma^2}e^{-\frac{x^2 + y^2}{2\sigma^2}}
+    \label{eq:gaussian_blur}
+\end{equation}
+
+The random noise is typically applied using a normal distribution to improve the smoothness of the intensity counts. The current work uses a standard deviation of 5.0 intensity throughout the image. Finally, the exposure factor is a value between zero and one, which, when multiplied by the image intensity data, helps reduce particle streaking due to exposure. The exposure factor effectively reduces the intensity levels throughout the image by the specified factor. With the new high-speed cameras, the streaking is typically not a problem. Still, given the gradient and fidelity of the current data, the shock interface appears as streaks, which can be observed in the zoomed-up portion in Fig. \ref{fig:bicsnet_synthetic_vs_cropped}. The exposure factor was set to 0.8 for the incident shock region and 0.95 for the transmitted shock region. These pre-processing steps help align the PIV image intensity levels with those of the synthetic images used to train the model. Both the synthetic and processed PIV images with a blow-up on the shock location, intensity count frequency, and cumulative frequency are highlighted in Fig. \ref{fig:bicsnet_synthetic_vs_adjusted}. This process effectively reduced the zero pixel counts by 62.5\% in the pre-processed data.\par
+
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[width=\linewidth]{./figures/06pivnet/piv/synthetic_vs_pre_processed.png}
+    \caption{Intensity distribution comparison between synthetic and pre-processed PIV data}
+    \label{fig:bicsnet_synthetic_vs_adjusted}
+\end{figure}
+
+All pre-processing steps were applied to the entire experimental PIV dataset comprising 365 image pairs. In contrast to a sample from the synthetic dataset, the cumulative intensity distribution before and after pre-processing is presented in Fig. \ref{fig:cfd_comparison}. This comparison illustrates how the pre-processing technique modified the image intensity levels. On average, the proportion of zero-intensity pixels in the cropped experimental data decreased from approximately 75\% to 30\%, and the overall intensity distribution became noticeably smoother. These enhancements make the data more suitable for processing using BICSNet.
+
+\begin{figure}[ht!]
+    \centering
+    % Top-left subfigure
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{./figures/06pivnet/piv/cdfs_synthetic_vs_cropped.png}
+        \caption{Synthetic vs. Cropped data}
+        \label{fig:cdf-1}
+    \end{subfigure}
+    % Top-right subfigure
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{./figures/06pivnet/piv/cdfs_synthetic_vs_pre_processed.png}
+        \caption{Synthetic vs. Pre-processed data}
+        \label{fig:cdf-2}
+    \end{subfigure}
+
+    \caption{Intensity cumulative frequency distribution}
+    \label{fig:cfd_comparison}
+\end{figure}
+
+\subsection{Results and discussion}
+This section presents the results obtained by processing the data from the above methodology for just the first oblique shock highlighted in Fig. \ref{fig:bicsnet_cropped_image} and the whole shock interaction system. First, a discussion is presented in the rotated frame of reference where the oblique shock front studied is aligned with the vertical direction, and then a discussion on the whole shock interaction data is presented.\par
+
+\subsubsection{Application of BICSNet to a Single Oblique Shock}
+
+For the incident oblique shock, the pre-processed PIV images were analyzed using BICSNet, with a freestream Mach number of 2.0 and an estimated particle Reynolds number of 427 provided as inputs. The particle Reynolds number was calculated based on an average particle diameter of $0.8,\mu m$, determined from prior particle response analysis. The BICSNet-enhanced images were subsequently processed using OpenPIV’s multipass cross-correlation algorithm, which employed three passes with interrogation window sizes of 64, 32, and 16 pixels, and a 50\% overlap at each stage. This approach yielded a final velocity field resolution of 32$\times$32.\par
+
+The velocity fields, normalized by the freestream velocity of 510 m/s, are shown in Fig. \ref{fig:contour_comparison} for the PIV, BICSNet, and CFD datasets. To facilitate direct comparison and isolate the particle inertia bias effect, the CFD velocity field was interpolated onto a grid with the same resolution as the PIV data. The figure shows that the oblique shock appears smeared in the PIV data due to particle inertia bias; however, this feature is noticeably improved in the BICSNet prediction as seen around the $x=0mm$ location. The CFD dataset exhibits the sharpest gradient among the three, providing the most distinct representation of the shock structure.
+
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[width=\linewidth]{phd_dissertation/figures/06pivnet/piv/contour_comparison_piv.png}
+    \caption{PIV vs. BICSNet vs. CFD normalized velocity contours}
+    \label{fig:contour_comparison}
+\end{figure}
+
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[width=0.7\linewidth]{phd_dissertation/figures/06pivnet/piv/piv_cfd_bicsnet_line_plot.png}
+    \caption{Normalized velocity shock decay curves}
+    \label{fig:bicsnet_piv_line_plots}
+\end{figure}
+
+To further quantify this improvement, spanwise-averaged velocity profiles were extracted at each y-location and plotted as a function of shock normal distance (x). The resulting data are presented in Fig.~\ref{fig:bicsnet_piv_line_plots}. The velocity profiles are normalized using Eq.~\ref{eq:shock_normal_decay}. This plot highlights the improvement in velocity estimation achieved by reducing particle inertia bias in the PIV data using BICSNet. The velocity profile obtained by processing PIV data through the deep learning model, denoted as BICSNet data in the figure, is similar to the CFD profile, a step function characteristic of an oblique shock wave. A quantitative comparison using the L2-norm between the CFD and BICSNet outputs indicates a reduction in inertia bias by \( 53.75\% \). This substantial improvement demonstrates the potential of deep learning models like BICSNet to directly reduce measurement biases in experimental PIV datasets.
+
+\subsubsection{Application of BICSNet to Shock Interaction}
+
+Finally, the entire shock interaction dataset was processed using BICSNet. The raw PIV images were segmented into two regions: the pre-interaction and post-interaction zones. For the pre-interaction region, the model inputs were a freestream Mach number of 2.0 and a particle Reynolds number of 427. For the post-interaction region, the Mach number was set to 1.6 (obtained from oblique shock relations) while the particle Reynolds number was set to 402.
+
+Cross-correlation using OpenPIV was implemented in a manner identical to previous cases to extract velocity fields, which were stitched by averaging the overlapping regions to reconstruct the whole shock interaction domain. The resulting normalized velocity fields are shown in Fig. \ref{fig:shock_interaction_contour_comparison}. In the reconstructed data, shock locations are better aligned and exhibit sharper gradients compared to the original PIV fields. However, in regions near the interaction zone, where two shock fronts intersect, the corrected fields still exhibit inertia bias similar to the PIV data. This behavior can be further examined by analyzing the velocity distributions at various y-locations across the domain.
+
+\begin{figure}
+    \centering
+    \begin{subfigure}[b]{0.33\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{phd_dissertation/figures/06pivnet/piv/piv_shock_interaction.png}
+        \caption{PIV data}
+        \label{fig:piv_shock_interaction}
+    \end{subfigure}%
+    \begin{subfigure}[b]{0.33\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{phd_dissertation/figures/06pivnet/piv/bicsnet_shock_interaction.png}
+        \caption{BICSNet data}
+        \label{fig:bicsnet_shock_interaction}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.33\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{phd_dissertation/figures/06pivnet/piv/cfd_shock_interaction.png}
+        \caption{CFD data}
+        \label{fig:cfd_shock_interaction}
+    \end{subfigure}
+    \caption{Normalized velocity contours for shock interaction}
+    \label{fig:shock_interaction_contour_comparison}
+\end{figure}
+
+Velocity profiles were extracted at \( y = 0.5\,\text{mm} \) and \( y = 5\,\text{mm} \), as shown in Fig.~\ref{fig:bicsnet_shock_interaction_velocity_profiles}. At \( y = 5\,\text{mm} \), the BICSNet prediction shows significant improvement, particularly at the shock fronts. A sharp gradient is recovered at each shock, indicating a substantial reduction in particle inertia bias. This behavior was also observed in the single oblique shock case studied earlier. 
+
+Quantitatively, the improvement in the L2-norm error between BICSNet and CFD (relative to the PIV and CFD comparison) is 54.26\% at the first shock and 58.41\% at the second shock. These results highlight the efficacy of the current network, particularly for the Mach 2.0 case, which was not included in the training set, thereby demonstrating the model’s interpolation capabilities. This finding is consistent with the conclusions drawn from the synthetic data analysis, which also showed significant improvement at Mach 2.5 conditions.
+
+
+In contrast, the particle does not relax to the post-shock velocity after the first shock at \( y = 0.5\,\text{mm} \). It enters the second shock with residual inertia, compounding the overall bias. This phenomenon is termed particle dynamics history (PDH) and is caused by sequential flow interactions. In this case, the patch that was the input to the BICSNet model consisted of information from the shock interaction around \( y = 0.0\,\text{mm} \) location in the contours shown in Fig. \ref{fig:line_plots_location} and used pre-interaction conditions for image pre-processing. This is an out-of-distribution case for the BICSNet model, which was trained on single oblique shocks and did not see any information about multiple gradients in the flow. The BICSNet captures the initial gradient associated with the first shock but fails to resolve the second gradient. The corresponding improvement in the L2-norm between the shocks is approximately 7\%. These results suggest that the current model, which is mainly trained on single oblique shock configurations, yields the best performance in scenarios with single and Cartesian aligned gradients.\par
+
+\begin{figure}
+    \centering
+    \begin{subfigure}[b]{0.5\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{phd_dissertation/figures/06pivnet/piv/bicsnet_line_plots_location.png}
+        \caption{y-locations and shock interaction region}
+        \label{fig:line_plots_location}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.5\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{phd_dissertation/figures/06pivnet/piv/bicsnet_piv_cfd_y_5mm.png}
+        \caption{Complete particle relaxation between shocks}
+        \label{fig:bicsnet_5mm}
+    \end{subfigure}%
+    \begin{subfigure}[b]{0.5\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{phd_dissertation/figures/06pivnet/piv/bicsnet_piv_cfd_y_0p5mm.png}
+        \caption{Incomplete particle relaxation between shocks}
+        \label{fig:bicsnet_0p5mm}
+    \end{subfigure}
+    \caption{Velocity profile comparison at two different y-locations}
+    \label{fig:bicsnet_shock_interaction_velocity_profiles}
+\end{figure}
+
+
+
+\section{Conclusion}
+The ability to reduce particle inertia bias in supersonic PIV experiments is of significant importance, particularly in light of growing national and international interest in hypersonic technologies. As aerospace systems continue to push the boundaries of speed and performance, accurate experimental techniques are essential for understanding complex flow phenomena and validating high-fidelity simulations. Inertia-related biases introduced by tracer particles in supersonic particle image velocimetry (PIV) experiments remain a critical challenge, and addressing them is key to improving the reliability and applicability of experimental datasets.
+
+In this work, we introduced a deep convolutional neural network architecture, BICSNet, designed to correct particle inertia bias across a range of oblique shock conditions. By training on a synthetic dataset that spans diverse flow conditions, particle properties, and image statistics, the model demonstrated strong generalization capabilities for in-distribution cases. Physics-aware conditioning via Mach and Reynolds numbers further improved model robustness and interpretability. Notably, BICSNet achieved up to 87\% improvement in L2-norm error for Mach numbers included in the training set, underscoring its value as a correction tool that bridges experimental and numerical velocity data.
+
+A detailed parameter study highlighted that the BICSNet model predictions are inconsistent across the shock strengths tested. For example, it was observed that the error reduction is minimal for low shock strengths, and the model is sensitive to correcting strong shocks with large deflection angles. This is due to the chosen dataset, which features shocks clustered around high deflection angles. A high variance in error correction is also observed for low deflection angles. These insights provide direction for which data to include in the future training processes to make the model robust across all Mach regimes.
+
+After appropriate intensity normalization, BICSNet was applied to experimental PIV images to evaluate its real-world applicability, aiming to match the synthetic training distribution. A significant reduction in particle inertia bias was observed, with an L2-norm error improvement of 53.75\% for a single incident shock case. When applied to a shock interaction case, the model performed well when the shocks were spread apart, with an improvement in gradient estimation of up to 58.41\%. These findings validate the potential of the model for experimental workflows, provided that pre-processing aligns with training conditions.
+
+Despite its success, the performance of the model diminished in more complex configurations, particularly in regions with multiple closely spaced shocks. For instance, the compounded bias resulted in an incomplete correction at \( y = 0.5\,\text{mm} \) in the shock interaction zone, where particles pass through successive shocks without sufficient relaxation time. These results highlight a key limitation: the current model, trained on single-shock scenarios, is not yet fully equipped to generalize to out-of-distribution multi-shock structures.
+
+Future work will focus on enhancing the generalization capabilities of the current model. Training strategies that weight samples based on input-to-truth error could further optimize model performance across a broader range of flow conditions. These needs were identified during the parameter study, and automating the process of generating necessary data and optimizing the model through transfer learning presents a potentially transformative opportunity. 
+
+Additionally, expanding the training dataset to include multi-shock scenarios and incorporating additional flow features, such as local acceleration, represents a promising direction for capturing particle dynamics history, a characteristic often encountered in complex PIV experiments, as discussed in the current work. PSNR diagnostics have also indicated that the current model is limited in accurately reconstructing pixel-level features. To address these challenges, architectural improvements such as denser networks with additional skip connections or attention mechanisms may enhance the recovery of fine-scale features while preserving overall image fidelity, potentially enabling higher-order flow field analyses.
+
+Beyond improving the model, future directions include applying inertia bias-aware deep learning models to more complex flow configurations, such as shock–boundary layer interactions and jet exhausts, where particle history effects play a more significant role. Integrating physics-informed neural networks (PINNs) and hybrid modeling approaches may enhance prediction fidelity while maintaining computational efficiency.
+
+In conclusion, this study demonstrates both the feasibility and transformative potential of deep learning in addressing longstanding challenges in high-speed experimental aerodynamics. By reducing particle inertia bias, models like BICSNet can enhance the quality of experimental data, improve CFD validation efforts, and support the development of next-generation aerospace technologies aligned with national hypersonic initiatives.
+
+

@@ -1,0 +1,596 @@
+\cleardoublepage
+\appendix
+\phantomsection %to correct hyperlink reference issue
+\addcontentsline{toc}{chapter}{Appendices}
+\chapter*{Appendices}\label{ch:appendices}
+\section{Appedix A: Lagrangian Particle Tracking Code Documentation}
+
+\subsection{Overview}
+This appendix provides details about the custom-built Lagrangian Particle Tracker (LPT) code, which has been developed as part of the research described in this dissertation. The code is open-source and available on GitHub and PyPI for use and collaboration by the research community. It serves two primary objectives:
+
+\begin{enumerate}
+    \item \textbf{Particle Tracking:} Accurately compute the trajectories of particles using one-way coupling paradigm within a flow field.
+    \item \textbf{Frame Transformation:} Convert data from the Lagrangian frame to the Eulerian Frame for further analysis and visualization
+\end{enumerate}
+
+\subsection{Code Access and Installation}
+\subsubsection{GitHub Repository}
+The source code, issue tracker, and contribution guidelines are hosted on GitHub at:\\ \href{https://github.com/kalagotla/lptlib}{https://github.com/kalagotla/lptlib}
+
+\subsubsection{PyPI Package}
+The code is available as a Python package on PyPI for ease of use. Install it using:
+\begin{minted}{python}
+    pip install lptlib
+\end{minted}
+
+\subsection{Key Features}
+\begin{itemize}
+    \item \textbf{Flexibility:} Supports Plot3D data format with significantly faster data access than traditional methods. A custom-built algorithm leverages NumPy data structures, achieving up to 40 times faster data access for a 42-million grid compared to a Fortran implementation.
+    \item \textbf{Robust LPT Modules:} The LPT is designed to track particles in complex supersonic flows reliably. Features include:
+    \begin{itemize}
+        \item A localized ``quick" Newton-Raphson search process for efficient point location.
+        \item Advanced interpolation methods, including shock-cell-based interpolation, that replicates local flow behavior using step-function-style approximations.
+        \item Adaptive RK4 integration methods that adjust based on flow deflection and integration residuals.
+        \item Support for multiple drag models tailored to various flow conditions.
+    \end{itemize}
+    \item \textbf{Parallel Computing:} Fully parallelized to take advantage of high-performance computing (HPC) environments. Supports MPI and multithreading for efficient large-scale computation.
+    \item \textbf{Visualization Support:} Includes a built-in visualization module for rendering results within Python, summarized in Chhabra et al. \cite{chhabra2023}.
+\end{itemize}
+
+\subsection{API and Usage}
+
+\subsubsection{Particle Tracking}
+The primary functionality of the current code is to track particles in a given flow field. To achieve this, particles are spawned at a given location in the flow field and are traced till the end-of-domain is reached. These tracks are saved to \mintinline{python}{.npy} file format. This format is the standard binary file format in NumPy for persisting a single arbitrary NumPy array on disk. The format stores all of the shape and dtype information necessary to reconstruct the array correctly even on another machine with a different architecture. The format is designed to be as simple as possible while achieving its limited goals.\par
+
+Here is a sample code using the \mintinline{python}{Streamlines} class:
+\begin{minted}{python}
+from lptlib import Streamlines
+
+# call the Streamlines class
+streamline = Streamlines(
+    grid_file = 'grid.x',
+    flow_file = 'flow.q',
+    point = [0.1, 0.1, 0.05],  # start point
+    method = 'pRK4',  # Runge-Kutta 4th order in physical space
+    diameter = 1e-6,  # particle diameter
+    density = 1000,  # particle density
+    time_step = 1e-3  # initial time step
+)
+
+# start the process
+streamline.compute(method='adaptive-ppath')
+
+\end{minted}
+
+The \mintinline{python}{Streamlines} module integrates particle paths and velocity fields using user-defined methods and parameters. It also supports adaptive time-stepping for better numerical stability.\par
+
+Several tracing methods were implemented for different use cases. These include \mintinline{python}{p-space,}
+\mintinline{python}{c-space, adaptive-p-space, adaptive-c-space,}
+\mintinline{python}{ppath, ppath-c-space, adaptive-ppath,}
+\mintinline{python}{adaptive-ppath-c-space}. Unsteady versions are also currently included but are still under development as of this writing. Refer to GitHub for more information. The \mintinline{python}{ppath} versions are the ones for tracking particles with mass.\par
+
+\subsubsection{Frame Transformation}
+The \mintinline{python}{DataIO} class provides functionality to map scattered LPT data onto a structured Eulerian grid. This is useful for visualization and further analyzing the PDH-informed flows.\par
+
+Here is an example implementation of the class:
+
+\begin{minted}{python}
+    from lptlib import DataIO
+    from lptlib import GridIO, FlowIO
+
+    grid = GridIO('grid.x')
+    flow = FlowIO('flow.q')
+    # dataio module
+    data = DataIO(grid, flow, percent_data=0.01, location='./constant_particle_specs/')
+    # Increased refinement for better resolution
+    data.x_refinement = 100
+    data.y_refinement = 100
+    data.oblique_shock = True
+    data.compute()
+    
+\end{minted}
+
+This process interpolates particle data to a refined grid and exports results compatible with Plot3D visualization formats. The \mintinline{python}{oblique_shock} is currently used as a placeholder for sequentially sampling data. This will be replaced in future updates.\par
+
+\subsubsection{Parallel Execution}
+The \mintinline{python}{StochasticModel} class facilitates parallelization for handling a large number of particles or complex flow fields. Users can choose between multithreading, multiprocessing, or MPI execution.
+
+Here is an example to process using MPI:
+
+\begin{minted}{python}
+    from lptlib import StochasticModel
+
+    # setup the model
+    model = StochasticModel(particles, spawn_locations, method='adaptive-ppath-c-space',
+                            grid=grid, flow=flow)
+    
+    # Process using MPI
+    model.mpi_run()
+\end{minted}
+
+The code saved to a file named \mintinline{python}{main.py} can be executed using:
+
+\begin{minted}{python}
+    mpiexec -np 8 python main.py
+\end{minted}
+
+For MPI implementations, tasks are dynamically distributed among processes to ensure load balancing and efficient computation.
+
+\subsubsection{Parallelization Details}
+The code is designed to leverage high-performance computing capabilities for efficient processing of large datasets. Key features include:
+
+\begin{itemize}
+    \item Parallelization is achieved by tracking each particle as a separate process.
+    \item Uses \mintinline{python}{mpi4py} for parallelization. This has limited functionality compared to the traditional MPI.
+    \item The \mintinline{python}{DataIO} module distributes grid data across processes for interpolation to the Eulerian frame. This works best with a perfect square number of processes (4, 16, 64...).
+\end{itemize}
+
+\subsubsection{Future Work}
+The current code is actively maintained, with ongoing enhancements planned to:
+\begin{itemize}
+    \item Expand support for unsteady flow fields.
+    \item Enhance existing algorithms for stability and accuracy, focusing on studying a flow's second-order statistics.
+\end{itemize}
+
+\subsubsection{Citation}
+If you use this code in your research, please cite this dissertation or the associated paper as follows:
+
+\fullcite{kalagotla2023}
+
+\subsubsection{Contact}
+For inquiries or contributions, contact the author at \href{mailto:dilip.kalagotla@gmail.com}{dilip.kalagotla@gmail.com}
+
+\newpage
+
+\section{Appendix B: Synthetic Image Generator Code Documentation}
+\subsection{Overview}
+The synthetic image generation module presented here is an open-source tool designed for generating planar Particle Image Velocimetry (PIV) images. The code is publicly available on GitHub at \href{https://github.com/kalagotla/syPIV}{https://github.com/kalagotla/syPIV} and can also be accessed via PyPI (sypiv). Its primary purpose is to simulate realistic PIV images based on specified flow field data, allowing users to explore various parameters influencing particle distributions and imaging.
+
+\subsection{Features}
+\begin{itemize}
+    \item \textbf{Planar PIV Image Creation:}
+    \begin{itemize}
+        \item Generates two sequential images (snapshots) that mimic the planar PIV experiment.
+        \item Incorporates physical parameters such as particle size distribution, density distribution, concentration, and motion.
+    \end{itemize}
+    \item \textbf{Parameters:}
+    \begin{itemize}
+        \item Users can define particle distributions using pre-defined parameters such as mean, minimum, maximum, and shape profile to define distributions such as Gaussian, uniform, and log-normal.
+        \item Laser sheet parameters include position, thickness, intensity distribution, and pulse duration.
+        \item Interrogation area (IA) bounds, image resolution, field of view, and particle pixel size adjustments are also available as configurable parameters.
+        \item Simulates the projection of particles onto a CCD sensor, accounting for image resolution, pixel density, and magnification parameters.
+    \end{itemize}
+    \item \textbf{Parallel Computing Capabilities:}
+    \begin{itemize}
+        \item Supports distributed computing using MPI for handling large datasets efficiently.
+        \item Offers compatibility with multiprocessing and Dask for intensity field calculations.
+    \end{itemize}
+\end{itemize}
+
+\subsubsection{API Usage}
+To use the module, install it via PyPI:
+
+\begin{minted}{python}
+    pip install sypivlib
+\end{minted}
+
+The following provides a high-level overview of the primary API components:
+\begin{enumerate}
+    \item \textbf{Initial setup}
+    \begin{minted}{python}
+        # import libraries
+        from sypivlib import GridIO, FlowIO
+        from sypivlib import Particle
+        from sypivlib import LaserSheet
+        from sypivlib import CCDProjection
+        from sypivlib import Intensity
+        from sypivlib import ImageGen
+        import numpy as np
+        
+        # Read-in the grid and flow file
+        # Typically these are generated from lptlib
+        grid = GridIO('./dataio/mgrd_to_p3d.x')
+        grid.read_grid()
+        grid.compute_metrics()
+        flow = FlowIO('./dataio/mgrd_to_p3d_particle.q')
+        flow.read_flow()
+        fluid_flow = FlowIO('./dataio/mgrd_to_p3d_fluid.q')
+        fluid_flow.read_flow()
+        
+    \end{minted}
+    \item \textbf{Particle Distribution and Initialization:}
+    \begin{minted}{python}
+        # call particle class
+        p = Particle()
+        p.mean_dia = 3e-6  # mean particle diameter in meters (m)
+        p.min_dia = 0.4e-6  # m
+        p.max_dia = 100e-5  # m  # some large number
+        p.std_dia = 1e-6  # m
+        p.density = 900  # density in kg/m3
+        # number concentration
+        # resx * resy *per pixel concentration * 
+        # out-of-plane motion * out-of-domain movement
+        p.n_concentration = 3170*1585*0.05*1.1*1.2
+        p.compute_distribution()  # defaults to normal distribution
+    \end{minted}
+    \item \textbf{Laser Sheet Configuration}
+    \begin{minted}{python}
+        # Define the laser sheet
+        laser = LaserSheet(grid)
+        # z-location
+        laser.position = 0.00125  # in m (Keep laser sheet at some z-location)
+        laser.thickness = 0.001  # in m (Data given by Dan)
+        laser.pulse_time = 1e-6  # in s (from Dan's 2014 data)
+        laser.compute_bounds()
+    \end{minted}
+    \item \textbf{IA bounds and Particle Physical Locations}
+    \begin{minted}{python}
+        # setup random state for replicability
+        rng = np.random.default_rng(7)
+        # Create particle locations array
+        ia_bounds = [None, None, None, None]
+        loc = CreateParticles(grid, flow, p, laser, ia_bounds)
+        # x_min, x_max, y_min, y_max --> ia_bounds
+        # increase bounds to account for particle movement
+        loc.ia_bounds = [-0.05, 0.2, -0.05, 0.05]
+        loc.in_plane = 90  # % of particles in plane
+        loc.compute_locations()
+        # use MPI to compute the second set of locations
+        # compute_locations2() is serial
+        loc.compute_locations2_mpi()
+        # actual ia bounds - update it for projection
+        loc.ia_bounds = [0, 0.2, -0.05, 0.05]  # in m based on the CCD res
+    \end{minted}
+    \item \textbf{CCD Projection}
+    \begin{minted}{python}
+        # Create particle projections (Simulating based on EUROPIV)
+        proj = CCDProjection(loc)
+        proj.dpi = 15.85 * 25.4  # Compute based on the jet contours; 15.85px/mm
+        # resolution
+        proj.xres = 3170
+        proj.yres = 1585
+        # Set distance based on similar triangles relationship
+        # This sets the magnification
+        # can be modified to zoom or change physical dimensions to zoom (ia_bounds)
+        proj.d_ccd = proj.xres * 25.4e-3 / proj.dpi  # in m
+        # almost same value as above. Sets magnification to 1
+        # proj.d_ccd = (loc.ia_bounds[1] - loc.ia_bounds[0] - laser.thickness)  # in m
+        proj.d_ia = loc.ia_bounds[1] - loc.ia_bounds[0]  # in m; ia_bounds (max - min)
+        proj.compute()
+    \end{minted}
+    \item \textbf{Image Generation}
+    \begin{minted}{python}
+        # setup particle image parameters (intensity computation)
+        sx, sy = 2, 2
+        cache = (proj.projections[:, 2], proj.projections[:, 2],
+                 proj.projections[:, 0], proj.projections[:, 1],
+                 sx, sy, 1.0, 1.0,
+                 2, 1, loc.locations[:, 2])
+        intensity = Intensity(cache, proj)
+        intensity.compute_mpi()
+
+        # save image
+        snap = ImageGen(intensity)
+        snap.snap(snap_num=1)
+        snap.save_snap(fname=path + 'snap1/' + str(i) + '.tif')
+
+        # second snap generation
+        cache2 = (proj.projections2[:, 2], proj.projections2[:, 2],
+                  proj.projections2[:, 0], proj.projections2[:, 1],
+                  sx, sy, 1.0, 1.0,
+                  2, 1, loc.locations2[:, 2])
+        intensity2 = Intensity(cache2, proj)
+        intensity2.compute_mpi()
+        #
+        snap2 = ImageGen(intensity2)
+        snap2.snap(snap_num=2)
+        snap2.save_snap(fname=path + 'particle/' + str(i) + '.tif')
+    \end{minted}
+\end{enumerate}
+
+\subsection{Parallel Capabilites}
+The module leverages MPI, multiprocessing, and Dask to facilitate parallelized computations, making it suitable for high-resolution image generation:
+\begin{itemize}
+    \item \textbf{MPI:} Parallelizes particle location and intensity calculations generation.
+    \item \textbf{Dask:} Handles large intensity field arrays efficiently. Best for large-resolution images.
+    \item \textbf{Multiprocessing:} For personal computer parallelization capabilities without MPI.
+\end{itemize}
+
+For distributed execution with MPI. Save to a Python file and execute:
+\begin{minted}{python}
+    mpirun -n 4 python main_mpi.py
+\end{minted}
+
+\subsubsection{Future Work}
+The current code is actively maintained, with ongoing enhancements planned to:
+\begin{itemize}
+    \item Expand support for stereoscopic PIV.
+\end{itemize}
+
+\subsubsection{Citation}
+If you use this code in your research, please cite this dissertation or the associated paper as follows:
+
+\fullcite{kalagotla2024}
+
+\subsubsection{Contact}
+For inquiries or contributions, contact the author at \href{mailto:dilip.kalagotla@gmail.com}{dilip.kalagotla@gmail.com}
+
+
+\newpage
+
+\section{Appendix C: PIVnet Code Documentation}
+\subsection{Overview}
+The PIVnet module is a custom-developed, open-source framework designed for advanced processing and analysis of Particle Image Velocimetry (PIV) data. It is specifically tailored to correct particle inertia bias using a bilateral convolutional neural network (CNN) architecture. The module is available on GitHub at \href{https://github.com/kalagotla/PIVnet}{https://github.com/kalagotla/PIVnet}. Contact me for further instructions.\par
+
+\subsection{Features}
+The PIVnet module includes:
+\begin{itemize}
+    \item \textbf{Data Handling:} Reads, parses, and preprocesses PIV image data stored in hierarchical folder structures, with support for \mintinline{python}{.tif} files and associated scalar parameters.
+    \item \textbf{Model Training and Evaluation:} Supports training, validation, and testing of neural networks with early stopping and adaptive learning rate features. Currently, it provides functionality to test three distinct models.
+    \item \textbf{Parallel Processing:} Utilizes multi-GPU environments for accelerated computation, leveraging \mintinline{python}{torch.nn.DataParallel} for seamless scaling across devices.
+    \item \textbf{Experiment Tracking:} Integrates with ClearML for real-time tracking of experiment metrics, facilitating reproducibility and comprehensive analysis.
+    \item \textbf{Visualization:} Provides utilities for visualizing model predictions and loss trends, aiding in debugging and evaluation.
+\end{itemize}
+
+\subsection{Core Functionality}
+\begin{itemize}
+    \item \textbf{Data Loading and Preprocessing:} The \mintinline{python}{PIVDataset} class reads images from the specified directory, validates consistency across input-output pairs, and prepares the data for use in PyTorch models. Scalar parameters, such as Mach and Reynolds numbers, are extracted for embedding and model input.
+    \item \textbf{Model Design:} The current module includes several models:
+    \begin{itemize}
+        \item BICSNet: As discussed in the current dissertation.
+        \item BICNet: A denser version with all the skip-connections enabled.
+        \item Residual net: A residual network based on Fan et al. \cite{fan2023} architecture.
+    \end{itemize}
+    \item \textbf{Training Pipeline:} The training script enables:
+    \begin{itemize}
+        \item Loading and splitting datasets into training, validation, and testing subsets.
+        \item Training models with gradient clipping, dynamic learning rate adjustments, and periodic checkpointing.
+        \item Logging training progress to ClearML.
+    \end{itemize}
+    \item \textbf{Image Generation:} Synthetic images are generated using the trained models for further analysis, stored in organized output directories, and formatted for compatibility with OpenPIV processing.
+    \item \textbf{Visualization and Analysis:} Tools for visualizing model outputs, comparing predictions with ground truths, and plotting loss metrics are provided.
+\end{itemize}
+
+\subsection{Parallel Capabilities}
+The PIVnet module is designed to handle large amounts of data required for training a CNN. The data generated from the \mintinline{python}{lptlib} is used by \mintinline{python}{sypivlib} to generate images for training. The parallelization for the model training is implemented using the multi-GPU capabilities in \mintinline{python}{pytorch} library. Further, data processing after model training is achieved by MPI for distributed environments. We also implemented PIV image processing with openPIV on HPC.\par
+
+\subsection{Availability and Contributions}
+The source code is hosted on GitHub. Contact me at \href{mailto:dilip.kalagotla@gmail.com}{dilip.kalagotla@gmail.com} for the source code. Users can fork the repository, report issues, and contribute enhancements. Comprehensive documentation and examples are included to facilitate adoption.
+
+\subsection{Future Directions}
+Planned enhancements include integrating additional regularization techniques, supporting domain-transfer learning, and extending compatibility to alternative PIV formats.
+
+\subsection{Citation}
+If you use this code in your research, please cite this dissertation or the associated paper as follows:
+
+\fullcite{kalagotla2025}
+
+\newpage
+
+\section{Appendix D: BICSNet Sampled Results}
+Here, we present randomly sampled data to highlight the BICSNet model's performance compared to the ground truth data. The results illustrate the model's ability to correct particle inertia biases for various test cases, spanning multiple Mach numbers, deflection angles, and particle characteristics. The model achieves significant error reductions for Mach numbers within the training distribution, closely approximating the ground truth and capturing the underlying physics with reasonable accuracy. This indicates that the model effectively learns the complex, nonlinear relationships between input parameters and velocity profiles. However, for the out-of-distribution case, such as Mach 7.6, the model fails to adequately capture the expected physics, as evidenced by the larger prediction discrepancies. This can be seen in the sample plots listed below. This highlights a limitation in the current model architecture and suggests the need to incorporate physics-informed loss functions or datasets extending to these regions. Despite this limitation, the model demonstrates robust performance across most cases, indicating that it is a valuable tool for enhancing PIV data analysis and mitigating particle inertia effects.
+
+\begin{figure}[!hbt]
+    \centering
+    \begin{subfigure}[b]{0.23\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/06pivnet/appendix/training_machs_1p5_3p0/11.35_strong_10.0_2000.0.png}
+        \caption{Sample 1}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.23\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/06pivnet/appendix/training_machs_1p5_3p0/12.11_strong_30.0_950.0.png}
+        \caption{Sample 2}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.23\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/06pivnet/appendix/training_machs_1p5_3p0/12.11_weak_0.5_2000.0.png}
+        \caption{Sample 3}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.23\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/06pivnet/appendix/training_machs_1p5_3p0/12.11_weak_5.0_2000.0.png}
+        \caption{Sample 4}
+    \end{subfigure}
+    
+    \vspace{0.5cm}
+    
+    \begin{subfigure}[b]{0.23\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/06pivnet/appendix/training_machs_1p5_3p0/12.11_weak_40.0_1212.5.png}
+        \caption{Sample 5}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.23\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/06pivnet/appendix/training_machs_1p5_3p0/22.71_strong_10.0_2000.0.png}
+        \caption{Sample 6}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.23\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/06pivnet/appendix/training_machs_1p5_3p0/34.07_strong_10.0_1737.5.png}
+        \caption{Sample 7}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.23\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/06pivnet/appendix/training_machs_1p5_3p0/34.07_strong_30.0_1212.5.png}
+        \caption{Sample 8}
+    \end{subfigure}
+    
+    \caption{Normalized velocity profiles for training Mach numbers (1.5 to 3.0) with varying deflection angles, particle diameters, and densities.}
+    \label{fig:training_mach_profiles}
+\end{figure}
+
+\begin{figure}[!hbt]
+    \centering
+    \begin{subfigure}[b]{0.23\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/06pivnet/appendix/training_machs_4p3_5p0/13.7_strong_5.0_1475.0.png}
+        \caption{Sample 1}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.23\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/06pivnet/appendix/training_machs_4p3_5p0/13.7_weak_5.0_950.0.png}
+        \caption{Sample 2}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.23\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/06pivnet/appendix/training_machs_4p3_5p0/13.21_weak_0.5_950.0.png}
+        \caption{Sample 3}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.23\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/06pivnet/appendix/training_machs_4p3_5p0/13.21_weak_0.5_1737.5.png}
+        \caption{Sample 4}
+    \end{subfigure}
+    
+    \vspace{0.5cm}
+    
+    \begin{subfigure}[b]{0.23\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/06pivnet/appendix/training_machs_4p3_5p0/26.42_weak_5.0_2000.0.png}
+        \caption{Sample 5}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.23\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/06pivnet/appendix/training_machs_4p3_5p0/39.63_strong_30.0_950.0.png}
+        \caption{Sample 6}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.23\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/06pivnet/appendix/training_machs_4p3_5p0/41.11_strong_30.0_1212.5.png}
+        \caption{Sample 7}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.23\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/06pivnet/appendix/training_machs_4p3_5p0/41.11_weak_0.5_1212.5.png}
+        \caption{Sample 8}
+    \end{subfigure}
+    
+    \caption{Normalized velocity profiles for training Mach numbers (4.3 to 5.0) with varying deflection angles, particle diameters, and densities.}
+    \label{fig:training_mach_4p3_5p0_profiles}
+\end{figure}
+
+\begin{figure}[!hbt]
+    \centering
+    \begin{subfigure}[b]{0.23\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/06pivnet/appendix/mach_2.5/9.93_strong_30.0_1212.5.png}
+        \caption{Sample 1}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.23\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/06pivnet/appendix/mach_2.5/19.86_strong_0.5_2000.0.png}
+        \caption{Sample 2}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.23\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/06pivnet/appendix/mach_2.5/19.86_strong_5.0_2000.0.png}
+        \caption{Sample 3}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.23\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/06pivnet/appendix/mach_2.5/19.86_strong_10.0_1737.5.png}
+        \caption{Sample 4}
+    \end{subfigure}
+    
+    \vspace{0.5cm}
+    
+    \begin{subfigure}[b]{0.23\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/06pivnet/appendix/mach_2.5/19.86_strong_10.0_2000.0.png}
+        \caption{Sample 5}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.23\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/06pivnet/appendix/mach_2.5/19.86_strong_30.0_1212.5.png}
+        \caption{Sample 6}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.23\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/06pivnet/appendix/mach_2.5/29.79_strong_5.0_2000.0.png}
+        \caption{Sample 7}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.23\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/06pivnet/appendix/mach_2.5/29.79_weak_40.0_1212.5.png}
+        \caption{Sample 8}
+    \end{subfigure}
+    
+    \caption{Normalized velocity profiles for Mach 2.5 across different test cases.}
+    \label{fig:mach_2.5_profiles}
+\end{figure}
+
+\begin{figure}[!ht]
+    \centering
+    \begin{subfigure}[b]{0.23\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/06pivnet/appendix/mach_7.6/14.53_strong_10.0_2000.0.png}
+        \caption{Sample 1}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.23\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/06pivnet/appendix/mach_7.6/14.53_strong_30.0_1212.5.png}
+        \caption{Sample 2}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.23\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/06pivnet/appendix/mach_7.6/29.06_strong_30.0_950.0.png}
+        \caption{Sample 3}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.23\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/06pivnet/appendix/mach_7.6/43.59_strong_5.0_2000.0.png}
+        \caption{Sample 4}
+    \end{subfigure}
+    
+    \vspace{0.5cm}
+    
+    \begin{subfigure}[b]{0.23\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/06pivnet/appendix/mach_7.6/43.59_strong_30.0_950.0.png}
+        \caption{Sample 5}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.23\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/06pivnet/appendix/mach_7.6/43.59_strong_30.0_1212.5.png}
+        \caption{Sample 6}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.23\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/06pivnet/appendix/mach_7.6/43.59_weak_0.5_2000.0.png}
+        \caption{Sample 7}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.23\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/06pivnet/appendix/mach_7.6/43.59_weak_40.0_1212.5.png}
+        \caption{Sample 8}
+    \end{subfigure}
+    
+    \caption{Normalized velocity profiles for Mach 7.6 with varying deflection angles, particle diameters, and densities.}
+    \label{fig:mach_7.6_profiles}
+\end{figure}
+

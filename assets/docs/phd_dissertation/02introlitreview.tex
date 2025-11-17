@@ -1,0 +1,466 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Introduction:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Introduction \& Motivation}\label{ch:intro}
+
+% Talk about why PIV is important for the field of aerospace engineering -- Refer back to Orkwis' words from the white paper
+% Discuss the uncertainty quantification attempts done in previous works -- Mostly Delft works
+% How particle lag is relevant -- how it compares to previous works
+
+Unsteadiness, turbulence, shock waves, shear layers, and vorticity are standard features of flows that concern the development of aerospace systems. These phenomena exist in the aerodynamics of wings, missiles, Unmanned Aerial Vehicles (UAVs), engine inlets, weapons bays, exhaust nozzles, and more. An accurate understanding of the associated flow physics is needed to develop robust aerospace systems. The study of such complex flow fields requires a multidisciplinary approach that involves collaborative experiments, theoretical frameworks, and computational simulations. To understand complex flow phenomena, the problem must be established by understanding the conditions under which they occur. These conditions are then studied by developing a theoretical framework (T) that is governed by known mathematical models. In studying fluids, theoretical models are usually governed by the Navier-Stokes equations and are generally applicable to simple flows and geometries. Further analysis using experiments (E) may help validate the theoretical work developed and provide insight into understanding flows in complex geometries. Later, numerical models (N) can be built, verified, and validated using the knowledge from theoretical and experimental work. This knowledge gained from numerical simulations will lead to the development of better and more robust experiments in the future. As such, a collaborative effort between numerical analysts and experimentalists is the way forward to a critical understanding of the complex physics behind these flow phenomena. This workflow structure (T-E-N) has been the key to building precision aerospace components that work under non-simulated flow conditions for many years. This is represented in Fig. \ref{fig:1-1}. As seen from the figure, the double-sided arrows represent the collaborative efforts between multiple disciplines, and by working together, a complex flow phenomenon is understood, which is represented by one-sided arrows. \par
+
+\begin{figure}[ht]
+	\centering
+	\includesvg[scale=1.0]{./figures/02intro/1-1}
+	\caption{Traditional collaborative way of studying complex flow fields; T: Theoretical frameworks, E: Experiments; N: Numerical analysis}
+	\label{fig:1-1}
+\end{figure}
+
+Recently, developments in computational hardware have driven a data-centric approach to aerospace engineering as a whole. Burton et al. \cite{brunton2021} discuss this aspect in detail. This includes the study of complex flows, supporting both experimental and numerical aspects. The data-centric approach, driven by data science (DS), helps identify patterns that are physically difficult to estimate. Building on the previous methodology, the data-centric approach for driving innovation in studying complex flow features is presented in Fig. \ref{fig:1-2}. The data science (DS-T-E-N) aspect introduced acts as an intermediate step between the theoretical models, experiments, and numerical analysis (T-E-N), using numerous machine learning models. As represented by arrows, the data obtained from T-E-N would be passed on to data-driven modeling, which provides feedback to construct more accurate numerical models. These models, in turn, provide support to improve experiments and/or theoretical models to some extent. A major disadvantage of this type of approach is the modeling of outlier data into feedback loops for numerical models. This is being handled using physics-informed machine learning, specifically physics-informed neural networks (PINNs), which constrain the modeling ability to be bounded within the known physics of a system. This is a highly desirable aspect, which makes this approach an active area of research. The PINNs approach has been extensively reviewed by Karniadakis et al. \cite{karniadakis2021}. \par
+
+\begin{figure}[ht]
+	\centering
+	\includesvg[scale=1.2]{./figures/02intro/1-2}
+	\caption{Data centric collaborative way of studying complex flow fields; T: Theoretical frameworks, E: Experiments; N: Numerical analysis, DS: Data Science}
+	\label{fig:1-2}
+\end{figure}
+
+The shock wave boundary layer interaction (SBLI) has long been considered one of the complex flow features that occur on both internal and external surfaces. They can often be a critical factor in deciding the reliability of aerospace components (Huang et al. \cite{huang2020}).  Babinsky et al. \cite{babinsky2011}, who compiled important work from leading international experts in the field, present a detailed understanding of the physics of various SBLIs and their study using the T-E-N methodology. A schematic for two-dimensional turbulent SBLIs of ideal gas is shown in Fig. \ref{fig:1-3}. The figure illustrates the various types of interactions that are possible. These represent an effort to understand the physics behind SBLIs using theoretical models. A schematic of the basic types of dimensionless 3D SBLIs is shown in Fig. \ref{fig:1-4}, which has been the research interest for the past few decades. These interactions translate well into practical settings. Such models provide an enhanced conceptual framework to guide both the design of related experimental studies and the correlation and interpretation of the resulting data.\par
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[scale=0.65]{./figures/02intro/2D-SBLI.png}
+	\caption{Basic types of 2D turbulent shock wave-boundary-layer-interactions; Credit: Babinsky et al. \cite{babinsky2011}}
+	\label{fig:1-3}
+\end{figure}
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[scale=0.6]{./figures/02intro/3D-SBLI.png}
+	\caption{Basic types of 3D shock wave-boundary-layer-interactions; Credit: Babinsky et al. \cite{babinsky2011}}
+	\label{fig:1-4}
+\end{figure}
+
+Here, an effort is presented to understand the structure of an incident shock-generated SBLI as an example. One of the important works and the primary motivation for the current study is an AIAA-sponsored workshop conducted in 2010 by DeBonis et al. \cite{debonis2012}. In the workshop, numerous computational codes predicting complex shock boundary layer interactions (SBLIs) were compared with their respective PIV data. The numerical codes presented in the workshop included Reynolds-Averaged Navier-Stokes (RANS) methods and scale-resolved Navier-Stokes methods, encompassing large-eddy simulations (LES), direct numerical simulations (DNS), and hybrid RANS/LES methods. The obtained CFD results were compared with the PIV data using an error metric. This metric was defined as the average of the difference between the experimental and numerical results. The conclusions drawn showed that all the numerical simulations were remarkably similar in error levels. However, the error levels are high, reaching an average of 4\% in cases of strong shock for first-order metrics. In cases of low shock strength, these error levels averaged around 2.5\%. These metrics highlight the inherent uncertainties in PIV and the modeling assumptions in the numerical analyses. It is also worth noting that these error metrics are reported as the weighted average over the whole domain under consideration. The local levels around the shocks and recirculation zones might be higher than these numbers. To improve confidence in numerical codes, the best-case scenarios of the workshop were enhanced by carefully modeling the grid and boundary conditions, as described by Friedlander et al. \cite{friedlander2015}. A theory was proposed based on the well-known tracer particle response in supersonic flows and was loosely implemented by linearly integrating particle paths. This has significantly improved the error metric levels. Later, the approach was extended in a work by Kalagotla et al. \cite{kalagotla2018}, using the Stokes drag model, which improved confidence in the importance of considering the effect of tracer particle response when comparing numerical data with its respective PIV data.\par
+
+The whole collaborative effort can be summarized using Fig. \ref{fig:1-5}. The data presented for the theoretical and experimental work are obtained from a series of experimental campaigns by Eagle et al. \cite{eagle2014}. The numerical data were obtained from the work of Galbraith \cite{galbraith2011}.
+
+\begin{figure}[ht]
+	\centering
+	\includesvg[scale=0.75]{./figures/02intro/1-4}
+	\caption{Collaborative efforts to study an incident oblique shock wave-boundary layer interaction}
+	\label{fig:1-5}
+\end{figure}
+
+The current work is a direct extension of the series of works described above. Here, efforts are made to build a comprehensive sandbox for quantifying and reducing the uncertainty in tracer particle response generated in experiments. The response of the particles as they pass through the complex flows is analyzed using tools from data science (DS) such as deep learning, and a feedback loop is constructed. This helps to understand flows that are hard to understand using the traditional T-E-N methodology. For example, the three-dimensional SBLIs or shock interactions are complex and require a collaborative DS-T-E-N effort to provide confidence in the numerical codes, which help to understand these flows with deeper insights. Therefore, we propose that the feedback obtained from the DS loop is the key to improving confidence for numerical models while simultaneously providing key insights into quantifying tracer response uncertainty in non-intrusive experiments.\par
+
+
+%-------------------------------------------------------------------
+% particle image velocimetry description
+\section{Notes on flow velocity measurement techniques}
+\label{sec:velocity_techniques}
+% Components of non-intrusive techniques
+Traditionally, velocity measurement techniques have utilized the physics of gases to estimate the velocity of a flow field indirectly. This has been most commonly exploited through the use of pressure probes, which utilize the isentropic gas equation to estimate velocity; wind anemometers, which leverage rotational speed to compute velocity; and hot wires, which employ the concept of temperature fluctuations to measure velocity. Hot-wire anemometry is perhaps the most versatile technique among them, having been successfully applied to flows ranging from low subsonic to high supersonic. These flows are traditionally studied using data correction techniques (Kovasznay \cite{kovasznay1950}). However, improvements in hardware, as demonstrated by Kokmanian et al. \cite{kokmanian2019} using nanotechnology, indicate advancements in hot wire probes. This enables wider temporal resolution to reliably study supersonic flows. The main advantage is that these techniques are easy to implement. Due to its direct dependence on flow physics, the uncertainty is easily quantifiable. However, one of the drawbacks of significance is that these techniques directly influence the flow field under study. As such, these types of techniques are classified as ``intrusive". More advantages and drawbacks of these techniques are presented in Table \ref{tab:1-1}.
+
+\begin{table}[ht]
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{|c|c|c|}
+\hline
+\textit{Technique} & \textit{Advantages} & \textit{Limitations} \\ \hline
+Indirect & \begin{tabular}[c]{@{}c@{}}Easy to implement\\ Straightforward uncertainty quantification\\ Well-matured\\ Desirable to study turbomachinery flows\end{tabular} & \begin{tabular}[c]{@{}c@{}}Pointwise\\ Should interact with flow\\ Hard to accurately estimate \\ post supersonic regime\end{tabular} \\ \hline
+Optical & \begin{tabular}[c]{@{}c@{}}Planar/Volumetric data can be studied\\ Instantaneous quantitative visualizations\\ Versatile mach number flow regimes\\ High accuracy is possible\\ Coherent turbulence structures study\end{tabular} & \begin{tabular}[c]{@{}c@{}}Relatively hard to setup\\ Involved uncertainty quantification\\ Setup is case-by-case basis\\ Significant computational effort\\ Reliability\\ Expertise is a must\end{tabular} \\ \hline
+\end{tabular}%
+}
+\caption{Advantages and limitations of indirect and optical velocity measurement techniques}
+\label{tab:1-1}
+\end{table}
+
+% Non-intrusive techniques 
+Optical measurement techniques have been developed to overcome the disadvantages posed by the indirect measurement techniques mentioned above. Most fluids are transparent, making it difficult to study their flow characteristics. Hence, fluids are studied by visualizing suspended particles, which may be either solids or fluids. There are a few relatively new techniques that utilize excitation (Molecular Tagging Velocimetry (MTV)) of fluids to study them without the need to track suspended particles. The inspiration for most of these techniques can be traced back to the Jomon people, who decorated their pottery using structures that resemble Karman vortices about 4500 years ago. Leonardo Da Vinci created very detailed drawings of vortices and is often cited as one of the inspirations for qualitative visualization of flows. Types of such inspiration for qualitative analyses can be found throughout the 19th and 20th centuries, with Ludwig Prandtl's groundbreaking paper, ``On the Motion of Fluids in Very Little Friction" \cite{prandtl1904}, as the front-runner. The work presented utilized particles suspended in water to demonstrate the flow properties qualitatively. A significant amount of work done by Prandtl at the beginning of the twentieth century is quantified by Willert et al. \cite{willert2019} in 2019, using the latest algorithms. This demonstrates the competence and importance of visualization and data processing techniques utilized in optical measurements. For a detailed discussion of the introduction to qualitative visualizations, the reader is referred to Raffel et al. \cite{raffel2018}.\par
+
+Quantitative optical velocity measurements are relatively new, with roots dating back to the 1930s, when particle streak images were analyzed manually (Adrian \cite{adrian1991}). However, it was not until Young's fringe method of interrogation was developed in the 1970s (Burch et al. \cite{burch1968} and Stetson \cite{stetson1975}) that accurate quantitative results were obtained. Later, advances in the tools utilized for these experiments, such as lasers, CCD cameras, and computational power, paved the way for instantaneous, quantitative, high-fidelity data. There are a few drawbacks, which are listed in the Table \ref{tab:1-1}. However, the advantages, also listed in Table \ref{tab:1-1}, far outweigh the limitations, making these techniques an active part of research to date.\par
+
+It is imperative to understand the terminology used in optical velocity measurement techniques. They are summarized below:
+\begin{itemize}
+    \item \textbf{Interrogation Area (IA) or Volume (IV)}: The flow region under study. It can be a point of interest, or either planar or volumetric.
+    \item \textbf{Tracer particles}: Particles that are added to the flow for visualization. These are assumed to faithfully track the flow.
+    \item \textbf{Illumination}: The tracer particles are usually illuminated by a coherent, monochromatic laser, and the data are extracted depending on the core principle of the measurement technique.
+    \item \textbf{Scattering}: Light scattered by tracer particles illuminated by the laser. There are two types of scattering: elastic and inelastic scattering.
+    \item \textbf{Recording}: Usually, the scattered light is captured using charged-coupled device (CCD) sensors known as recording.
+    \item \textbf{Evaluation}: The images obtained are then evaluated to quantify the velocity in the IA region, known as evaluation.
+    \item \textbf{Post-processing}: The data is later processed using sophisticated algorithms to remove spurious velocities and to understand complex flow physics. This is known as post-processing.
+\end{itemize}
+
+\section{Particle based optical velocity measurement techniques}\label{sec:particletechniques}
+% A generalized discussion about particle-based non-intrusive flow measurement techniques
+In this section, the particle-based optical flow measuring techniques are reviewed, as the focus of this work is to understand the uncertainty arising from the tracer particle response. One of the primary classifications of these techniques can be introduced using the scattering physics of the particles under study. There are two types of scattering:
+\begin{itemize}
+    \item \textbf{Elastic}: The internal state of the particles does not change during the scattering process.
+    \item \textbf{Inelastic}: The internal state of the particles changes during the scattering process, which might amount to the excitation of the electrons of an atom in the scattering particle or the complete annihilation of the scattering particle to create a new particle.
+\end{itemize}
+
+Most of the current particle-based optical measurements fall under elastic scattering, which can be further classified based on the relative scattering size of a particle, which is defined as the ratio of characteristic dimension (the circumference in the case of a spherical particle) to the wavelength of the light as shown in the equation \ref{eq:1-1}.\par
+
+\begin{equation}
+    x_{p} = \frac{2\pi r}{\lambda}
+    \label{eq:1-1}
+\end{equation}
+
+where $r$ is the radius of the spherical particle under consideration and $\lambda$ is the wavelength of the light that impinges on the particle.\par
+
+Based on the type of spectroscopy and the relative scattering size of a particle, multiple optical measurement techniques were designed. These are classified in Table \ref{tab:1-2}. The Mie scattering regime is of particular interest due to the size of the tracers used in popular optical velocimetry techniques.
+
+Only molecular tagging velocity (MTV) offers flow velocity measurements using molecules as tracers, or, in some cases, by exciting the molecules within the flow itself, without the need for tracers. Hence, this method is highly suitable for supersonic flows. However, the technique is expensive due to the instrumentation involved and is not as mature as the techniques based on Mie scattering.\par
+
+\begin{table}[ht]
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{|c|c|c|}
+\hline
+\textit{Spectroscopy type} & \textit{Sub-classification} & \textit{Optical Techniques} \\ \hline
+\multirow{3}{*}{Elastic Scattering} & Geometric Scattering ($x_{p} > 1$) & Large Scale Particle Image Velocimetry (LSPIV) \cite{muste2008} \\ \cline{2-3} 
+ & Mie Scattering ($x_{p} \approx 1$) & \begin{tabular}[c]{@{}c@{}}Most popular optical velocimetry techniques.\\ Summarized in Table \ref{tab:1-3}\end{tabular} \\ \cline{2-3} 
+ & Rayleigh Scattering ($x_{p} <<1$) & Filtered Rayleigh Scattering (FRS) \cite{gopal2021} \\ \hline
+Inelastic Scattering & Raman scattering & \multirow{2}{*}{Molecular Tagging Velocimetry (MTV) \cite{fangbo2021}} \\ \cline{1-2}
+Luminescence & Fluorescence, Phosphorescence &  \\ \hline
+\end{tabular}%
+}
+\caption{Classification of optical techniques based on spectroscopy type}
+\label{tab:1-2}
+\end{table}
+
+The most popular among them are listed in Table \ref{tab:1-3}, highlighting their advantages and limitations. The core principles behind these techniques are listed:
+\begin{itemize}
+    \item \textbf{Doppler effect}: The velocity is estimated by measuring the change in frequency of the scattered beam that impinges on the tracer particles.
+    \item \textbf{Traveling time}: The velocity is estimated by measuring the time of flight of tracer particles carried with the fluid passing through two separated, parallel, highly focused laser beams.
+    \item \textbf{Distance based}: The velocity is estimated by illuminating the tracer particles using a pulsating laser beam and capturing their locations using a CCD sensor one after the other.
+\end{itemize}
+
+% Table generated from https://www.tablesgenerator.com/#
+\begin{table}[ht]
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{ccccc}
+\multicolumn{5}{c}{\textbf{Optical Measurement Techniques in Mei Regime}} \\ \hline
+\multicolumn{1}{|c|}{\textit{Core Principle}} & \multicolumn{1}{c|}{\textit{Technique}} & \multicolumn{1}{c|}{\textit{Measurement type}} & \multicolumn{1}{c|}{\textit{Advantages}} & \multicolumn{1}{c|}{\textit{Limitations}} \\ \hline
+\multicolumn{1}{|c|}{\multirow{2}{*}{Doppler Effect}} & \multicolumn{1}{c|}{\begin{tabular}[c]{@{}c@{}}Laser Doppler Velocimetry (LDV)/\\ Laser Doppler Anemometry (LDA)\end{tabular}} & \multicolumn{1}{c|}{Pointwise} & \multicolumn{1}{c|}{\begin{tabular}[c]{@{}c@{}}Easy calibration\\ Highly accurate\\ Desirable for turbomachinery\end{tabular}} & \multicolumn{1}{c|}{\begin{tabular}[c]{@{}c@{}}Cannot capture coherent flow structures\\ Point measurements are time consuming\\ to reconstruct a flow field\end{tabular}} \\ \cline{2-5} 
+\multicolumn{1}{|c|}{} & \multicolumn{1}{c|}{Doppler Global Velocimetry (DGV)} & \multicolumn{1}{c|}{Planar} & \multicolumn{1}{c|}{\begin{tabular}[c]{@{}c@{}}Frequency based removes\\ particle dynamics dependency\\ No laser pulsation\end{tabular}} & \multicolumn{1}{c|}{\begin{tabular}[c]{@{}c@{}}Reliability\\ Maturity of tools involved - esp. absorption cells\\ Uncertainty Quantification\end{tabular}} \\ \hline
+\multicolumn{1}{|c|}{Traveling Time} & \multicolumn{1}{c|}{\begin{tabular}[c]{@{}c@{}}Laser Transit Velocimetry (LTV)/\\ Laser two-focus Velocimetry (L2F)\end{tabular}} & \multicolumn{1}{c|}{Pointwise} & \multicolumn{1}{c|}{\begin{tabular}[c]{@{}c@{}}Desirable for turbomachinery\\ due to optical accessibility\\ High signal-to-noise level\end{tabular}} & \multicolumn{1}{c|}{\begin{tabular}[c]{@{}c@{}}Involved calibration\\ Point measurements are time consuming\\ to reconstruct a flow field\end{tabular}} \\ \hline
+\multicolumn{1}{|c|}{\multirow{2}{*}{Distance Based}} & \multicolumn{1}{c|}{Particle Image Velocimetry (PIV)} & \multicolumn{1}{c|}{Volumetric} & \multicolumn{1}{c|}{\begin{tabular}[c]{@{}c@{}}Most matured technique\\ Continued research to \\ expand capabilities\\ Instantaneous volumetric\\ flow visualizations\end{tabular}} & \multicolumn{1}{c|}{\begin{tabular}[c]{@{}c@{}}Setup for complex geometries\\ Further improvements heavily rely\\  on advancements in the tools used\\ Particle dynamics\\ Seeding issues\\ Calibration issues\end{tabular}} \\ \cline{2-5} 
+\multicolumn{1}{|c|}{} & \multicolumn{1}{c|}{Particle Tracking Velocimetry (PTV)} & \multicolumn{1}{c|}{Volumetric} & \multicolumn{1}{c|}{\begin{tabular}[c]{@{}c@{}}Highly accurate due to better \\ spatial and temporal resolutions\\ Low particle densities\end{tabular}} & \multicolumn{1}{c|}{\begin{tabular}[c]{@{}c@{}}Needs significant computational resources\\ Maturity of the technique\\ Particle dynamics\end{tabular}} \\ \hline
+\end{tabular}%
+}
+\caption{Popular optical velocity measurement techniques}
+\label{tab:1-3}
+\end{table}
+
+For a detailed summary of the techniques listed in Table \ref{tab:1-2} and Table \ref{tab:1-3}, the reader is referred to the chapter ``Velocity, Vorticity, and Mach Number" in Handbook of Experimental Fluid Mechanics by Tropea et al. \cite{tropea2007}.\par
+
+\section{A note on intrusive and non-intrusive velocimetries}
+Traditionally, most techniques used to measure physical parameters of a flow field are categorized based on their intrusiveness and invasiveness. These can be best understood using Fig. \ref{fig:1-6}. Using this classification methodology, the above-discussed techniques will fall into the categories as listed:
+\begin{enumerate}
+    \item Intrusive/Invasive: The indirect velocimetry techniques listed in section \ref{sec:velocity_techniques}
+    \item Intrusive/Non-Invasive: Techniques such as ultrasonic anemometry fall under this category, where the sensor is not in touch with the flow, but the flow field might have to be modified to get a correct reading.
+    \item Non-Intrusive/Invasive: Most of the Mie scattering-based techniques, which have been traditionally considered non-intrusive only, can be further classified into invasive techniques. Here, the particles act as sensors to get the flow reading. Hence, they act as invasive species.
+    \item Non-Intrusive/Non-Invasive: Most of the qualitative flow visualizations, like Shadowgraph and Schlieren, fall under this category. A few MTV processes, where tracers are not used, also fall under this category.
+\end{enumerate}
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[scale=0.6]{phd_dissertation/figures/02intro/intrusive_invasive.png}
+    \caption{Classification of velocimetry techniques}
+    \label{fig:1-6}
+\end{figure}
+
+The above classification emphasizes the presence of particles in optical measurement techniques where it is required. This is important moving forward, especially with new techniques like MTV, where, in some cases, tracer particles are not necessary, but the whole process is similar to PIV. This ``invasive" tag helps to highlight the high quantities of uncertainties caused by the tracer particles in the optical measurements. The literature supporting this argument is presented in the section \ref{sec:tracers}\par
+
+\section{Tracer particles in optical velocimetries}\label{sec:tracers}
+% Refer to Raffel et al.
+One of the major assumptions of the Mei regime-based optical velocimetries is that the particles track the flow faithfully. However, this is not true in multiple cases and has been a point of discussion in many works. Most of the initial works citing the assumption as an issue focused on studying the particle physics of different types of particles and their optimal generation (\cite{hunter1985}, \cite{melling1986}, \cite{melling1997}, \cite{meyers1991}, \cite{kahler2002}). The efforts have been directed towards the better development of particle generators, which have proved to be more cost-effective at the time and improved the reliability of the technique as a whole.\par
+
+
+\subsection{Flow tracking characteristics}
+One of the important dimensionless quantities of interest when dealing with tracer particles is the Stokes number of the particle. It is defined as the ratio of the particle response time, $\tau_{p}$, to the characteristic time scale in the flow, $\tau_{f}$, and is given by:
+
+\begin{equation}
+    St = \frac{\tau_{p}}{\tau_{f}}
+    \label{eq:stokesnumber}
+\end{equation}
+
+The nondimensional Stokes number has been a standard method for understanding the particle tracing capability in a flow of interest. Determining $\tau_{p}$ is not a straightforward task for complex flows. The particle response time is correlated with the coefficient of drag, which in turn is an empirical constant that depends on the particle specifications and the local flow properties. Empiricism can best be understood using Fig. \ref{fig:drag_plot}. Multiple curve fits have been proposed, as can be seen in the figure. These, along with other empirical models, will be part of the current study.\par
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[scale=0.75]{./figures/02intro/drag_re.png}
+	\caption{Empiricism of the coefficient of drag; credit: Loth \cite{loth2008}}
+	\label{fig:drag_plot}
+\end{figure}
+
+The relation between drag force and $\tau_{p}$ can be derived using the quasi-steady drag equation given by Mei \cite{mei1996}, that is,
+
+\begin{equation}
+    F_d = m_p \frac{d \vec{v_p}}{dt} = -\frac{1}{2}\rho_{f}{C_D}(A\boldsymbol{\hat{n}})(\vec{v_p}-\vec{u_f}).(\vec{v_p}-\vec{u_f})
+    \label{eq:empiricaldrag}
+\end{equation}
+
+where $F_d$ is the drag force acting on a particle, $m_p$ is the mass of the particle, $C_D$ is the drag coefficient, which depends on the local flow characteristics, and the particle specifications, $\rho_f$ is the local density of the fluid surrounding the particle, $A$ is the cross section area of the particle under study, $v_p$ and $u_f$ are the velocities of the particle and fluid packets considered. For a spherical particle, the Eq. \ref{eq:empiricaldrag} translates to,
+
+\begin{equation}
+    \frac{dv_{p}}{dt} = -\frac{18\mu\phi}{\rho_p{d_p}^2} (v_{p}-u_{f})
+    \label{eq:sphericaldrag}
+\end{equation}
+
+Where $d_p$ is the diameter of the spherical particle, $\mu$ is the fluid viscosity based on the local temperature, and $\phi$ is an empirical constant to deviate from the Stokes drag. However, with the new drag models proposed in recent years (for example, Loth \cite{loth2008}), this equation becomes more complex.
+
+With the advancement of technologies used in these optical velocimetries and an established theoretical understanding of the particle momentum, the next ideal step was to quantify the uncertainties generated during each phase of the process. The uncertainty caused by the tracer particle response is of particular interest for the current study. This is quite high in supersonic flows for individual cases (\cite{lang1999}, \cite{koike2007}, \cite{lazar2010}, \cite{ragni2011}, \cite{burns2015}, \cite{kalagotla2018}, \cite{kalagotla2020}, \cite{williams2015}, \cite{sciacchitano2019}). These works are summarized in table \ref{tab:1-4} for easy reference.\par
+
+\begin{table}[ht]
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{|c|c|c|c|}
+\hline
+\textbf{Work} & \textbf{Flow Type} & \textbf{Drag Models Used} & \textbf{Comments} \\ \hline
+Lang, 1999 \cite{lang1999} & \begin{tabular}[c]{@{}c@{}}Oblique shock,\\ M = 2.02, $\delta = 6.25^\circ$\end{tabular} & \begin{tabular}[c]{@{}c@{}}Oseen, Melling,\\ Goldstein, Abraham\end{tabular} & Testing drag models, particle response \\ \hline
+Koike, 2007 \cite{koike2007} & Normal SBLI, M = 1.80 & Stokes, Henderson & Methodology to quantify and correct PIV data \\ \hline
+Lazar, 2010 \cite{lazar2010} & Supersonic cross flow, M = 2.25 & Stokes & Quantify particle response uncertainty from PIV \\ \hline
+Ragni, 2011 \cite{ragni2011} & \begin{tabular}[c]{@{}c@{}}Oblique shock,\\ M = 2.00, $\delta = 9.00^\circ$\end{tabular} & Stokes & Estimated response times for various particles \\ \hline
+Burns, 2015 \cite{burns2015} & Inlet SBLI, M = 5.00 & Melling/Schiller-Nauman & Case study to validate LES to PIV \\ \hline
+Williams, 2015 \cite{williams2015} & \begin{tabular}[c]{@{}c@{}}Oblique shock,\\ M = 3.00 - 10.00, $\delta = normalized$\end{tabular} & Loth & Particle response at different Mach zones \\ \hline
+Kalagotla, 2018 \cite{kalagotla2018} & Inlet SBLI, M = 2.75 & Stokes & Case study to validate RANS to PIV \\ \hline
+Kalagotla, 2020 \cite{kalagotla2020} & Turbomachinery flow, M = 1.6 & Stokes & Methodology to validate RANS to PIV \\ \hline
+\end{tabular}%
+}
+\caption{A summary of tracer particle response quantification-based works}
+\label{tab:1-4}
+\end{table}
+
+Most of the listed works aim to understand the response of particles across an oblique shock, which has traditionally been used to quantify particle response. This is particularly relevant when selecting particles for an optical velocimetry experiment. However, there is no standardized approach in place to estimate the particle response for experimenters. One reason is that the response is dependent on the empirical drag acting on the particle in high-acceleration regions. To clarify this, numerous attempts have been made by researchers from around the world. Samimy and Lele \cite{samimy1991} conducted a numerical simulation of vortex structures and concluded that the particle Stokes number should be less than 0.05 to accurately capture flow features. Lang \cite{lang1999} used multiple drag models to understand the behavior of particles in supersonic flows. One of the important conclusions of interest was that neither the base Stokes drag nor the Melling correction performed well in comparison to their experimental data. This highlights the importance of selecting the right drag model for numerical analysis. Later, the works by Koike et al. \cite{koike2007} and Lazar et al. \cite{lazar2010} highlighted the improvement in data around the sudden acceleration achieved by using Stokes drag, which provided better results for numerical validation. However, there was never a study in their works to validate the use of Stokes drag for correction. Although drag models have been proposed that work better for various relative Reynolds numbers, studies using these models have not been conducted until very recently. For example, Burns et al. \cite{burns2015} used a modified drag law based on the Schiller-Nauman \cite{torobin1959} and Melling correction model to account for acceleration regions and local wall slip effects. This is specific to their use case, and the Schiller-Nauman model is known to perform better in the Mach 5 range. The works of Kalagotla et al. \cite{kalagotla2018} and \cite{kalagotla2020} highlight the methodology for stationary and turbomachinery flows. This shows the applicability of the a-posteriori tracer lag technique (as referenced by Sciacchitano \cite{sciacchitano2019}) to various flow types. Experimental work such as Ragni et al. \cite{ragni2011} focused on understanding the response times of different particles using a single shock strength. However, their study focused on obtaining the particle response time instead of the Stokes number, which makes the study applicable for flows in that Mach range. This is well understood in contrast to the work by Williams et al. \cite{williams2015}, who have shown that the particle response for different-sized particles at different Mach numbers and shock strengths follows a different trend. At lower Mach numbers, the particles exhibit a higher frequency response, which tends to increase with shock strength. In contrast, their response at higher Mach numbers tends to taper off with increased shock strength. This can be clearly understood from Fig. \ref{fig:response_plot}.
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[scale=0.75]{./figures/02intro/shock_strength_vs_frequency.png}
+	\caption{Frequency response of particles in contrast to varying Mach numbers and shock strengths; credit: Williams et al. \cite{williams2015}}
+	\label{fig:response_plot}
+\end{figure}
+
+\subsection{Light scattering properties}
+Another critical aspect that significantly contributes to the uncertainty is the light scattering capability of the tracer particle. The size of the tracer particles must be a balance between their light scattering and flow tracking capabilities in Mie regime-based optical measurement techniques to achieve a strong signal-to-noise ratio (SNR). This can cause a couple of uncertainties as outlined below:
+\begin{enumerate}
+    \item The significant particle size leads to strong inertia, which causes the tracer particle to unfaithfully represent flow features in flows with strong gradients. For example, supersonic flows.
+    \item The tracer particle size will be significant in microscale flows. This makes the presence of particles intrusive when studying such flows.
+\end{enumerate}
+
+Due to this trade-off, a significant amount of research has been devoted to the development of image-capturing sensors, such as Charged Coupled Devices (CCDs) and Laser devices, used in these experiments. A review of these developments and their improvements can be found in Raffel et al. \cite{raffel2018}.\par
+
+Here, a brief overview of the light scattering properties of particles is presented, as they are relevant to the method in the current work. As described by Melling \cite{melling1997}, a convenient measure of the (spatially integrated) light scattering capability is the scattering cross section $C_s$, defined as the ratio of the total scattered power $P_s$ to the laser intensity $I_0$ incident on the particle:
+
+\begin{equation}
+    C_s = \frac{P_s}{I_0}
+    \label{eq:scatteringcapability}
+\end{equation}
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[scale=1.0]{./figures/02intro/cs_plot.png}
+	\caption{The scattering cross section as a function of the particle size (refractive index m = 1.6); credit: Melling \cite{melling1997}}
+	\label{fig:cs_plot}
+\end{figure}
+
+Fig. \ref{fig:cs_plot} shows $C_s$ plotted against the ratio of particle diameter, $d_p$, and wavelength, $\lambda$, for spherical particles with a refractive index of $m=1.6$. This indicates that the light scattering capability of particles that are closer to or smaller than the wavelength of light in which they are present tends to drop off steeply and is not suitable for optical velocimetry experiments. This steep slope region corresponds to the Rayleigh scattering regime. For typical optical velocimetry techniques, the wavelength of light is about $532 nm$ \cite{raffel2018}. So, particle diameters of the order $1\mu m$ will be suitable. They fall under the Mie scattering regime, which is $d_p/\lambda > 1$ in the plot.
+
+\section{Overview of Particle Image Velocimetry}
+% Argument to highlight PIV to be used in a supersonic flow study
+Although the technique presented in the current work to quantify the tracer particle response applies to any particle-based velocimetry, Particle Image Velocimetry (PIV) has been used as the basis due to its widespread popularity. Therefore, in this section, PIV and its components are reviewed.
+
+Particle image velocimetry (PIV) has become one of the most popular methods for studying flow fields in aerospace engineering. PIV is the most mature of all optical velocimetry techniques due in part to its ability to produce instantaneous quantitative visualizations of flow fields. The amount of research efforts to advance PIV has been growing steadily (Sciacchitano \cite{sciacchitano2019}). This makes the technique more attractive for use in the study of complex flows and their physics. A schematic for PIV is shown in Fig. \ref{fig:piv2d2c}.\par
+
+\begin{figure}[ht]
+	\centering
+	\includesvg[scale=0.85]{./figures/02intro/PIV2D2C}
+	\caption{Schematic of a typical Particle Image Velocimetry (PIV) setup}
+	\label{fig:piv2d2c}
+\end{figure}
+
+As described in section \ref{sec:particletechniques}, the operational principle of PIV is distance-based. In simple terms, the displacement of the tracers introduced into the flow is measured in a short period. This information is used to compute the velocity of the flow. A double-pulse laser illuminates the seeds or tracers, and their images are captured in sequential pairs using a charged-coupled device (CCD) or complementary metal-oxide-semiconductor (CMOS) camera. All of these systems are controlled by an external synchronizer, which helps to sync the laser pulse timing and camera imaging. The image information obtained is then sent to a computer (Data Acquisition and Processing in Fig. \ref{fig:piv2d2c}), where state-of-the-art cross-correlation algorithms are used to analyze the images and determine the velocity of the flow field.\par
+
+Multiple PIV configurations have been developed over the years to study complex flow fields based on the measurement domain and the measured velocity components. These are summarized in Sciacchitano \cite{sciacchitano2014} and are reiterated for the relevance of the current work:
+\begin{enumerate}
+    \item 2D 2C: two-component planar PIV, as illustrated in the setup of Fig. \ref{fig:piv2d2c}, where a single camera normal to the laser sheet (2D measurement volume) is used to record images and in turn measure two velocity components (2C).
+    \item 2D 3C: Using two cameras at different observation angles, information on the third (out-of-plane) velocity component can be retrieved (Fig. \ref{fig:piv2d3c}). This technique is called stereoscopic PIV.
+    \item 3D 3C: Elsinga et al. \cite{elsinga2006} proposed the so-called tomographic PIV to measure the three-dimensional velocity field in a 3D measurement domain. A typical setup of a tomographic PIV experiment is illustrated in Fig. \ref{fig:piv3d3c}.
+    \item 4D 3C: When the tomographic PIV experiment is conducted with high acquisition frequency cameras, time-resolved (TR) 3D velocity fields can be obtained.
+\end{enumerate}
+
+\begin{figure}[ht]
+\centering
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{./figures/02intro/piv2d3c}
+  \caption{Schematic of a stereoscopic PIV}
+  \label{fig:piv2d3c}
+\end{subfigure}%
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{./figures/02intro/piv3d3c}
+  \caption{Schematic of a tomographic PIV}
+  \label{fig:piv3d3c}
+\end{subfigure}
+\caption{Examples of camera setups for different PIV configurations. Illustrations from Tropea et al. \cite{tropea2007}, and Elsinga et al, \cite{elsinga2006} respectively.}
+\label{fig:multicameraPIV}
+\end{figure}
+
+Together, these configurations highlight the flexibility of PIV in studying complex flows. However, there are also a few drawbacks due to setup requirements, such as optical access, cost, particle seeding, and others, that are beyond the scope of the current study. A detailed exploration of these can be found in Sciaccitano \cite{sciacchitano2014} and Raffel et al. \cite{raffel2018}.\par
+
+Finally, this work highlights the workflow methodology for quantifying the tracer particle response in planar PIV. However, it can be easily extended to other configurations as well. With little effort, the uncertainty of other tracer particles in other optical techniques could also be quantified.\par
+
+\subsection{Working principle}
+The working principle for PIV has been extensively discussed in the literature and can be found in detail elsewhere \cite{raffel2018}, \cite{sciacchitano2014}. Only the concepts relevant to the current work are discussed in this section.
+
+PIV measures velocity indirectly by measuring the displacement of the tracers embedded in a flow field and usually illuminated by a laser sheet. The displacement is given by Eq. \ref{eq:displacement} according to Westerweel \cite{westerweel1997}.
+
+\begin{equation}
+    \boldsymbol{D}(\boldsymbol{X; t_1, t_2}) = \int_{t_1}^{t_2} \boldsymbol{v[X(t), t]} \,dt
+    \label{eq:displacement}
+\end{equation}
+
+where, $\boldsymbol{D}(\boldsymbol{X; t_1, t_2})$ is the displacement of the tracer particles in a finite time interval ($\Delta t = t_2 - t_1$), $\boldsymbol{v[X(t), t]}$ is the velocity of the particle and $\boldsymbol{u[X(t), t]}$ is the velocity of the surrounding fluid.\par
+
+Ideally, the velocity of the tracer particle $\boldsymbol{v}$ is equated to the velocity of the surrounding fluid $\boldsymbol{u}$. However, in practical cases, there will be a difference in the velocities. This can be understood from Fig. \ref{fig:velocity_difference}, which highlights two issues. One, the tracer particle velocity is different from the fluid velocity. This is due to particle physics, which leads to bias error, and was traditionally improved with the selection of better tracers. Second, the velocity obtained from the calculation will be the average velocity over time $\Delta t$. This is typically attributed to the uncertainty inherent in PIV analysis. The associated error is often negligible, provided that the spatial and temporal scales of the flow are large with respect to the spatial resolution and the exposure time delay, and the dynamics of the tracer particles.\par
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[scale=0.75]{./figures/02intro/velocity_difference.png}
+	\caption{Illustration of the tracer particle deviation from the fluid path leading to velocity error; credit: Westerweel \cite{westerweel1997}}
+	\label{fig:velocity_difference}
+\end{figure}
+
+So, from Fig. \ref{fig:velocity_difference}, the velocity obtained from the experiment is:
+
+\begin{equation}
+    v[X, t] = \frac{X_i(t_2) - X_i(t_1)}{t_2 - t_1}
+    \label{eq:velocity_equation}
+\end{equation}
+
+\subsection{Tracers in PIV}
+General characteristics of tracer particles in optical velocimetries are discussed in Section \ref{sec:tracers}. Here, typical tracers used in PIV for gaseous flows are presented. These provide a basis for the analysis presented later in the work. 
+
+Typical considerations for seeding in PIV call for non-toxic, non-corrosive, non-abrasive, non-volatile, and chemically inert (Melling \cite{melling1997}). The seeding material for gases is hundreds of orders of magnitude denser than the flow itself. Some of the most popular seeding materials and their typical diameters are listed in Table \ref{tab:seeds}. The typical response times found in the literature are reported in the table. These values are case-specific and cannot be used as a single standard. The current study will provide a closer examination of the response times for these tracers using the LPT code. The references listed in the table contain examples of the cases. Solids such as Titanium dioxide ($TiO_2$) and Alumina ($Al_2O_3$) are used for their high refractive index and inert nature. They are especially preferred for studying high-temperature flows such as combustion, flames, and jet exhausts. Due to the contamination nature of solid particles, other liquid / gaseous counterparts, such as mineral oil, $CO_2$, and aerosols, have been used for their `cleaner' seeding nature.\par
+
+\begin{table}[ht]
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{|c|c|c|c|c|}
+\hline
+\textbf{Particles} & \textbf{Density ($Kg/m^3$)} & \textbf{Typical Diameter ($\mu m$)} & \textbf{Typical response ($\mu s$)} & \textbf{Reference} \\ \hline
+$TiO_2$ & 4,230 & 0.01 - 0.5 & 0.05 - 3.7 & Ragni et al. \cite{ragni2011} \\ \hline
+$Al_2O3$ & 4,000 & 0.3 & 20 - 28 & Urban et al. \cite{urban2001} \\ \hline
+Glass & 2,600 & 1.67 & 22.6 & Melling \cite{melling1997} \\ \hline
+Olive Oil & 970 & 3 & 22.5 & Melling \cite{melling1997} \\ \hline
+DEHS & 912 & 1 & 2 & Ragni et al. \cite{ragni2011} \\ \hline
+\end{tabular}%
+}
+\caption{Popular tracers used in PIV}
+\label{tab:seeds}
+\end{table}
+
+% Details on the illumination of tracers, optics, and imaging are discussed in chapter \ref{syPIV} as needed to develop the synthetic-PIV module.\par
+
+\section{PIV for high-speed flows}
+PIV for supersonic flows is being increasingly used due to its ability to extract instantaneous high-fidelity volumetric data. However, particle seeding remains an issue as discussed in the previous sections. The homogeneous seeding for high-speed flows has always been a challenge due to the harsh environments and conditions encountered. The general requirement is that the flow should be seeded homogeneously without perturbing the flow itself to generate enough data for postprocessing. Another aspect of seeding is the light scattering trade-off discussed in the previous section. These make each PIV experiment unique, and based on the setup, seeding particles and their generators are chosen. In this section, some of the key high-speed flow studies using PIV are discussed with a focus on the tracer particles chosen for each study and their light scattering characteristics. These studies will later be examined using the methodology introduced in this work to understand the response of the tracer particles. This section is summarized from the work of Scarano \cite{scarano2008}, Raffel et al. \cite{raffel2018}, and Danehy et al. \cite{danehy2018}.\par
+
+One of the first works on transonic flows is by Raffel et al. \cite{raffel1993} on a NACA0012 airfoil. This is a Mach 0.8 free-stream flow to study the passage shock. The result is shown in Fig. \ref{fig:transonic_airfoil}, which highlights the shock wave. Oil particles of $d_p \approx 1\mu m$ diameter were used, but density was not reported. Typically, oil with a density of about $\rho_p = 970 Kg/m^3$ is used. The authors achieved better results by applying the ``image shifting" ambiguity removal technique, where, by decreasing the temporal separation between the two illumination pulses and increasing the displacement between the images of the tracer particles by image shifting, the images are set for evaluation. However, these days, sophisticated evaluation algorithms, high-energy lasers, and seeding generators are available. Therefore, the evaluation of transonic flows using PIV has become the norm, eliminating the need to account for uncertainty arising from the response of the tracer particles. This is evident from a note by Beresh to Raffel \cite{raffel2018}, who cites that after conducting multiple particle (mineral oil) response tests across the shock wave generated by a wedge at several supersonic Mach numbers in the range $0.5 - 3.0$ and multiple shock angles, the estimated particle diameter was consistent. An a posteriori analysis showed that the Stokes number was around 0.05 for each of these analyses. This indicates that the particle generators and other instrumentation used for transonic PIV cases are sufficiently efficient to yield consistent results with minimal uncertainty from tracers.\par
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[scale=0.75]{./figures/02intro/transonic_airfoil.png}
+	\caption{Early use of PIV to study transonic flows highlighting the shock; Image shifting is used to correct the data; credit: Raffel et al. \cite{raffel1993}}
+	\label{fig:transonic_airfoil}
+\end{figure}
+
+Studies by Rice et al. \cite{rice2017} and Peltier et al. \cite{peltier2018} highlight the turbulent boundary layer and corner flow under the Mach 2 regime. These tests were conducted to understand the flow physics in supersonic vehicle components with noncircular internal flow paths and corners. In this study, $TiO_2$ is used as the tracer particle. The particle-time response was reported as $\tau_p = 2.6\mu s$ and the particle Stokes number as $St = 0.09$. This suggests that the system has good flow-tracking features for the particles. However, a RANS comparison with stereoscopic PIV highlighted that the velocity in the region with the vortex is off by at least 3\%. This is evident from Fig. \ref{fig:cornerflow}. This difference in velocity occurs in the region of the counter-rotating vortex, suggesting that the significant source of error might be the PIV itself. Analysis of this nature must be studied carefully to understand where the error in velocity originates.\par
+
+\begin{figure}[ht]
+\centering
+\begin{subfigure}{.50\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{./figures/02intro/cornerflow1.png}
+  \caption{PIV data for the corner flow highlighting the region with vortex}
+  \label{fig:cornerflow1}
+\end{subfigure}%
+\begin{subfigure}{.50\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{./figures/02intro/cornerflow2.png}
+  \caption{Comparison of RANS to PIV data}
+  \label{fig:cornerflow2}
+\end{subfigure}
+\caption{Supersonic PIV of a corner flow; credit: Peltier et al. \cite{peltier2018}}
+\label{fig:cornerflow}
+\end{figure}
+
+An example of a Mach 5 study is the `Unstart' inlet-isolator flow. The experiment was carried out by Wagner et al. \cite{wagner2010}. The inlet compression is obtained by a $6^\circ$ wedge placed at the opening of a rectangular conduit to study the flow characteristics of the ``unstart" begun from the scramjet mode. The tracer particles used for the analysis were Titanium Dioxide ($TiO_2$). The manufacturer-specified diameter is $0.02\mu\text{m}$. However, it is at least one order of magnitude higher due to agglomeration effects, according to the findings of Urban et al. \cite{urban2001}. There was never an experimental oblique shock test performed to estimate the particle response. The findings relied on Hou's analysis \cite{hou2003} for Mach 2 flow. Using the diameter estimated by Hou and an empirical drag formula, the response time was numerically found to be $0.75\mu\text{s}$. This brings the Stokes number to 0.013, which is quite low for a Mach 5 normal shock. This is due to several reasons. One, the use of empirical drag coefficients for such findings must be carefully considered, as proposed by Williams et al. \cite{williams2015} and Fang et al. \cite{fang2017}. Second, the estimated flow response time is for large-scale turbulence structures, and a similar response time for estimating shocks would lead to incorrect estimates. Findings from Urban et al. \cite{urban2001} for similar $TiO_2$ particles suggested that the response time is $3.5\mu\text{s}$ for a Mach 2 flow. This negates the numerical finding of $0.75\mu\text{s}$ for the current experiment.\par
+
+\begin{figure}[ht]
+\centering
+\begin{subfigure}{\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{./figures/02intro/koo_velocity1.png}
+  \caption{Mean LES data: Streamwise (left) and normal (right); velocities (top) and RMS (bottom); credit: Koo et al. \cite{koo2012}}
+  \label{fig:koo_velocity1}
+\end{subfigure}
+\begin{subfigure}{\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{./figures/02intro/koo_velocity2.png}
+  \caption{Streamwise (left) and normal (right); velocities (top) and RMS (bottom) highlighting different locations; Solid: PIV, Dotted: LES credit: Koo et al. \cite{koo2012}}
+  \label{fig:koo_velocity2}
+\end{subfigure}
+\caption{Comparison of LES to PIV data highlighting the dynamics of unstart inlet-isolator flow}
+\label{fig:koo_velocity}
+\end{figure}
+
+This case was further numerically studied by Koo et al. \cite{koo2012} using Large Eddy Simulations (LES). The initial results showed that the streamwise velocities compared well, but the normal velocities did not. This might be due to the difference in magnitude of velocities ($V << U$). These results are presented in Fig. \ref{fig:koo_velocity}, which shows the results for one specific algorithm; however, simulations conducted with different algorithms yielded similar results. Therefore, Burns et al. \cite{burns2015} performed additional post-processing to incorporate the tracer particle response into the CFD data for improved comparison. This proved to be worth the effort, helping to better validate the CFD code, especially at the shock interfaces. Both the velocity and the RMS data were well compared. These results are highlighted in Fig. \ref{fig:burns_velocities}, which shows the velocity profiles across a shock at a location of interest.\par
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[scale=0.65]{./figures/02intro/burns_velocity.png}
+	\caption{Particle response corrected comparison; Simulated PIV carries the uncertainties associated with PIV to numerical data; credit: Burns et al. \cite{burns2015}}
+	\label{fig:burns_velocities}
+\end{figure}
+
+The hypersonic regime is relatively new to be studied using particle image velocimetry (PIV). As a result, there is limited literature available. One of the big reasons is the response of the tracer particle. This can be easily understood from a flow study of a Mach 4.5 - 6 wedge ($20^\circ$) flow study from the French-German Institute of Saint-Louis (ISL) \cite{havermann2002} and \cite{havermann2008}. Two different particles were used: $TiO_2$ for the Mach 4.5 case and $Al_2O_3$ for the Mach 6 case. Other details about the particles were not mentioned. The results showed high shock smearing, as expected. The relaxation of the particles in both cases was calculated to be around $1.3\mu\text{s}$. One of the reasons why $Al_2O_3$ performs on par with $TiO_2$ even at higher Mach numbers can be attributed to the better spatial resolution in the latter case, as observed in their study. This highlights that there are a few improvements that can be made to the setup for this study to obtain better PIV data. The PIV images and their respective contours that highlight the smeared shock are shown in Fig. \ref{fig:mach4p5_6}.
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[scale=0.85]{./figures/02intro/mach4p5_6.png}
+	\caption{PIV images and velocity contours for Mach 4.5 (left) and Mach 6 (right) flow over a $20^\circ$ wedge; credit: Havermann et al. \cite{havermann2002} }
+	\label{fig:mach4p5_6}
+\end{figure}
+
+A Mach 7 flow over a two-dimensional double compression ramp is studied at the Hypersonic Test Facility Delft (HTFD) \cite{scarano2008}, \cite{schrijer2006}. The study was conducted to understand the flow dynamics of atmospheric reentry vehicles after orbital missions. The study includes a complex shock-shock interaction structure and a shock boundary layer interaction (SBLI). For the study, $TiO_2$ particles of order $ 400\text{nm}$ are used. The response time was estimated to be about $2.5\mu\text{s}$ and the settling distance $2.5\text{mm}$. The results are presented in Fig. \ref{fig:mach7} compared to Schlieren and CFD. The smearing and unevenness in the PIV data are more noticeable compared to the Schlieren data. The 2D CFD model utilized the Navier-Stokes solver and the Menter shear stress turbulence model, which closely resembles Schlieren data, characterized by thicker boundary layers. This is the expected outcome of PIV, which has traditionally predicted thin boundary layers as seen by Kalagotla et al. \cite{kalagotla2020}.\par
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[scale=0.75]{./figures/02intro/mach7.png}
+	\caption{Comparison of PIV and Schlieren (left). CFD results versus experiments (right); credit: Scarano \cite{scarano2008}}
+	\label{fig:mach7}
+\end{figure}
+
+Ultimately, the case for using PIV is compelling, given its ability to provide instantaneous, quantitative visualizations of large flow fields. However, technological improvements surrounding its equipment have almost stalled. This enables us to move towards a data-centric approach, where data obtained from experiments and numerical analysis will help develop more accurate drag models and better estimate response times. The cases presented in this section, characterized by large particle relaxation times and settling distances, underscore the need for a reliable methodology to quantify particle response, thereby facilitating the validation of numerical data against the respective PIV data. This inherent nature of particle interaction is not only local, but also propagates throughout the flow field if the particle comes into contact with another accelerating zone within the flow field. Therefore, a full-fledged Lagrangian particle tracking (LPT) algorithm was developed in the current work to study particle physics, unlike previous works.\par
+
+
+\section{Objectives and outline of the current work}
+The current work aims to quantify and reduce the uncertainty related to the tracer particles, including the uncertainty arising from the interaction of the fluid with the particle (tracer particle response uncertainty) and the uncertainty due to imaging and analysis (analysis phase uncertainty). The current study utilizes planar PIV for both imaging and analysis. However, it can be easily extended to other optical velocimetry techniques. To achieve the objective, the following studies are conducted:
+\begin{enumerate}
+    \item The theory of particle dynamics history (PDH) is presented along with several previous works. These works emphasize the importance of incorporating PDH information when validating numerical codes against the corresponding optical velocimetry data. This is presented in chapter \ref{ch:pdh}
+    \item Development of an efficient, reliable, and versatile one-way coupled Lagrangian Particle Tracker (LPT) emphasizing drag models and accuracy. This will help quantify the uncertainty of the response of the tracer particle. The particle response analysis conducted to understand the uncertainty related to the tracers in PIV is explored from a numerical perspective. A concrete methodology is proposed to help calculate and validate particle response times. A few case studies have been included to show the effect of PDH. This study is vital for complex flows with a series of interactions, such as jet exhaust. This is followed by developing a code to transform data from the Lagrangian to the Eulerian frame accurately. This transformation process enables us to replicate PIV data more accurately than traditional synthetic data creation methods. The development process and test cases for verifying and validating these codes are presented in chapter \ref{ch:lpt}.
+    \item Development of a Synthetic Particle Image Velocimetry (syPIV) module that generates images to replicate the imaging phase of PIV. Multiple test cases are studied to understand the impact of imaging on uncertainty. This is followed by using a postprocessing tool (such as open-PIV) to generate PIV-similar data and account for the uncertainty of the analysis. Chapter \ref{ch:sypiv} presents the methodology and test cases.
+    \item The developed tools were utilized to create a methodology for studying particle size distribution in shock-dominated flows. First, this methodology was demonstrated using a test case, and then it was validated using data from Florida State University (FSU) on shock interactions. The data showed strong multimodality in the distributions observed. Utilizing the particle sizes, better validation was obtained for the CFD data compared to PIV. These results are presented in Chapter \ref{ch:fsu_data}.
+    \item A multi-shock case was explored using the developed framework. The results highlighted the importance of considering PDH in understanding the data obtained from optical velocimetries. A jet flow case is also studied in comparison with experimental PIV data to demonstrate the importance of PDH in complex supersonic flows. This is presented in detail in Chapter \ref{ch:multishock}.
+    \item In Chapter \ref{ch:jetflow}, a complex jet exhaust LES dataset is analyzed using several particle sizes to quantify the effect of PDH and validate it better with the PIV data. A Stokes number theory is also presented to report the Stokes number for several regions of the flow field. 
+    \item A novel machine learning framework is proposed and studied on an oblique shock dataset that would reduce the particle inertia bias in PIV images. This methodology presents a novel approach to addressing the issue of particle lag in PIV. It was further applied to a shock interaction experimental PIV data obtained from FSU. Chapter \ref{ch:pivnet} presents the literature and work on the development and application of a deep learning model to reduce particle inertia bias in supersonic PIV data.
+\end{enumerate}
+   
+
+
+
+  
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,0 +1,96 @@
+\chapter{Research Contributions}\label{ch:research_contributions}
+This chapter outlines the primary contributions of this dissertation, offering readers a high-level overview of the novel insights and advancements achieved through this work.\par
+
+The present research addresses the uncertainties inherent in ``supersonic" velocity diagnostic experiments caused by the presence of tracer particles, with a particular focus on Particle Image Velocimetry (PIV). These uncertainties primarily stem from particle inertia and the imaging process of the tracer particles. Chapter \ref{ch:intro} delves into the relevant literature, highlighting the impact of particle inertia bias on the accuracy of PIV measurements in supersonic flows.\par
+
+As velocity diagnostic techniques have evolved, this work critically examines supersonic PIV, classifying it as a non-intrusive yet inherently invasive technique. This classification underscores the role of tracer particles as a significant source of uncertainty in PIV-based measurements. By emphasizing this aspect, the research lays the groundwork for novel approaches to mitigate particle inertia bias and enhance the accuracy of supersonic flow diagnostics.\par
+
+\section{Novel Contributions}
+
+This section highlights the novel contributions of this work, encompassing the development of a Lagrangian Particle Tracker (LPT), a reduced-order model to transform Lagrangian particle trajectories to an Eulerian frame, a synthetic image generator, and a novel machine learning architecture.
+
+\subsection{UC-LPT Code}
+A new in-house Lagrangian Particle Tracking (UC-LPT) code was developed from the ground up, utilizing one-way coupling for efficient particle tracking. Details of its implementation are discussed in Chapter \ref{ch:lpt}. The UC-LPT code offers several key advancements over existing approaches:
+
+\begin{enumerate}
+    \item \textbf{Advanced Programming Interface (API):} 
+    A versatile and user-friendly API was designed to provide streamlined access to LPT functionalities, including algorithms for particle search, interpolation, and integration.
+    
+    \item \textbf{Future-Proof Design:} 
+    The code was architected with scalability and flexibility in mind. It supports future developments, such as handling unsteady flows and enabling GPU parallelization.
+    
+    \item \textbf{Demonstration and Testing of Algorithms:} 
+    Leveraging the API, multiple LPT algorithms were implemented and rigorously tested for accuracy and efficiency.
+    
+    \item \textbf{Comprehensive Drag Models:} 
+    Various drag models were incorporated, enabling researchers to switch models to suit specific case requirements easily.
+    
+    \item \textbf{MPI Integration:} 
+    All implemented algorithms were parallelized using the Message Passing Interface (MPI), facilitating high-performance computations.
+    
+    \item \textbf{Optimized Plot3D Data Reading:} 
+    A novel algorithm for reading Plot3D data was developed, which achieves a 50x speedup compared to its Fortran-based counterpart. This improvement was achieved by using Numpy \cite{harris2020} to read and restructure entire data files simultaneously rather than sequentially.
+    
+    \item \textbf{Efficient Search Algorithm:} 
+    A new particle search algorithm was implemented, using the particle’s previous location as the starting point for the search. This adaptive approach significantly reduces algorithmic complexity and improves efficiency, particularly in iterative simulations.
+    
+    \item \textbf{Diverse Interpolation Techniques:} 
+    Multiple interpolation algorithms were developed and evaluated, including trilinear interpolation, radial basis function (RBF) interpolation, regular grid interpolation (RGI), and a novel shock-cell-based interpolation. The shock-cell-based method identifies shock regions and adapts trilinear interpolation to a step function, making it particularly effective for shock-dominated flows.
+    
+    \item \textbf{Lagrangian-to-Eulerian Transformation:} 
+    A systematic and efficient approach was developed to transform Lagrangian particle data into an Eulerian frame, facilitating model order reduction for large-scale simulations. This process incorporates a robust sampling algorithm to ensure a minimum of two sample points per grid cell, guaranteeing high spatial accuracy. The interpolation workflow was parallelized by partitioning the computational grid across multiple processes, significantly enhancing performance and scalability. After interpolation, the grid was seamlessly reconstructed to produce a coherent dataset. This transformation framework efficiently generates particle inertia-informed synthetic PIV data, eliminating the need for multiple Lagrangian particle simulations while preserving the fidelity of the particle dynamics.
+\end{enumerate}
+
+
+\subsection{Synthetic Image Generation (syPIV)}
+
+Synthetic image generation was implemented using the EUROPIV framework, which has been made publicly available through PyPI \cite{pypi}. The literature, design, and testing are presented in Chapter \ref{ch:sypiv}. Significant efforts were dedicated to parallelizing the algorithms using MPI, resulting in two adaptable parallelization approaches tailored to specific tasks:
+
+\begin{enumerate}
+    \item \textbf{Parallelization for Large-Scale Data Generation:} 
+    This method efficiently generates large datasets, making it suitable for developing training datasets for machine learning models, such as those used in this work. Here, each image is generated independently on separate processor cores, maximizing throughput and enabling the rapid creation of extensive datasets.
+
+    \item \textbf{Parallelization at the Image Generation Level:} 
+    This approach parallelizes the computational tasks in the image generation process, specifically integrating the intensity equation required to generate realistic synthetic images. It is designed for applications requiring high-fidelity, real-world image synthesis, which is critical for studying uncertainties related to particle inertia bias. Such applications include the work of Burns et al. \cite{burns2015} and the current jet flow data analysis presented in this study.
+\end{enumerate}
+
+These parallelization strategies provide flexibility and scalability, ensuring syPIV can meet the diverse demands of machine learning dataset generation and high-accuracy synthetic image studies.
+
+
+\subsection{Deep Learning Framework}
+
+A new model was developed, trained, and tested for the specific implementation of particle inertia bias reduction in PIV data. The novel contributions of this work are summarized as follows:
+
+\begin{enumerate}
+    \item \textbf{BICSNet: A Physics-Aware Deep Learning Model:}
+    \begin{itemize}
+        \item Development of a bilateral convolutional neural network architecture (BICSNet) specifically designed to correct particle inertia bias in supersonic PIV images, incorporating U-Net features and avoiding pooling layers.
+        \item Integration of freestream Mach and Reynolds numbers as scalar inputs, embedding physical context into the learning process to improve model robustness.
+        \item Sparse connections to balance computational efficiency and prediction accuracy, ensuring scalability for high-resolution PIV data.
+        \item Enhanced encoder-decoder architecture for hierarchical feature extraction and dense optical flow estimation.
+    \end{itemize}
+    
+    \item \textbf{Framework for Model Training and Testing:}
+    \begin{itemize}
+        \item Creation of a comprehensive synthetic dataset encompassing a diverse range of Mach numbers, deflection angles, particle diameters, and densities using UC-LPT and syPIV modules.
+        \item Implementation of physics-informed data preparation by transforming LPT data into Eulerian frames, accurately modeling shock dynamics and particle properties.
+        \item Dynamic learning optimization using the Adam optimizer with adaptive learning rates, patience, and Mean Squared Error (MSE) loss for stable convergence.
+    \end{itemize}
+
+    \item \textbf{Novel Error Analysis and Metrics:}
+    \begin{itemize}
+        \item Introduction of robust evaluation metrics, including MSE, L2-norm, and Peak Signal-to-Noise Ratio (PSNR), to assess model performance comprehensively.
+        \item Extensive correlation studies to evaluate model performance against parameters like Mach number, deflection angle, particle diameter, and density.
+        \item Analysis of out-of-distribution generalization, identifying strengths and areas for further optimization using physics-based techniques.
+    \end{itemize}
+
+    \item \textbf{Impactful Results:}
+    \begin{itemize}
+        \item Achieved up to 87\% error reduction for training-distribution Mach numbers and 78\% for unseen Mach numbers, demonstrating strong generalization capabilities.
+        \item High PSNR values, indicating effective reconstruction of high-fidelity images while preserving flow physics and reducing particle inertia bias.
+        \item Demonstrated scalability across diverse flow regimes, showcasing the model’s applicability to real-world experimental setups.
+    \end{itemize}
+
+\end{enumerate}
+
+These contributions position BICSNet as a novel framework for addressing particle inertia bias in supersonic PIV, bridging the gap between experimental diagnostics and computational flow analysis.
