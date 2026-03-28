@@ -3,30 +3,131 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+  <!-- Google Tag Manager -->
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-PGZH8HT');</script>
+  <!-- End Google Tag Manager -->
+
+  <script>
+    (function(){
+      try{var t=localStorage.getItem('theme');if(t==='dark'){document.documentElement.classList.add('dark-theme');document.addEventListener('DOMContentLoaded',function(){document.body.classList.add('dark-theme');});}}catch(e){}
+    })();
+  </script>
+
+  <!-- Font Awesome Icon - CSS-->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <!-- Custom Styles-->
   <link rel="stylesheet" href="/assets/css/style.css" />
-  <title>Blog - Dilip Kalagotla</title>
+  <title>Blog - Dilip Kalagotla | Aerospace Engineer</title>
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-60RKR4PHQY"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-60RKR4PHQY');
+  </script>
+
+  <!-- Open Graph-->
+  <meta property="og:locale" content="en_US" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Blog - Dilip Kalagotla | Aerospace Engineer" />
+  <meta property="og:description" content="Articles on CFD, HPC, and machine learning by Dilip Kalagotla." />
+  <meta property="og:url" content="https://kalagotla.github.io/blog/" />
+  <meta property="og:site_name" content="Dilip Kalagotla | Aerospace Engineer" />
+  <meta property="article:publisher" content="https://kalagotla.github.io/" />
+  <meta property="og:image" content="https://kalagotla.github.io/examples/preview.JPG" />
+
+  <meta name="author" content="Dilip Kalagotla" />
+  <meta name="description" content="Articles on CFD, HPC, and machine learning by Dilip Kalagotla." />
+  <link rel="apple-touch-icon" sizes="57x57" href="/assets/img/favicon/apple-icon-57x57.png" />
+  <link rel="apple-touch-icon" sizes="60x60" href="/assets/img/favicon/apple-icon-60x60.png" />
+  <link rel="apple-touch-icon" sizes="72x72" href="/assets/img/favicon/apple-icon-72x72.png" />
+  <link rel="apple-touch-icon" sizes="76x76" href="/assets/img/favicon/apple-icon-76x76.png" />
+  <link rel="apple-touch-icon" sizes="114x114" href="/assets/img/favicon/apple-icon-114x114.png" />
+  <link rel="apple-touch-icon" sizes="120x120" href="/assets/img/favicon/apple-icon-120x120.png" />
+  <link rel="apple-touch-icon" sizes="144x144" href="/assets/img/favicon/apple-icon-144x144.png" />
+  <link rel="apple-touch-icon" sizes="152x152" href="/assets/img/favicon/apple-icon-152x152.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/img/favicon/apple-icon-180x180.png" />
+  <link rel="icon" type="image/png" sizes="192x192" href="/assets/img/favicon/android-icon-192x192.png" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicon/favicon-32x32.png" />
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/img/favicon/favicon-96x96.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="/assets/img/favicon/favicon-16x16.png" />
+  <link rel="manifest" href="/assets/img/favicon/manifest.json" />
+  <meta name="msapplication-TileColor" content="#ffffff" />
+  <meta name="msapplication-TileImage" content="/assets/img/favicon/ms-icon-144x144.png" />
+  <meta name="theme-color" content="#ffffff" />
+  <meta name="robots" content="index, follow" />
+  <meta name="keywords" content="blog, CFD, HPC, machine learning, aerospace engineering, deep learning, SLURM, computational fluid dynamics" />
+  <!-- Google Site Verification for indexing -->
+  <meta name="google-site-verification" content="_qxK8tePiU2fhnwlwnJ7pkDFnj1k2EiKq_cYGy1Cb84" />
 </head>
+
 <body>
+  <!-- Google Tag Manager (noscript) -->
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PGZH8HT"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe>
+  </noscript>
+
+  <!-- Navigation -->
   <nav class="nav">
     <div class="nav-container">
       <a href="/index.html" class="nav-logo">Dilip Kalagotla</a>
       <ul class="nav-links">
         <li><a href="/index.html">Home</a></li>
         <li><a href="/research.html">Research</a></li>
+        <li><a href="/teaching.html">Teaching</a></li>
         <li><a href="/blog/index.html" class="active">Blog</a></li>
         <li><a href="/contact.html">Contact</a></li>
+        <li>
+          <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme" aria-pressed="false">
+            <i class="fas fa-moon" aria-hidden="true"></i>
+          </button>
+        </li>
       </ul>
+      <button class="nav-toggle" aria-label="Toggle navigation">
+        <i class="fas fa-bars"></i>
+      </button>
     </div>
   </nav>
+
+  <!-- Main Content -->
   <main class="main">
     <section class="page-section">
       <div class="container">
         <h2>Blog</h2>
-        <p>Articles on CFD, HPC, and machine learning.</p>
+        <p style="margin-bottom: 2rem; color: #666;">Articles on CFD, HPC, and machine learning.</p>
         <div id="articles"></div>
       </div>
     </section>
   </main>
+
+  <!-- Simple JavaScript for mobile navigation -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const navToggle = document.querySelector('.nav-toggle');
+      const navLinks = document.querySelector('.nav-links');
+
+      if (navToggle && navLinks) {
+        navToggle.addEventListener('click', function() {
+          navLinks.classList.toggle('active');
+        });
+
+        // Close mobile menu when clicking on a link
+        navLinks.addEventListener('click', function(e) {
+          if (e.target.tagName === 'A') {
+            navLinks.classList.remove('active');
+          }
+        });
+      }
+    });
+  </script>
+  <script src="/assets/js/theme.js"></script>
 </body>
 </html>
