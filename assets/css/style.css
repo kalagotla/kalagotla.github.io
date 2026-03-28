@@ -1132,6 +1132,130 @@ a:hover {
   }
 }
 
+/* Blog listing */
+.blog-list {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.blog-item {
+  display: block;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+.blog-item:hover {
+  border-color: var(--text-muted);
+  background: var(--surface-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px var(--shadow);
+}
+
+.blog-item-date {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-bottom: 0.5rem;
+}
+
+.blog-item-title {
+  color: var(--text-strong);
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+}
+
+.blog-item-summary {
+  color: var(--text);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin-bottom: 0;
+}
+
+/* Blog article */
+.blog-article {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.blog-article h1 {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.blog-article-meta {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.blog-article h2 {
+  font-size: 1.5rem;
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+  text-align: left;
+}
+
+.blog-article p {
+  line-height: 1.8;
+  margin-bottom: 1.25rem;
+}
+
+.blog-article ul,
+.blog-article ol {
+  margin-bottom: 1.25rem;
+  padding-left: 1.5rem;
+}
+
+.blog-article li {
+  margin-bottom: 0.5rem;
+  line-height: 1.7;
+  color: var(--text);
+}
+
+.blog-article pre {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 1.25rem;
+  overflow-x: auto;
+  margin-bottom: 1.5rem;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.blog-article code {
+  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+  font-size: 0.9em;
+}
+
+.blog-article p code {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 0.15rem 0.4rem;
+}
+
+.blog-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  margin-bottom: 2rem;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.blog-back-link:hover {
+  color: var(--text-strong);
+}
+
 /* Utility classes */
 .text-center {
   text-align: center;
